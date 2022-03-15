@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Generic Webhook to SFTP Upload CLI app.
+ * WaterOneFlow Web Service CLI app.
  *
  * @author J. Scott Smith
  * @license BSD-2-Clause-FreeBSD

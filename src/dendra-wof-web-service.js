@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * Generic Webhook to SFTP Upload CLI entry point.
+ * WaterOneFlow Web Service CLI entry point.
  *
  * @author J. Scott Smith
  * @license BSD-2-Clause-FreeBSD
- * @module generic-webhook-sftp-upload
+ * @module dendra-wof-web-service
  */
 
 const mri = require('mri')

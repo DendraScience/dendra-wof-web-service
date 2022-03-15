@@ -1,0 +1,54 @@
+{
+  "name": "@dendra-science/dendra-wof-web-service",
+  "version": "0.0.1",
+  "description": "WaterOneFlow Web Service to share hydrologic data with CUAHSI-HIS.",
+  "license": "BSD-2-Clause-FreeBSD",
+  "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",
+  "bin": {
+    "dendra-wof-web-service": "./dist/dendra-wof-web-service.js"
+  },
+  "main": "dist/dendra-wof-web-service.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DendraScience/dendra-wof-web-service.git"
+  },
+  "scripts": {
+    "babel": "babel src -d dist",
+    "build": "npm run lint && npm run clean && npm run babel && npm run chmod",
+    "chmod": "chmod +x dist/dendra-wof-web-service.js",
+    "clean": "rm -rf dist/*",
+    "lint": "eslint src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=14.19"
+  },
+  "dependencies": {
+    "agentkeepalive": "^4.2.1",
+    "axios": "^0.26.1",
+    "entities": "^3.0.1",
+    "fastify": "^3.23.1",
+    "fastify-cors": "^6.0.3",
+    "fastify-xml-body-parser": "^2.1.0",
+    "http-errors": "^2.0.0",
+    "load-json-file": "^6.2.0",
+    "luxon": "^2.1.1",
+    "mri": "^1.2.0",
+    "qs": "^6.10.3",
+    "sax": "^1.2.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.16.0",
+    "@babel/core": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "eslint": "^8.2.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "prettier": "^2.4.1"
+  }
+}

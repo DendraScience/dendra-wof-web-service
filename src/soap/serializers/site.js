@@ -8,17 +8,16 @@ function siteEnd() {
   return '</site>'
 }
 
-function sitesResponseStart() {
-  return '<sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
+function siteInfoStart() {
+  return '<siteInfo>'
 }
 
-function sitesResponseEnd() {
-  return '<sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
+function siteInfoEnd() {
+  return '</siteInfo>'
 }
 
-function siteInfo({ station }) {
+function siteInfoType({ station }) {
   return (
-    '<siteInfo>' +
     `<siteName>${entities.encodeXML(station.name)}</siteName>` +
     `<siteCode network="${entities.encodeXML(
       (station.organization_lookup && station.organization_lookup.slug) ||
@@ -47,15 +46,24 @@ function siteInfo({ station }) {
       ? `<siteProperty name="Site Comments">${entities.encodeXML(
           station.description
         )}</siteProperty>`
-      : '') +
-    '</siteInfo>'
+      : '')
   )
+}
+
+function sitesResponseStart() {
+  return '<sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
+}
+
+function sitesResponseEnd() {
+  return '</sitesResponse>'
 }
 
 module.exports = {
   siteStart,
   siteEnd,
+  siteInfoStart,
+  siteInfoEnd,
+  siteInfoType,
   sitesResponseStart,
-  sitesResponseEnd,
-  siteInfo
+  sitesResponseEnd
 }

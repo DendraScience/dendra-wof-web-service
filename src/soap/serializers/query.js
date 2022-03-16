@@ -1,8 +1,15 @@
 const entities = require('entities')
 
-function queryInfo({ method, parameters }) {
+function queryInfoStart() {
+  return '<queryInfo>'
+}
+
+function queryInfoEnd() {
+  return '</queryInfo>'
+}
+
+function queryInfoType({ method, parameters }) {
   return (
-    '<queryInfo>' +
     `<creationTime>${new Date().toISOString()}</creationTime>` +
     `<criteria MethodCalled="${method}">` +
     Object.entries(parameters)
@@ -13,11 +20,12 @@ function queryInfo({ method, parameters }) {
           )}"/>`
       )
       .join('') +
-    '</criteria>' +
-    '</queryInfo>'
+    '</criteria>'
   )
 }
 
 module.exports = {
-  queryInfo
+  queryInfoStart,
+  queryInfoEnd,
+  queryInfoType
 }

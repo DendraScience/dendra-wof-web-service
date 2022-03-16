@@ -1,29 +1,47 @@
 const { Readable } = require('stream')
 const { CacheControls, ContentTypes, Headers } = require('../../lib/utils')
 const {
+  queryInfoStart,
+  queryInfoEnd,
+  queryInfoType
+} = require('../serializers/query')
+const {
+  seriesStart,
+  seriesEnd,
+  seriesCatalogStart,
+  seriesCatalogEnd
+} = require('../serializers/series')
+const {
+  siteStart,
+  siteEnd,
+  siteInfoStart,
+  siteInfoEnd,
+  siteInfoType,
+  sitesResponseStart,
+  sitesResponseEnd
+} = require('../serializers/site')
+const {
   soapBodyStart,
   soapBodyEnd,
   soapEnvelopeStart,
   soapEnvelopeEnd
 } = require('../serializers/common')
 const {
-  siteStart,
-  siteEnd,
-  sitesResponseStart,
-  sitesResponseEnd,
-  siteInfo
-} = require('../serializers/site')
-const { queryInfo } = require('../serializers/query')
+  variableStart,
+  variableEnd,
+  variableInfoType
+} = require('../serializers/variable')
 
 async function* getSiteInfoObject(
   request,
-  { logger, method, parameters, webAPI }
+  { helpers, logger, method, parameters, webAPI }
 ) {
   const { site } = parameters
   const stationId = site.split(':')[1]
 
   if (!stationId) throw new Error(`Invalid site parameter: ${site}`)
 
+  // Fetch station
   let stationResp
   try {
     stationResp = await webAPI.get(`/stations/${stationId}`, {
@@ -35,17 +53,48 @@ async function* getSiteInfoObject(
     else throw err
   }
 
+  // Fetch datastreams for station
+  const datastreamsResp = await webAPI.get(`/datastreams`, {
+    params: {
+      is_enabled: true,
+      is_hidden: false,
+      station_id: stationId,
+      // TODO: Paginate to allow for more than 2000
+      $limit: 2000
+    }
+  })
+  const datastreams =
+    (datastreamsResp.data &&
+      datastreamsResp.data.data &&
+      datastreamsResp.data.data.filter(datastream => datastream.terms.odm)) ||
+    []
+
+  const unitCV = await helpers.getUnitCV()
+  const variableCV = await helpers.getVariableCV()
+
   yield soapEnvelopeStart() +
     soapBodyStart() +
     '<GetSiteInfoObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/">' +
     sitesResponseStart() +
-    queryInfo({ method, parameters }) +
+    queryInfoStart() +
+    queryInfoType({ method, parameters }) +
+    queryInfoEnd() +
     siteStart() +
-    siteInfo({ station: stationResp.data })
+    siteInfoStart() +
+    siteInfoType({ station: stationResp.data }) +
+    siteInfoEnd() +
+    seriesCatalogStart()
 
-  // TODO: for yield seriesCatalog({datastream})
+  for (const datastream of datastreams) {
+    yield seriesStart() +
+      variableStart() +
+      variableInfoType({ datastream, unitCV, variableCV }) +
+      variableEnd() +
+      seriesEnd()
+  }
 
-  yield siteEnd() +
+  yield seriesCatalogEnd() +
+    siteEnd() +
     sitesResponseEnd() +
     '</GetSiteInfoObjectResponse>' +
     soapBodyEnd() +

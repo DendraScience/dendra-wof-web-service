@@ -1,5 +1,7 @@
 "use strict";
 
+const entities = require('entities');
+
 const {
   Readable
 } = require('stream');
@@ -51,7 +53,7 @@ const {
   variableInfoType
 } = require('../serializers/variable');
 
-async function* getSiteInfoObject(request, {
+async function* getSiteInfo(request, {
   helpers,
   logger,
   method,
@@ -80,12 +82,12 @@ async function* getSiteInfoObject(request, {
   })).filter(datastream => datastream.terms.odm);
   const unitCV = await helpers.getUnitCV();
   const variableCV = await helpers.getVariableCV();
-  yield soapEnvelopeStart() + soapBodyStart() + responseStart('GetSiteInfoObjectResponse') + sitesResponseStart() + queryInfoStart() + queryInfoType({
+  yield soapEnvelopeStart() + soapBodyStart() + responseStart('GetSiteInfoResponse') + '<GetSiteInfoResult>' + entities.encodeXML(sitesResponseStart() + queryInfoStart() + queryInfoType({
     method,
     parameters: Object.entries(parameters)
   }) + queryInfoEnd() + siteStart() + siteInfoStart() + siteInfoType({
     station
-  }) + siteInfoEnd() + seriesCatalogStart();
+  }) + siteInfoEnd() + seriesCatalogStart());
 
   for (const datastream of datastreams) {
     const firstDatapoint = await helpers.findDatapoint({
@@ -98,7 +100,7 @@ async function* getSiteInfoObject(request, {
     if (datastream.thing_type_id) thingType = await helpers.findOneCached('thing-types', datastream.thing_type_id, {
       is_enabled: true
     });
-    yield seriesStart() + variableStart() + variableInfoType({
+    yield entities.encodeXML(seriesStart() + variableStart() + variableInfoType({
       datastream,
       unitCV,
       variableCV
@@ -113,14 +115,14 @@ async function* getSiteInfoObject(request, {
       thingType
     }) + seriesSource({
       organization
-    }) + seriesEnd();
+    }) + seriesEnd());
   }
 
-  yield seriesCatalogEnd() + siteEnd() + sitesResponseEnd() + '</GetSiteInfoObjectResponse>' + soapBodyEnd() + soapEnvelopeEnd();
+  yield entities.encodeXML(seriesCatalogEnd() + siteEnd() + sitesResponseEnd()) + '</GetSiteInfoResult>' + '</GetSiteInfoResponse>' + soapBodyEnd() + soapEnvelopeEnd();
 }
 
 module.exports = async (request, reply, ctx) => {
-  reply.header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0).header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8).send(Readable.from(getSiteInfoObject(request, ctx), {
+  reply.header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0).header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8).send(Readable.from(getSiteInfo(request, ctx), {
     autoDestroy: true
   }));
 };

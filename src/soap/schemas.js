@@ -6,37 +6,90 @@ const authToken = {
 }
 
 /*
-  {
-    "?xml": "",
-    "soap:Envelope": {
-      "soap:Body": {
-        "GetSiteInfoObject": {
-          "authToken": "",
-          "site": "iutah:LR_WaterLab_AA"
-        }
-      }
-    }
-  }
+  GetSiteInfoXXX methods.
  */
-const GetSiteInfoObject = {
+
+const getSiteInfoType = {
   additionalProperties: false,
   properties: {
-    GetSiteInfoObject: {
-      additionalProperties: false,
-      properties: {
-        authToken,
-        site: {
-          type: 'string',
-          minLength: 1
-        }
-      },
-      required: ['site'],
-      type: 'object'
+    authToken,
+    site: {
+      type: 'string',
+      minLength: 1
     }
+  },
+  required: ['site'],
+  type: 'object'
+}
+
+const GetSiteInfo = {
+  properties: {
+    GetSiteInfo: getSiteInfoType
+  },
+  required: ['GetSiteInfo'],
+  type: 'object'
+}
+
+const GetSiteInfoObject = {
+  properties: {
+    GetSiteInfoObject: getSiteInfoType
   },
   required: ['GetSiteInfoObject'],
   type: 'object'
 }
+
+/*
+  GetSitesXXX methods.
+ */
+
+const getSitesType = {
+  additionalProperties: false,
+  properties: {
+    authToken,
+    site: {
+      oneOf: [
+        { type: 'string' },
+        {
+          properties: {
+            string: {
+              oneOf: [
+                { type: 'string' },
+                {
+                  items: {
+                    type: 'string'
+                  },
+                  type: 'array'
+                }
+              ]
+            }
+          },
+          type: 'object'
+        }
+      ]
+    }
+  },
+  type: 'object'
+}
+
+const GetSites = {
+  properties: {
+    GetSites: getSitesType
+  },
+  required: ['GetSites'],
+  type: 'object'
+}
+
+const GetSitesObject = {
+  properties: {
+    GetSitesObject: getSitesType
+  },
+  required: ['GetSitesObject'],
+  type: 'object'
+}
+
+/*
+  SOAP bleh.
+ */
 
 const SoapRequestSchema = {
   body: {
@@ -46,7 +99,7 @@ const SoapRequestSchema = {
         additionalProperties: false,
         properties: {
           'soap:Body': {
-            oneOf: [GetSiteInfoObject]
+            oneOf: [GetSiteInfo, GetSiteInfoObject, GetSites, GetSitesObject]
           }
         },
         required: ['soap:Body'],

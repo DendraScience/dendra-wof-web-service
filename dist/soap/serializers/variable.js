@@ -2,9 +2,9 @@
 
 const entities = require('entities');
 
-function unitsType(config) {
-  return (config.unitName ? `<unitName>${entities.encodeXML(config.unitName)}</unitName>` : '') + (config.unitName ? `<unitType>${entities.encodeXML(config.unitType)}</unitType>` : '') + (config.unitAbbreviation ? `<unitAbbreviation>${entities.encodeXML(config.unitType)}</unitAbbreviation>` : '') + (config.unitCode ? `<unitCode>${entities.encodeXML(config.unitCode + '')}</unitCode>` : '');
-}
+const {
+  unitsType
+} = require('./common');
 
 function variableStart() {
   return '<variable>';
@@ -27,7 +27,6 @@ function variableInfoType({
 }
 
 module.exports = {
-  unitsType,
   variableStart,
   variableEnd,
   variableInfoType

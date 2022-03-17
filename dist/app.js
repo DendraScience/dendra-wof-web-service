@@ -38,6 +38,10 @@ const {
 } = require('./soap/schemas');
 
 const {
+  createHelpers
+} = require('./lib/helpers');
+
+const {
   CacheControls,
   ContentTypes,
   Headers
@@ -65,7 +69,8 @@ module.exports = async log => {
     const soapBody = request.body['soap:Envelope']['soap:Body'];
     const method = Object.keys(soapBody)[0];
     const parameters = soapBody[method];
-    log.info(`Handling web service POST request for method ${method}`); // NOTE: Good to go since the schema validated the body
+    log.info(`Handling web service POST request for method ${method}`);
+    if (!method) throw new Error('Method required'); // NOTE: Good to go since the schema validated the body
 
     return soapMethodHandlers[method](request, reply, Object.assign({
       method,
@@ -101,70 +106,10 @@ module.exports = async log => {
       log.info(`Web API request ${request.method.toUpperCase()} ${request.url}`);
       return request;
     });
-    /*
-      Helpers for caching and mapping vocabulary.
-     */
-
-    const getCached = async (key, ...args) => {
-      const data = cache.get(key);
-      if (data) return data;
-      const resp = await webAPI.get(...args);
-      cache.set(key, resp.data);
-      return resp.data;
-    };
-
-    const getUnitCV = async () => {
-      let data = cache.get('unitCV');
-
-      if (!data) {
-        const resp = await webAPI.get('/uoms', {
-          params: {
-            $limit: 2000
-          }
-        });
-        data = {};
-        if (resp.data && resp.data.data) resp.data.data.forEach(uom => {
-          if (uom.unit_tags && uom.library_config && uom.library_config.wof_web_service) uom.unit_tags.forEach(tag => {
-            data[tag] = uom.library_config.wof_web_service;
-          });
-        });
-        cache.set('unitCV', data);
-      }
-
-      return data;
-    };
-
-    const getVariableCV = async () => {
-      let data = cache.get('variableCV');
-
-      if (!data) {
-        const resp = await webAPI.get('/vocabularies', {
-          params: {
-            _id: {
-              $in: ['odm-data-type', 'odm-general-category', 'odm-sample-medium', 'odm-value-type', 'odm-variable-name']
-            },
-            is_enabled: true,
-            is_hidden: false
-          }
-        });
-        if (resp.data && resp.data.data) data = resp.data.data.reduce((v, vocabulary) => {
-          if (vocabulary.terms) v[vocabulary.label] = vocabulary.terms.reduce((t, term) => {
-            if (term.name) t[term.label] = term.name;
-            return t;
-          }, {});
-          return v;
-        }, {});
-        cache.set('variableCV', data);
-      }
-
-      return data;
-    };
-
-    const helpers = {
-      getCached,
-      getUnitCV,
-      getVariableCV
-    };
+    const helpers = createHelpers({
+      cache,
+      webAPI
+    });
     /*
       Set up web service and routes.
      */

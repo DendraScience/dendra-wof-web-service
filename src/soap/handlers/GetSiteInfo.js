@@ -1,3 +1,4 @@
+const entities = require('entities')
 const { Readable } = require('stream')
 const { CacheControls, ContentTypes, Headers } = require('../../lib/utils')
 const {
@@ -37,7 +38,7 @@ const {
   variableInfoType
 } = require('../serializers/variable')
 
-async function* getSiteInfoObject(
+async function* getSiteInfo(
   request,
   { helpers, logger, method, parameters, webAPI }
 ) {
@@ -73,16 +74,19 @@ async function* getSiteInfoObject(
 
   yield soapEnvelopeStart() +
     soapBodyStart() +
-    responseStart('GetSiteInfoObjectResponse') +
-    sitesResponseStart() +
-    queryInfoStart() +
-    queryInfoType({ method, parameters: Object.entries(parameters) }) +
-    queryInfoEnd() +
-    siteStart() +
-    siteInfoStart() +
-    siteInfoType({ station }) +
-    siteInfoEnd() +
-    seriesCatalogStart()
+    responseStart('GetSiteInfoResponse') +
+    '<GetSiteInfoResult>' +
+    entities.encodeXML(
+      sitesResponseStart() +
+        queryInfoStart() +
+        queryInfoType({ method, parameters: Object.entries(parameters) }) +
+        queryInfoEnd() +
+        siteStart() +
+        siteInfoStart() +
+        siteInfoType({ station }) +
+        siteInfoEnd() +
+        seriesCatalogStart()
+    )
 
   for (const datastream of datastreams) {
     const firstDatapoint = await helpers.findDatapoint({
@@ -100,21 +104,24 @@ async function* getSiteInfoObject(
         { is_enabled: true }
       )
 
-    yield seriesStart() +
-      variableStart() +
-      variableInfoType({ datastream, unitCV, variableCV }) +
-      variableEnd() +
-      valueCount({ datastream, firstDatapoint, lastDatapoint }) +
-      variableTimeInterval({ firstDatapoint, lastDatapoint }) +
-      seriesMethod({ thingType }) +
-      seriesSource({ organization }) +
-      seriesEnd()
+    yield entities.encodeXML(
+      seriesStart() +
+        variableStart() +
+        variableInfoType({ datastream, unitCV, variableCV }) +
+        variableEnd() +
+        valueCount({ datastream, firstDatapoint, lastDatapoint }) +
+        variableTimeInterval({ firstDatapoint, lastDatapoint }) +
+        seriesMethod({ thingType }) +
+        seriesSource({ organization }) +
+        seriesEnd()
+    )
   }
 
-  yield seriesCatalogEnd() +
-    siteEnd() +
-    sitesResponseEnd() +
-    '</GetSiteInfoObjectResponse>' +
+  yield entities.encodeXML(
+    seriesCatalogEnd() + siteEnd() + sitesResponseEnd()
+  ) +
+    '</GetSiteInfoResult>' +
+    '</GetSiteInfoResponse>' +
     soapBodyEnd() +
     soapEnvelopeEnd()
 }
@@ -124,7 +131,7 @@ module.exports = async (request, reply, ctx) => {
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)
     .send(
-      Readable.from(getSiteInfoObject(request, ctx), {
+      Readable.from(getSiteInfo(request, ctx), {
         autoDestroy: true
       })
     )

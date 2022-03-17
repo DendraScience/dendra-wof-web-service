@@ -2,5 +2,8 @@
 
 // Named exports for convenience
 module.exports = {
-  GetSiteInfoObject: require('./GetSiteInfoObject')
+  GetSiteInfo: require('./GetSiteInfo'),
+  GetSiteInfoObject: require('./GetSiteInfoObject'),
+  GetSites: require('./GetSites'),
+  GetSitesObject: require('./GetSitesObject')
 };

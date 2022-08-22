@@ -9,9 +9,13 @@ WORKDIR /home/node/app
 # Install dependencies
 COPY package.json /home/node/app
 COPY package-lock.json /home/node/app
+# Best practice: run with NODE_ENV set to production
+ENV NODE_ENV production
+RUN npm install
 
 # Linting layer, won't make it into production
 FROM base AS linter
+ENV NODE_ENV development
 RUN npm install
 COPY . /home/node/app
 RUN npm run lint
@@ -25,9 +29,6 @@ RUN npm run test
 #
 
 FROM base AS prod
-# Best practice: run with NODE_ENV set to production
-ENV NODE_ENV production
-RUN npm install
 # Best practice: run as user 'node'
 USER node
 EXPOSE 8080

@@ -1,12 +1,12 @@
-const entities = require('entities')
-const { Readable } = require('stream')
-const { CacheControls, ContentTypes, Headers } = require('../../lib/utils')
-const {
+import { encodeXML } from 'entities'
+import { Readable } from 'stream'
+import { CacheControls, ContentTypes, Headers } from '../../lib/utils.js'
+import {
   queryInfoStart,
   queryInfoEnd,
   queryInfoType
-} = require('../serializers/query')
-const {
+} from '../serializers/query.js'
+import {
   siteStart,
   siteEnd,
   siteInfoStart,
@@ -14,19 +14,16 @@ const {
   siteInfoType,
   sitesResponseStart,
   sitesResponseEnd
-} = require('../serializers/site')
-const {
+} from '../serializers/site.js'
+import {
   responseStart,
   soapBodyStart,
   soapBodyEnd,
   soapEnvelopeStart,
   soapEnvelopeEnd
-} = require('../serializers/common')
+} from '../serializers/common.js'
 
-async function* getSites(
-  request,
-  { helpers, logger, method, parameters, webAPI }
-) {
+async function* getSites(request, { helpers, method, parameters }) {
   const { site } = parameters
   const sites =
     site &&
@@ -62,7 +59,7 @@ async function* getSites(
     soapBodyStart() +
     responseStart('GetSitesResponse') +
     '<GetSitesResult>' +
-    entities.encodeXML(
+    encodeXML(
       sitesResponseStart() +
         queryInfoStart() +
         queryInfoType({
@@ -76,7 +73,7 @@ async function* getSites(
     )
 
   for (const station of stations) {
-    yield entities.encodeXML(
+    yield encodeXML(
       siteStart() +
         siteInfoStart() +
         siteInfoType({ station }) +
@@ -85,14 +82,14 @@ async function* getSites(
     )
   }
 
-  yield entities.encodeXML(sitesResponseEnd()) +
+  yield encodeXML(sitesResponseEnd()) +
     '</GetSitesResult>' +
     '</GetSitesResponse>' +
     soapBodyEnd() +
     soapEnvelopeEnd()
 }
 
-module.exports = async (request, reply, ctx) => {
+export default async (request, reply, ctx) => {
   reply
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)

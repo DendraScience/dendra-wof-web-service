@@ -1,31 +1,27 @@
-const entities = require('entities')
+import { encodeXML } from 'entities'
 
-function methodType(data) {
+export function methodType(data) {
   return (
-    (data._id
-      ? `<methodCode>${entities.encodeXML(data._id)}</methodCode>`
-      : '') +
+    (data._id ? `<methodCode>${encodeXML(data._id)}</methodCode>` : '') +
     (data.name
-      ? `<methodDescription>${entities.encodeXML(
-          data.name
-        )}</methodDescription>`
+      ? `<methodDescription>${encodeXML(data.name)}</methodDescription>`
       : '')
   )
 }
 
-function responseStart(el) {
+export function responseStart(el) {
   return `<${el} xmlns="http://www.cuahsi.org/his/1.1/ws/">`
 }
 
-function soapBodyStart() {
+export function soapBodyStart() {
   return '<soap:Body>'
 }
 
-function soapBodyEnd() {
+export function soapBodyEnd() {
   return '</soap:Body>'
 }
 
-function soapEnvelopeStart() {
+export function soapEnvelopeStart() {
   return (
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
     ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
@@ -33,11 +29,11 @@ function soapEnvelopeStart() {
   )
 }
 
-function soapEnvelopeEnd() {
+export function soapEnvelopeEnd() {
   return '</soap:Envelope>'
 }
 
-function soapFault(error) {
+export function soapFault(error) {
   return (
     soapEnvelopeStart() +
     soapBodyStart() +
@@ -55,39 +51,29 @@ function soapFault(error) {
   )
 }
 
-function sourceType(data) {
+export function sourceType(data) {
   return (
-    (data.name
-      ? `<organization>${entities.encodeXML(data.name)}</organization>`
-      : '') +
+    (data.name ? `<organization>${encodeXML(data.name)}</organization>` : '') +
     (data.description
-      ? `<sourceDescription>${entities.encodeXML(
-          data.description
-        )}</sourceDescription>`
+      ? `<sourceDescription>${encodeXML(data.description)}</sourceDescription>`
       : '')
   )
 }
 
-function unitsType(data) {
+export function unitsType(data) {
   return (
-    (data.unitName
-      ? `<unitName>${entities.encodeXML(data.unitName)}</unitName>`
-      : '') +
-    (data.unitName
-      ? `<unitType>${entities.encodeXML(data.unitType)}</unitType>`
-      : '') +
+    (data.unitName ? `<unitName>${encodeXML(data.unitName)}</unitName>` : '') +
+    (data.unitName ? `<unitType>${encodeXML(data.unitType)}</unitType>` : '') +
     (data.unitAbbreviation
-      ? `<unitAbbreviation>${entities.encodeXML(
-          data.unitType
-        )}</unitAbbreviation>`
+      ? `<unitAbbreviation>${encodeXML(data.unitType)}</unitAbbreviation>`
       : '') +
     (data.unitCode
-      ? `<unitCode>${entities.encodeXML(data.unitCode + '')}</unitCode>`
+      ? `<unitCode>${encodeXML(data.unitCode + '')}</unitCode>`
       : '')
   )
 }
 
-function timePeriodType(data) {
+export function timePeriodType(data) {
   return (
     (data.beginDateTime
       ? `<beginDateTime>${data.beginDateTime.substring(0, 19)}</beginDateTime>`
@@ -108,17 +94,4 @@ function timePeriodType(data) {
         )}</endDateTimeUTC>`
       : '')
   )
-}
-
-module.exports = {
-  methodType,
-  responseStart,
-  soapBodyStart,
-  soapBodyEnd,
-  soapEnvelopeStart,
-  soapEnvelopeEnd,
-  soapFault,
-  sourceType,
-  timePeriodType,
-  unitsType
 }

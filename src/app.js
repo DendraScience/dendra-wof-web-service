@@ -1,29 +1,33 @@
 /**
- * WaterOneFlow Web Service CLI app.
+ * WaterOneFlow Web Service app.
  *
  * @author J. Scott Smith
- * @license BSD-2-Clause-FreeBSD
+ * @license BSD-3-Clause
  * @module app
  */
 
-const fs = require('fs')
-const path = require('path')
-const axios = require('axios')
-const qs = require('qs')
-const Agent = require('agentkeepalive')
-const LRU = require('lru-cache')
-const { HttpsAgent } = require('agentkeepalive')
-const { NotFound } = require('http-errors')
-const soapMethodHandlers = require('./soap/handlers/methods')
-const { soapErrorHandler } = require('./soap/handlers/common')
-const { SoapRequestSchema } = require('./soap/schemas')
-const { createHelpers } = require('./lib/helpers')
-const { CacheControls, ContentTypes, Headers } = require('./lib/utils')
+import fs from 'fs'
+import path from 'path'
+import axios from 'axios'
+import qs from 'qs'
+import Fastify from 'fastify'
+import cors from '@fastify/cors'
+import xmlBodyParser from 'fastify-xml-body-parser'
+import Agent, { HttpsAgent } from 'agentkeepalive'
+import LRU from 'lru-cache'
+import httpErrors from 'http-errors'
+import soapMethodHandlers from './soap/handlers/methods.js'
+import { soapErrorHandler } from './soap/handlers/common.js'
+import { SoapRequestSchema } from './soap/schemas.js'
+import { createHelpers } from './lib/helpers.js'
+import { CacheControls, ContentTypes, Headers } from './lib/utils.js'
+
+const { NotFound } = httpErrors
 
 const SERVICE_1_1 = 'cuahsi_1_1'
 const SLUG_REGEXP_STR = '^[a-z][a-z0-9-]{2,}[a-z0-9]$'
 
-module.exports = async log => {
+export default async logger => {
   const app = {}
 
   const handleGet = async (request, reply, { service }) => {
@@ -31,7 +35,7 @@ module.exports = async log => {
       request.query &&
       Object.keys(request.query).find(key => key.toLowerCase() === 'wsdl')
     ) {
-      log.info('Hnadling web service GET request for WSDL')
+      request.log.info('Handling web service GET request for WSDL')
 
       reply
         .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
@@ -53,7 +57,7 @@ module.exports = async log => {
     const method = Object.keys(soapBody)[0]
     const parameters = soapBody[method]
 
-    log.info(`Handling web service POST request for method ${method}`)
+    request.log.info(`Handling web service POST request for method ${method}`)
 
     if (!method) throw new Error('Method required')
 
@@ -66,7 +70,7 @@ module.exports = async log => {
   }
 
   // App setup
-  app.eval = async p => {
+  app.start = async p => {
     const cache = new LRU({
       max: 200,
       ttl: 1000 * 60 * 10,
@@ -74,7 +78,7 @@ module.exports = async log => {
       updateAgeOnHas: true
     })
     const webAPI = axios.create({
-      baseURL: p.web_api_url,
+      baseURL: process.env.WEB_API_URL,
       httpAgent: new Agent({
         timeout: 60000,
         freeSocketTimeout: 30000
@@ -90,7 +94,9 @@ module.exports = async log => {
       timeout: 90000
     })
     webAPI.interceptors.request.use(request => {
-      log.info(`Web API request ${request.method.toUpperCase()} ${request.url}`)
+      logger.info(
+        `Web API request ${request.method.toUpperCase()} ${request.url}`
+      )
       return request
     })
 
@@ -99,12 +105,12 @@ module.exports = async log => {
     /*
       Set up web service and routes.
      */
-    const fastify = require('fastify')()
+    const fastify = Fastify({ logger })
 
-    fastify.register(require('fastify-cors'), {
+    fastify.register(cors, {
       exposedHeaders: ['Accept', 'Content-Type', 'Origin', 'X-Requested-With']
     })
-    fastify.register(require('fastify-xml-body-parser'))
+    fastify.register(xmlBodyParser)
 
     // Root routes
     fastify.get(
@@ -112,7 +118,6 @@ module.exports = async log => {
       { prefixTrailingSlash: 'both' },
       async (request, reply) => {
         return handleGet(request, reply, {
-          logger: log,
           p,
           service: SERVICE_1_1
         })
@@ -129,10 +134,8 @@ module.exports = async log => {
         return handlePost(request, reply, {
           cache,
           helpers,
-          logger: log,
           p,
-          service: SERVICE_1_1,
-          webAPI
+          service: SERVICE_1_1
         })
       }
     )
@@ -143,7 +146,6 @@ module.exports = async log => {
       { prefixTrailingSlash: 'both' },
       async (request, reply) => {
         return handleGet(request, reply, {
-          logger: log,
           p,
           service: SERVICE_1_1
         })
@@ -160,17 +162,16 @@ module.exports = async log => {
         return handlePost(request, reply, {
           cache,
           helpers,
-          logger: log,
           p,
-          service: SERVICE_1_1,
-          webAPI
+          service: SERVICE_1_1
         })
       }
     )
 
-    const address = await fastify.listen(p.port, p.host)
-
-    log.info(`Web service listening on ${address}`)
+    await fastify.listen({
+      port: process.env.PORT | 0,
+      host: process.env.HOST || 'localhost'
+    })
 
     app.fastify = fastify
   }

@@ -1,55 +1,56 @@
 {
   "name": "@dendra-science/dendra-wof-web-service",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "WaterOneFlow Web Service to share hydrologic data with CUAHSI-HIS.",
-  "license": "BSD-2-Clause-FreeBSD",
+  "license": "BSD-3-Clause",
   "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",
-  "bin": {
-    "dendra-wof-web-service": "./dist/dendra-wof-web-service.js"
-  },
-  "main": "dist/dendra-wof-web-service.js",
+  "main": "src/main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/DendraScience/dendra-wof-web-service.git"
   },
   "scripts": {
-    "babel": "babel src -d dist",
-    "build": "npm run lint && npm run clean && npm run babel && npm run chmod",
-    "chmod": "chmod +x dist/dendra-wof-web-service.js",
-    "clean": "rm -rf dist/*",
-    "lint": "eslint src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run lint",
+    "dev": "npx nodemon --watch src --delay 1 --exec \"npm run build && npm run start\"",
+    "fix": "eslint src --fix",
+    "fix-test": "eslint test --fix",
+    "fmt": "npx prettier --write src/",
+    "fmt-test": "npx prettier --write test/",
+    "lint": "eslint src && npx prettier --check src/",
+    "lint-test": "eslint test && npx prettier --check test/",
+    "start": "node src/main.js",
+    "test": "npm run lint-test && NODE_ENV=test mocha test --recursive --use_strict"
   },
+  "type": "module",
   "engines": {
-    "node": ">=14.19"
+    "node": ">=16.17"
   },
   "dependencies": {
+    "@fastify/cors": "^8.1.0",
     "agentkeepalive": "^4.2.1",
-    "axios": "^0.26.1",
-    "entities": "^3.0.1",
-    "fastify": "^3.23.1",
-    "fastify-cors": "^6.0.3",
-    "fastify-xml-body-parser": "^2.1.0",
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
+    "entities": "^4.3.1",
+    "fastify": "^4.5.2",
+    "fastify-xml-body-parser": "^2.1.1",
     "http-errors": "^2.0.0",
-    "load-json-file": "^6.2.0",
-    "lru-cache": "^7.5.1",
-    "luxon": "^2.1.1",
-    "mri": "^1.2.0",
-    "qs": "^6.10.3",
-    "sax": "^1.2.4"
+    "load-json-file": "^7.0.1",
+    "lru-cache": "^7.14.0",
+    "pino": "^8.4.2",
+    "qs": "^6.11.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.16.0",
-    "@babel/core": "^7.16.0",
-    "@babel/preset-env": "^7.16.0",
-    "eslint": "^8.2.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "^2.25.2",
+    "chai": "^4.3.6",
+    "eslint": "^8.22.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-standard": "^5.0.0",
-    "prettier": "^2.4.1"
+    "mocha": "^10.0.0",
+    "prettier": "2.7.1",
+    "sinon": "^14.0.0"
   }
 }

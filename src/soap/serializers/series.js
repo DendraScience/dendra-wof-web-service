@@ -1,30 +1,30 @@
-const { methodType, sourceType, timePeriodType } = require('./common')
+import { methodType, sourceType, timePeriodType } from './common.js'
 
-function seriesMethod({ thingType }) {
+export function seriesMethod({ thingType }) {
   return '<method>' + methodType(thingType) + '</method>'
 }
 
-function seriesSource({ organization }) {
+export function seriesSource({ organization }) {
   return '<source>' + sourceType(organization) + '</source>'
 }
 
-function seriesStart() {
+export function seriesStart() {
   return '<series>'
 }
 
-function seriesEnd() {
+export function seriesEnd() {
   return '</series>'
 }
 
-function seriesCatalogStart() {
+export function seriesCatalogStart() {
   return '<seriesCatalog>'
 }
 
-function seriesCatalogEnd() {
+export function seriesCatalogEnd() {
   return '</seriesCatalog>'
 }
 
-function variableTimeInterval({ firstDatapoint, lastDatapoint }) {
+export function variableTimeInterval({ firstDatapoint, lastDatapoint }) {
   return firstDatapoint && lastDatapoint
     ? '<variableTimeInterval>' +
         timePeriodType({
@@ -37,7 +37,7 @@ function variableTimeInterval({ firstDatapoint, lastDatapoint }) {
     : ''
 }
 
-function valueCount({ datastream, firstDatapoint, lastDatapoint }) {
+export function valueCount({ datastream, firstDatapoint, lastDatapoint }) {
   return datastream &&
     datastream.general_config_resolved &&
     datastream.general_config_resolved.sample_interval &&
@@ -50,15 +50,4 @@ function valueCount({ datastream, firstDatapoint, lastDatapoint }) {
         ) +
         '</valueCount>'
     : ''
-}
-
-module.exports = {
-  seriesMethod,
-  seriesSource,
-  seriesStart,
-  seriesEnd,
-  seriesCatalogStart,
-  seriesCatalogEnd,
-  variableTimeInterval,
-  valueCount
 }

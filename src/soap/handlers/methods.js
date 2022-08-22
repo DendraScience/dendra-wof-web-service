@@ -1,7 +1,12 @@
+import GetSiteInfo from './GetSiteInfo.js'
+import GetSiteInfoObject from './GetSiteInfoObject.js'
+import GetSites from './GetSites.js'
+import GetSitesObject from './GetSitesObject.js'
+
 // Named exports for convenience
-module.exports = {
-  GetSiteInfo: require('./GetSiteInfo'),
-  GetSiteInfoObject: require('./GetSiteInfoObject'),
-  GetSites: require('./GetSites'),
-  GetSitesObject: require('./GetSitesObject')
+export default {
+  GetSiteInfo,
+  GetSiteInfoObject,
+  GetSites,
+  GetSitesObject
 }

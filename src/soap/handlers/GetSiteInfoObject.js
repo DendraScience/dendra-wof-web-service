@@ -1,11 +1,11 @@
-const { Readable } = require('stream')
-const { CacheControls, ContentTypes, Headers } = require('../../lib/utils')
-const {
+import { Readable } from 'stream'
+import { CacheControls, ContentTypes, Headers } from '../../lib/utils.js'
+import {
   queryInfoStart,
   queryInfoEnd,
   queryInfoType
-} = require('../serializers/query')
-const {
+} from '../serializers/query.js'
+import {
   seriesMethod,
   seriesSource,
   seriesStart,
@@ -14,8 +14,8 @@ const {
   seriesCatalogEnd,
   valueCount,
   variableTimeInterval
-} = require('../serializers/series')
-const {
+} from '../serializers/series.js'
+import {
   siteStart,
   siteEnd,
   siteInfoStart,
@@ -23,24 +23,21 @@ const {
   siteInfoType,
   sitesResponseStart,
   sitesResponseEnd
-} = require('../serializers/site')
-const {
+} from '../serializers/site.js'
+import {
   responseStart,
   soapBodyStart,
   soapBodyEnd,
   soapEnvelopeStart,
   soapEnvelopeEnd
-} = require('../serializers/common')
-const {
+} from '../serializers/common.js'
+import {
   variableStart,
   variableEnd,
   variableInfoType
-} = require('../serializers/variable')
+} from '../serializers/variable.js'
 
-async function* getSiteInfoObject(
-  request,
-  { helpers, logger, method, parameters, webAPI }
-) {
+async function* getSiteInfoObject(_request, { helpers, method, parameters }) {
   const { site } = parameters
   const stationId = site.split(':')[1]
 
@@ -119,7 +116,7 @@ async function* getSiteInfoObject(
     soapEnvelopeEnd()
 }
 
-module.exports = async (request, reply, ctx) => {
+export default async (request, reply, ctx) => {
   reply
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)

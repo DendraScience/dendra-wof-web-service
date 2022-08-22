@@ -1,34 +1,32 @@
-const entities = require('entities')
-const { unitsType } = require('./common')
+import { encodeXML } from 'entities'
+import { unitsType } from './common.js'
 
-function variableStart() {
+export function variableStart() {
   return '<variable>'
 }
 
-function variableEnd() {
+export function variableEnd() {
   return '</variable>'
 }
 
-function variableInfoType({ datastream, unitCV, variableCV }) {
+export function variableInfoType({ datastream, unitCV, variableCV }) {
   const variableEl = (el, key) => {
     return datastream.terms &&
       datastream.terms.odm &&
       datastream.terms.odm[key] &&
       variableCV[key] &&
       variableCV[key][datastream.terms.odm[key]]
-      ? `<${el}>${entities.encodeXML(
+      ? `<${el}>${encodeXML(
           variableCV[key][datastream.terms.odm[key]]
         )}</${el}>`
       : ''
   }
   return (
-    `<variableCode vocabulary="dendra" default="true">${entities.encodeXML(
+    `<variableCode vocabulary="dendra" default="true">${encodeXML(
       datastream._id
     )}</variableCode>` +
     variableEl('variableName', 'VariableName') +
-    `<variableDescription>${entities.encodeXML(
-      datastream.name
-    )}</variableDescription>` +
+    `<variableDescription>${encodeXML(datastream.name)}</variableDescription>` +
     variableEl('valueType', 'ValueType') +
     variableEl('dataType', 'DataType') +
     variableEl('generalCategory', 'GeneralCategory') +
@@ -39,10 +37,4 @@ function variableInfoType({ datastream, unitCV, variableCV }) {
       ? '<unit>' + unitsType(unitCV[datastream.terms_info.unit_tag]) + '</unit>'
       : '')
   )
-}
-
-module.exports = {
-  variableStart,
-  variableEnd,
-  variableInfoType
 }

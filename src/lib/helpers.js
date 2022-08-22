@@ -2,7 +2,7 @@
  * Helpers for caching and mapping vocabulary.
  */
 
-function createHelpers({ cache, webAPI }) {
+export function createHelpers({ cache, webAPI }) {
   return {
     async findDatapoint(query, last) {
       const resp = await webAPI.get('/datapoints', {
@@ -114,8 +114,4 @@ function createHelpers({ cache, webAPI }) {
       return data
     }
   }
-}
-
-module.exports = {
-  createHelpers
 }

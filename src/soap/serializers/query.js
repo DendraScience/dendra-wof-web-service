@@ -1,14 +1,14 @@
-const entities = require('entities')
+import { encodeXML } from 'entities'
 
-function queryInfoStart() {
+export function queryInfoStart() {
   return '<queryInfo>'
 }
 
-function queryInfoEnd() {
+export function queryInfoEnd() {
   return '</queryInfo>'
 }
 
-function queryInfoType({ method, parameters }) {
+export function queryInfoType({ method, parameters }) {
   return (
     `<creationTime>${new Date().toISOString()}</creationTime>` +
     `<criteria MethodCalled="${method}">` +
@@ -16,17 +16,11 @@ function queryInfoType({ method, parameters }) {
       .map(parameter =>
         !parameter[1]
           ? ''
-          : `<parameter name="${parameter[0]}" value="${entities.encodeXML(
+          : `<parameter name="${parameter[0]}" value="${encodeXML(
               parameter[1] + ''
             )}"/>`
       )
       .join('') +
     '</criteria>'
   )
-}
-
-module.exports = {
-  queryInfoStart,
-  queryInfoEnd,
-  queryInfoType
 }

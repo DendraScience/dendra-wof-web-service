@@ -1,7 +1,8 @@
 /*
   Shared types.
  */
-const authToken = {
+
+export const authToken = {
   type: 'string'
 }
 
@@ -9,7 +10,7 @@ const authToken = {
   GetSiteInfoXXX methods.
  */
 
-const getSiteInfoType = {
+export const getSiteInfoType = {
   additionalProperties: false,
   properties: {
     authToken,
@@ -22,7 +23,7 @@ const getSiteInfoType = {
   type: 'object'
 }
 
-const GetSiteInfo = {
+export const GetSiteInfo = {
   properties: {
     GetSiteInfo: getSiteInfoType
   },
@@ -30,7 +31,7 @@ const GetSiteInfo = {
   type: 'object'
 }
 
-const GetSiteInfoObject = {
+export const GetSiteInfoObject = {
   properties: {
     GetSiteInfoObject: getSiteInfoType
   },
@@ -42,7 +43,7 @@ const GetSiteInfoObject = {
   GetSitesXXX methods.
  */
 
-const getSitesType = {
+export const getSitesType = {
   additionalProperties: false,
   properties: {
     authToken,
@@ -71,7 +72,7 @@ const getSitesType = {
   type: 'object'
 }
 
-const GetSites = {
+export const GetSites = {
   properties: {
     GetSites: getSitesType
   },
@@ -79,7 +80,7 @@ const GetSites = {
   type: 'object'
 }
 
-const GetSitesObject = {
+export const GetSitesObject = {
   properties: {
     GetSitesObject: getSitesType
   },
@@ -91,7 +92,7 @@ const GetSitesObject = {
   SOAP bleh.
  */
 
-const SoapRequestSchema = {
+export const SoapRequestSchema = {
   body: {
     additionalProperties: false,
     properties: {
@@ -109,8 +110,4 @@ const SoapRequestSchema = {
     required: ['soap:Envelope'],
     type: 'object'
   }
-}
-
-module.exports = {
-  SoapRequestSchema
 }

@@ -47,7 +47,7 @@ async function* getSites(request, { helpers, method, parameters }) {
         $limit: 2000
       },
       request.params && request.params.org
-        ? { organization_id: request.params.org }
+        ? { organization_id: await helpers.orgId(request.params.org) }
         : undefined,
       sites.length
         ? { _id: { $in: sites.map(str => str.split(':')[1]) } }

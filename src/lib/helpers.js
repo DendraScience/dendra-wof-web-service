@@ -112,6 +112,12 @@ export function createHelpers({ cache, webAPI }) {
         cache.set('variableCV', data)
       }
       return data
+    },
+
+    // NOTE: Async since we could add slug lookup in the future
+    async orgId(org) {
+      if (org === 'WOF_ORG') return process.env.WOF_ORG
+      return org
     }
   }
 }

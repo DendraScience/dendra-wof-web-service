@@ -78,7 +78,7 @@ export default async logger => {
       updateAgeOnHas: true
     })
     const webAPI = axios.create({
-      baseURL: process.env.WEB_API_URL,
+      baseURL: process.env.WEB_API_URL || 'https://api.dendra.science/v2',
       httpAgent: new Agent({
         timeout: 60000,
         freeSocketTimeout: 30000

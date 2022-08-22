@@ -296,10 +296,6 @@
 ##
 **/.editorconfig
 **/.env.sample
-**/.eslintignore
-**/.eslintrc.cjs
 **/.git
 **/.gitignore
-**/.prettierrc.json
 **/README.md
-**/test

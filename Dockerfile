@@ -23,7 +23,7 @@ RUN npm run lint
 # Testing layer, won't make it into production
 FROM linter AS tester
 RUN npm run test
-
+RUN date > .buildtime
 #
 # Build stage skipped for node image, since it would require dev dependencies
 #
@@ -33,6 +33,7 @@ FROM base AS prod
 USER node
 EXPOSE 8080
 # Copy source files; relies on .dockerignore
+COPY --from=tester .buildtime .buildtime
 COPY . /home/node/app
 
 # Best practice: bypass the package.json's start

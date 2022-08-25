@@ -24,7 +24,7 @@ import { CacheControls, ContentTypes, Headers } from './lib/utils.js'
 
 const { NotFound } = httpErrors
 
-const SERVICE_1_1 = 'cuahsi_1_1'
+const SERVICE_1_1 = 'cuahsi_1_1.asmx'
 const SLUG_REGEXP_STR = '^[a-z][a-z0-9-]{2,}[a-z0-9]$'
 
 export default async logger => {

@@ -42,7 +42,7 @@ async function* getSitesObject(request, { helpers, method, parameters }) {
         is_enabled: true,
         is_hidden: false,
         // TODO: Paginate to allow for more than 2000
-        // TODO: Sort!
+        // TODO: Sort! We should default to _id. Check other services.
         $limit: 2000
       },
       request.params && request.params.org

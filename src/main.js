@@ -11,7 +11,7 @@ import Pino from 'pino'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-const logger = Pino({
+const	logger = Pino({
   level: process.env.LOGLEVEL || 'info'
 })
 

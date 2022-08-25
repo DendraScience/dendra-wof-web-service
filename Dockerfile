@@ -33,7 +33,7 @@ FROM base AS prod
 USER node
 EXPOSE 8080
 # Copy source files; relies on .dockerignore
-COPY --from=tester .buildtime .buildtime
+COPY --from=tester /home/node/app/.buildtime .buildtime
 COPY . /home/node/app
 
 # Best practice: bypass the package.json's start

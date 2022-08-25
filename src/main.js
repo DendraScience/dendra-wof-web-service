@@ -38,5 +38,5 @@ init(logger).then(app => {
     app.stop().then(() => process.exit(0))
   })
 
-  return app.start()
+			return app.start()
 })

@@ -70,7 +70,7 @@ export default async logger => {
   }
 
   // App setup
-  app.start = async p => {
+  app.start = async () => {
     const cache = new LRU({
       max: 200,
       ttl: 1000 * 60 * 10,
@@ -118,7 +118,6 @@ export default async logger => {
       { prefixTrailingSlash: 'both' },
       async (request, reply) => {
         return handleGet(request, reply, {
-          p,
           service: SERVICE_1_1
         })
       }
@@ -134,7 +133,6 @@ export default async logger => {
         return handlePost(request, reply, {
           cache,
           helpers,
-          p,
           service: SERVICE_1_1
         })
       }
@@ -146,7 +144,6 @@ export default async logger => {
       { prefixTrailingSlash: 'both' },
       async (request, reply) => {
         return handleGet(request, reply, {
-          p,
           service: SERVICE_1_1
         })
       }
@@ -162,7 +159,6 @@ export default async logger => {
         return handlePost(request, reply, {
           cache,
           helpers,
-          p,
           service: SERVICE_1_1
         })
       }

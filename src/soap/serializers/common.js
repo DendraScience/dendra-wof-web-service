@@ -1,12 +1,16 @@
 import { encodeXML } from 'entities'
 
 export function methodType(data) {
-  return (
-    (data._id ? `<methodCode>${encodeXML(data._id)}</methodCode>` : '') +
-    (data.name
-      ? `<methodDescription>${encodeXML(data.name)}</methodDescription>`
-      : '')
-  )
+  if (typeof data === 'object') {
+    return (
+      (data._id ? `<methodCode>${encodeXML(data._id)}</methodCode>` : '') +
+      (data.name
+        ? `<methodDescription>${encodeXML(data.name)}</methodDescription>`
+        : '')
+    )
+  } else {
+    return ''
+  }
 }
 
 export function responseStart(el) {
@@ -34,64 +38,93 @@ export function soapEnvelopeEnd() {
 }
 
 export function soapFault(error) {
-  return (
-    soapEnvelopeStart() +
-    soapBodyStart() +
-    '<soap:Fault>' +
-    '<faultcode>soap:Server</faultcode>' +
-    `<faultstring>${error.message}` +
-    (error.request
-      ? `\n${error.request.method.toUpperCase()} ${error.request.path}`
-      : '') +
-    '</faultstring>' +
-    '<detail/>' +
-    '</soap:Fault>' +
-    soapBodyEnd() +
-    soapEnvelopeEnd()
-  )
+  if (typeof error === 'object') {
+    return (
+      soapEnvelopeStart() +
+      soapBodyStart() +
+      '<soap:Fault>' +
+      '<faultcode>soap:Server</faultcode>' +
+      `<faultstring>${error.message}` +
+      (error.request
+        ? `\n${error.request.method.toUpperCase()} ${error.request.path}`
+        : '') +
+      '</faultstring>' +
+      '<detail/>' +
+      '</soap:Fault>' +
+      soapBodyEnd() +
+      soapEnvelopeEnd()
+    )
+  } else {
+    return ''
+  }
 }
 
 export function sourceType(data) {
-  return (
-    (data.name ? `<organization>${encodeXML(data.name)}</organization>` : '') +
-    (data.description
-      ? `<sourceDescription>${encodeXML(data.description)}</sourceDescription>`
-      : '')
-  )
+  if (typeof data === 'object') {
+    return (
+      (data.name
+        ? `<organization>${encodeXML(data.name)}</organization>`
+        : '') +
+      (data.description
+        ? `<sourceDescription>${encodeXML(
+            data.description
+          )}</sourceDescription>`
+        : '')
+    )
+  } else {
+    return ''
+  }
 }
 
 export function unitsType(data) {
-  return (
-    (data.unitName ? `<unitName>${encodeXML(data.unitName)}</unitName>` : '') +
-    (data.unitName ? `<unitType>${encodeXML(data.unitType)}</unitType>` : '') +
-    (data.unitAbbreviation
-      ? `<unitAbbreviation>${encodeXML(data.unitType)}</unitAbbreviation>`
-      : '') +
-    (data.unitCode
-      ? `<unitCode>${encodeXML(data.unitCode + '')}</unitCode>`
-      : '')
-  )
+  if (typeof data === 'object') {
+    return (
+      (data.unitName
+        ? `<unitName>${encodeXML(data.unitName)}</unitName>`
+        : '') +
+      (data.unitType
+        ? `<unitType>${encodeXML(data.unitType)}</unitType>`
+        : '') +
+      (data.unitAbbreviation
+        ? `<unitAbbreviation>${encodeXML(
+            data.unitAbbreviation
+          )}</unitAbbreviation>`
+        : '') +
+      (data.unitCode
+        ? `<unitCode>${encodeXML(data.unitCode + '')}</unitCode>`
+        : '')
+    )
+  } else {
+    return ''
+  }
 }
 
 export function timePeriodType(data) {
-  return (
-    (data.beginDateTime
-      ? `<beginDateTime>${data.beginDateTime.substring(0, 19)}</beginDateTime>`
-      : '') +
-    (data.endDateTime
-      ? `<endDateTime>${data.endDateTime.substring(0, 19)}</endDateTime>`
-      : '') +
-    (data.beginDateTimeUTC
-      ? `<beginDateTimeUTC>${data.beginDateTimeUTC.substring(
-          0,
-          19
-        )}</beginDateTimeUTC>`
-      : '') +
-    (data.endDateTimeUTC
-      ? `<endDateTimeUTC>${data.endDateTimeUTC.substring(
-          0,
-          19
-        )}</endDateTimeUTC>`
-      : '')
-  )
+  if (typeof data === 'object') {
+    return (
+      (data.beginDateTime
+        ? `<beginDateTime>${data.beginDateTime.substring(
+            0,
+            19
+          )}</beginDateTime>`
+        : '') +
+      (data.endDateTime
+        ? `<endDateTime>${data.endDateTime.substring(0, 19)}</endDateTime>`
+        : '') +
+      (data.beginDateTimeUTC
+        ? `<beginDateTimeUTC>${data.beginDateTimeUTC.substring(
+            0,
+            19
+          )}</beginDateTimeUTC>`
+        : '') +
+      (data.endDateTimeUTC
+        ? `<endDateTimeUTC>${data.endDateTimeUTC.substring(
+            0,
+            19
+          )}</endDateTimeUTC>`
+        : '')
+    )
+  } else {
+    return ''
+  }
 }

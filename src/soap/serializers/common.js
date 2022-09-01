@@ -1,6 +1,8 @@
 import { encodeXML } from 'entities'
 
 export function methodType(data) {
+  if (!(data && typeof data === 'object')) return ''
+
   return (
     (data._id ? `<methodCode>${encodeXML(data._id)}</methodCode>` : '') +
     (data.name
@@ -34,6 +36,8 @@ export function soapEnvelopeEnd() {
 }
 
 export function soapFault(error) {
+  if (!(error && typeof error === 'object')) return ''
+
   return (
     soapEnvelopeStart() +
     soapBodyStart() +
@@ -52,6 +56,8 @@ export function soapFault(error) {
 }
 
 export function sourceType(data) {
+  if (!(data && typeof data === 'object')) return ''
+
   return (
     (data.name ? `<organization>${encodeXML(data.name)}</organization>` : '') +
     (data.description
@@ -61,11 +67,15 @@ export function sourceType(data) {
 }
 
 export function unitsType(data) {
+  if (!(data && typeof data === 'object')) return ''
+
   return (
     (data.unitName ? `<unitName>${encodeXML(data.unitName)}</unitName>` : '') +
-    (data.unitName ? `<unitType>${encodeXML(data.unitType)}</unitType>` : '') +
+    (data.unitType ? `<unitType>${encodeXML(data.unitType)}</unitType>` : '') +
     (data.unitAbbreviation
-      ? `<unitAbbreviation>${encodeXML(data.unitType)}</unitAbbreviation>`
+      ? `<unitAbbreviation>${encodeXML(
+          data.unitAbbreviation
+        )}</unitAbbreviation>`
       : '') +
     (data.unitCode
       ? `<unitCode>${encodeXML(data.unitCode + '')}</unitCode>`
@@ -74,6 +84,8 @@ export function unitsType(data) {
 }
 
 export function timePeriodType(data) {
+  if (!(data && typeof data === 'object')) return ''
+
   return (
     (data.beginDateTime
       ? `<beginDateTime>${data.beginDateTime.substring(0, 19)}</beginDateTime>`

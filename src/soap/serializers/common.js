@@ -1,7 +1,7 @@
 import { encodeXML } from 'entities'
 
 export function methodType(data) {
-  if (typeof data !== 'object') return ''
+  if (!(data && typeof data === 'object')) return ''
 
   return (
     (data._id ? `<methodCode>${encodeXML(data._id)}</methodCode>` : '') +
@@ -36,7 +36,7 @@ export function soapEnvelopeEnd() {
 }
 
 export function soapFault(error) {
-  if (typeof error !== 'object') return ''
+  if (!(error && typeof error === 'object')) return ''
 
   return (
     soapEnvelopeStart() +
@@ -56,7 +56,7 @@ export function soapFault(error) {
 }
 
 export function sourceType(data) {
-  if (typeof data !== 'object') return ''
+  if (!(data && typeof data === 'object')) return ''
 
   return (
     (data.name ? `<organization>${encodeXML(data.name)}</organization>` : '') +
@@ -67,7 +67,7 @@ export function sourceType(data) {
 }
 
 export function unitsType(data) {
-  if (typeof data !== 'object') return ''
+  if (!(data && typeof data === 'object')) return ''
 
   return (
     (data.unitName ? `<unitName>${encodeXML(data.unitName)}</unitName>` : '') +
@@ -84,7 +84,7 @@ export function unitsType(data) {
 }
 
 export function timePeriodType(data) {
-  if (typeof data !== 'object') return ''
+  if (!(data && typeof data === 'object')) return ''
 
   return (
     (data.beginDateTime

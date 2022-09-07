@@ -10,7 +10,7 @@ export function queryInfoEnd() {
 
 export function queryInfoType({ method, parameters }) {
   return (
-    `<creationTime>${new Date().toISOString()}</creationTime>` +
+    `<creationTime>${new Date(1661964219333).toISOString()}</creationTime>` +
     `<criteria MethodCalled="${method}">` +
     parameters
       .map(parameter =>

@@ -22,7 +22,10 @@ import {
   soapEnvelopeEnd
 } from '../serializers/common.js'
 
-async function* getSitesObject(request, { helpers, method, parameters }) {
+export async function* getSitesObject(
+  request,
+  { helpers, method, parameters }
+) {
   const { site } = parameters
   const sites =
     site &&

@@ -41,7 +41,7 @@ describe('GetSitesObject handlers', function () {
     const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters, date }, ctx)
+      Object.assign({ date, method, parameters }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
@@ -80,7 +80,7 @@ describe('GetSitesObject handlers', function () {
     const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters, date }, ctx)
+      Object.assign({ date, method, parameters }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
@@ -140,7 +140,7 @@ describe('GetSitesObject handlers', function () {
     const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters, date }, ctx)
+      Object.assign({ date, method, parameters }, ctx)
     )
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
@@ -205,7 +205,7 @@ describe('GetSitesObject handlers', function () {
     const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters, date }, ctx)
+      Object.assign({ date, method, parameters }, ctx)
     )
 
     // Followup with with expect statements to check yielded results

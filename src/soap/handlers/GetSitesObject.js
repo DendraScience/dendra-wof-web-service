@@ -24,7 +24,7 @@ import {
 
 export async function* getSitesObject(
   request,
-  { helpers, method, parameters }
+  { helpers, method, parameters, date = new Date() }
 ) {
   const { site } = parameters
   const sites =
@@ -67,7 +67,8 @@ export async function* getSitesObject(
       parameters: [
         ['authToken', parameters.authToken],
         ...sites.map(str => ['site', str])
-      ]
+      ],
+      date
     }) +
     queryInfoEnd()
 

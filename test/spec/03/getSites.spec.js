@@ -38,7 +38,11 @@ describe('GetSites handlers', function () {
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
-    const gen = getSites(request, Object.assign({ method, parameters }, ctx))
+    const date = new Date(1661964219333)
+    const gen = getSites(
+      request,
+      Object.assign({ method, parameters, date }, ctx)
+    )
 
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
@@ -49,11 +53,11 @@ describe('GetSites handlers', function () {
     )
   })
 
-  it('should handle getSites with no station and parameters', async function () {
+  it('should handle getSites with parameters and no station', async function () {
     const method = 'GetSites'
     const parameters = {
       site: {
-        string: ['string', 'string']
+        string: ['string1', 'string2']
       },
       authToken: ''
     }
@@ -73,11 +77,15 @@ describe('GetSites handlers', function () {
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
-    const gen = getSites(request, Object.assign({ method, parameters }, ctx))
+    const date = new Date(1661964219333)
+    const gen = getSites(
+      request,
+      Object.assign({ method, parameters, date }, ctx)
+    )
 
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><GetSitesResult>&lt;sitesResponse xmlns=&quot;http://www.cuahsi.org/waterML/1.1/&quot;&gt;&lt;queryInfo&gt;&lt;creationTime&gt;2022-08-31T16:43:39.333Z&lt;/creationTime&gt;&lt;criteria MethodCalled=&quot;GetSites&quot;&gt;&lt;parameter name=&quot;site&quot; value=&quot;string&quot;/&gt;&lt;parameter name=&quot;site&quot; value=&quot;string&quot;/&gt;&lt;/criteria&gt;&lt;/queryInfo&gt;'
+      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><GetSitesResult>&lt;sitesResponse xmlns=&quot;http://www.cuahsi.org/waterML/1.1/&quot;&gt;&lt;queryInfo&gt;&lt;creationTime&gt;2022-08-31T16:43:39.333Z&lt;/creationTime&gt;&lt;criteria MethodCalled=&quot;GetSites&quot;&gt;&lt;parameter name=&quot;site&quot; value=&quot;string1&quot;/&gt;&lt;parameter name=&quot;site&quot; value=&quot;string2&quot;/&gt;&lt;/criteria&gt;&lt;/queryInfo&gt;'
     )
     expect((await gen.next()).value).to.equal(
       '&lt;/sitesResponse&gt;</GetSitesResult></GetSitesResponse></soap:Body></soap:Envelope>'
@@ -129,7 +137,11 @@ describe('GetSites handlers', function () {
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
-    const gen = getSites(request, Object.assign({ method, parameters }, ctx))
+    const date = new Date(1661964219333)
+    const gen = getSites(
+      request,
+      Object.assign({ method, parameters, date }, ctx)
+    )
 
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
@@ -150,9 +162,9 @@ describe('GetSites handlers', function () {
     const method = 'GetSites'
     const parameters = {
       site: {
-        string: ['string', '']
+        string: ['string1', '']
       },
-      authToken: 'string'
+      authToken: 'string2'
     }
     const request = { params: { org: '' } }
     const cache = {}
@@ -191,11 +203,15 @@ describe('GetSites handlers', function () {
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
-    const gen = getSites(request, Object.assign({ method, parameters }, ctx))
+    const date = new Date(1661964219333)
+    const gen = getSites(
+      request,
+      Object.assign({ method, parameters, date }, ctx)
+    )
 
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><GetSitesResult>&lt;sitesResponse xmlns=&quot;http://www.cuahsi.org/waterML/1.1/&quot;&gt;&lt;queryInfo&gt;&lt;creationTime&gt;2022-08-31T16:43:39.333Z&lt;/creationTime&gt;&lt;criteria MethodCalled=&quot;GetSites&quot;&gt;&lt;parameter name=&quot;authToken&quot; value=&quot;string&quot;/&gt;&lt;parameter name=&quot;site&quot; value=&quot;string&quot;/&gt;&lt;/criteria&gt;&lt;/queryInfo&gt;'
+      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><GetSitesResult>&lt;sitesResponse xmlns=&quot;http://www.cuahsi.org/waterML/1.1/&quot;&gt;&lt;queryInfo&gt;&lt;creationTime&gt;2022-08-31T16:43:39.333Z&lt;/creationTime&gt;&lt;criteria MethodCalled=&quot;GetSites&quot;&gt;&lt;parameter name=&quot;authToken&quot; value=&quot;string2&quot;/&gt;&lt;parameter name=&quot;site&quot; value=&quot;string1&quot;/&gt;&lt;/criteria&gt;&lt;/queryInfo&gt;'
     )
     expect((await gen.next()).value).to.equal(
       '&lt;site&gt;&lt;siteInfo&gt;&lt;siteName&gt;Egypt River&lt;/siteName&gt;&lt;siteCode network=&quot;IRWA&quot;&gt;i98573457347593479537495388&lt;/siteCode&gt;&lt;geoLocation&gt;&lt;geogLocation xsi:type=&quot;LatLonPointType&quot;&gt;&lt;latitude&gt;-70.8690423578&lt;/latitude&gt;&lt;longitude&gt;42.6981327284&lt;/longitude&gt;&lt;/geogLocation&gt;&lt;/geoLocation&gt;&lt;elevation_m&gt;4&lt;/elevation_m&gt;&lt;siteProperty name=&quot;Site Comments&quot;&gt;massachusetts&lt;/siteProperty&gt;&lt;/siteInfo&gt;&lt;/site&gt;'

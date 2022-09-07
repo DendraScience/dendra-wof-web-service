@@ -38,9 +38,10 @@ describe('GetSitesObject handlers', function () {
     sinon.replace(helpers, 'findMany', stations)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
+    const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters }, ctx)
+      Object.assign({ method, parameters, date }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
@@ -52,11 +53,11 @@ describe('GetSitesObject handlers', function () {
     )
   })
 
-  it('should handle getSitesObject with no station with parameters', async function () {
+  it('should handle getSitesObject with parameters and no station', async function () {
     const method = 'GetSitesObject'
     const parameters = {
       site: {
-        string: ['string', 'string']
+        string: ['string1', 'string2']
       },
       authToken: ''
     }
@@ -76,14 +77,15 @@ describe('GetSitesObject handlers', function () {
     sinon.replace(helpers, 'findMany', stations)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
+    const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters }, ctx)
+      Object.assign({ method, parameters, date }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"><parameter name="site" value="string"/><parameter name="site" value="string"/></criteria></queryInfo>'
+      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"><parameter name="site" value="string1"/><parameter name="site" value="string2"/></criteria></queryInfo>'
     )
     expect((await gen.next()).value).to.equal(
       '</sitesResponse></GetSitesObjectResponse></soap:Body></soap:Envelope>'
@@ -135,9 +137,10 @@ describe('GetSitesObject handlers', function () {
     sinon.replace(helpers, 'findMany', stations)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
+    const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters }, ctx)
+      Object.assign({ method, parameters, date }, ctx)
     )
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
@@ -158,7 +161,7 @@ describe('GetSitesObject handlers', function () {
     const method = 'GetSitesObject'
     const parameters = {
       site: {
-        string: ['string', 'string']
+        string: ['string1', 'string2']
       },
       authToken: ''
     }
@@ -199,14 +202,15 @@ describe('GetSitesObject handlers', function () {
     sinon.replace(helpers, 'findMany', stations)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
+    const date = new Date(1661964219333)
     const gen = getSitesObject(
       request,
-      Object.assign({ method, parameters }, ctx)
+      Object.assign({ method, parameters, date }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
     expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"><parameter name="site" value="string"/><parameter name="site" value="string"/></criteria></queryInfo>'
+      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"><parameter name="site" value="string1"/><parameter name="site" value="string2"/></criteria></queryInfo>'
     )
     expect((await gen.next()).value).to.equal(
       '<site><siteInfo><siteName>Egypt River</siteName><siteCode network="IRWA">i98573457347593479537495388</siteCode><geoLocation><geogLocation xsi:type="LatLonPointType"><latitude>-70.8690423578</latitude><longitude>42.6981327284</longitude></geogLocation></geoLocation><elevation_m>4</elevation_m><siteProperty name="Site Comments">massachusetts</siteProperty></siteInfo></site>'

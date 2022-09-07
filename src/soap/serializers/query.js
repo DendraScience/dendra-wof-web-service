@@ -8,9 +8,9 @@ export function queryInfoEnd() {
   return '</queryInfo>'
 }
 
-export function queryInfoType({ method, parameters }) {
+export function queryInfoType({ method, parameters, date = new Date() }) {
   return (
-    `<creationTime>${new Date(1661964219333).toISOString()}</creationTime>` +
+    `<creationTime>${date.toISOString()}</creationTime>` +
     `<criteria MethodCalled="${method}">` +
     parameters
       .map(parameter =>

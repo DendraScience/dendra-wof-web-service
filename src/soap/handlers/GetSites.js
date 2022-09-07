@@ -23,7 +23,10 @@ import {
   soapEnvelopeEnd
 } from '../serializers/common.js'
 
-export async function* getSites(request, { helpers, method, parameters }) {
+export async function* getSites(
+  request,
+  { helpers, method, parameters, date = new Date() }
+) {
   const { site } = parameters
   const sites =
     site &&
@@ -67,7 +70,8 @@ export async function* getSites(request, { helpers, method, parameters }) {
           parameters: [
             ['authToken', parameters.authToken],
             ...sites.map(str => ['site', str])
-          ]
+          ],
+          date
         }) +
         queryInfoEnd()
     )

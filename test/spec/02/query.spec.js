@@ -26,7 +26,8 @@ describe('Serializers', function () {
             ['authToken', ''],
             ['site', 'string'],
             ['site', 'string']
-          ]
+          ],
+          date: new Date(1661964219333)
         })
       ).to.equal(
         `<creationTime>${new Date(

@@ -42,15 +42,12 @@ describe('Serializers', function () {
         })
       ).to.equal(
         '<siteName>My Station</siteName>' +
-          '<siteCode network="dendra">i98573457347593479537495388</siteCode>' +
           '<geoLocation>' +
-          '<geogLocation xsi:type="LatLonPointType">' +
+          '<geogLocation xsi:type="LatLonPointType" srs="EPSG:99999">' +
           '<latitude>-96.5639</latitude>' +
           '<longitude>32.9029</longitude>' +
           '</geogLocation>' +
-          '</geoLocation>' +
-          '<elevation_m>4</elevation_m>' +
-          '<siteProperty name="Site Comments">nice place</siteProperty>'
+          '</geoLocation>'
       )
     })
 
@@ -64,11 +61,7 @@ describe('Serializers', function () {
             description: 'nice place'
           }
         })
-      ).to.equal(
-        '<siteName>My Station</siteName>' +
-          '<siteCode network="dendra">i98573457347593479537495388</siteCode>' +
-          '<siteProperty name="Site Comments">nice place</siteProperty>'
-      )
+      ).to.equal('<siteName>My Station</siteName>')
     })
 
     it('should serialize siteInfoType flavor 3', function () {
@@ -83,15 +76,12 @@ describe('Serializers', function () {
         })
       ).to.equal(
         '<siteName>My Station</siteName>' +
-          '<siteCode network="dendra">i98573457347593479537495388</siteCode>' +
           '<geoLocation>' +
-          '<geogLocation xsi:type="LatLonPointType">' +
+          '<geogLocation xsi:type="LatLonPointType" srs="EPSG:99999">' +
           '<latitude>-96.5639</latitude>' +
           '<longitude>32.9029</longitude>' +
           '</geogLocation>' +
-          '</geoLocation>' +
-          '<elevation_m>4</elevation_m>' +
-          '<siteProperty name="Site Comments">nice place</siteProperty>'
+          '</geoLocation>'
       )
     })
 
@@ -106,11 +96,7 @@ describe('Serializers', function () {
             description: 'nice place'
           }
         })
-      ).to.equal(
-        '<siteName>My Station</siteName>' +
-          '<siteCode network="dendra">i98573457347593479537495388</siteCode>' +
-          '<siteProperty name="Site Comments">nice place</siteProperty>'
-      )
+      ).to.equal('<siteName>My Station</siteName>')
     })
 
     it('should serialize siteInfoType flavor 5', function () {
@@ -126,14 +112,12 @@ describe('Serializers', function () {
         })
       ).to.equal(
         '<siteName>My Station</siteName>' +
-          '<siteCode network="dendra">i98573457347593479537495388</siteCode>' +
           '<geoLocation>' +
-          '<geogLocation xsi:type="LatLonPointType">' +
+          '<geogLocation xsi:type="LatLonPointType" srs="EPSG:99999">' +
           '<latitude>-96.5639</latitude>' +
           '<longitude>32.9029</longitude>' +
           '</geogLocation>' +
-          '</geoLocation>' +
-          '<siteProperty name="Site Comments">nice place</siteProperty>'
+          '</geoLocation>'
       )
     })
 

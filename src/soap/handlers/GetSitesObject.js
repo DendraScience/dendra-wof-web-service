@@ -1,5 +1,5 @@
 import { Readable } from 'stream'
-import { CacheControls, ContentTypes, Headers } from '../../lib/utils.js'
+import { CacheControls, ContentTypes, Headers, uuid } from '../../lib/utils.js'
 import {
   queryInfoStart,
   queryInfoEnd,
@@ -19,12 +19,23 @@ import {
   soapBodyStart,
   soapBodyEnd,
   soapEnvelopeStart,
-  soapEnvelopeEnd
+  soapEnvelopeEnd,
+  soapHeaderStart,
+  soapWsaAction,
+  soapWsaMessageID,
+  soapWsaRelatesTo,
+  soapWsaTo,
+  soapWsuInfo,
+  soapWsseSecurityStart,
+  soapWsseSecurityEnd,
+  soapWsuTimestampStart,
+  soapWsuTimestampEnd,
+  soapHeaderEnd
 } from '../serializers/common.js'
 
 export async function* getSitesObject(
   request,
-  { date = new Date(), helpers, method, parameters }
+  { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
   const sites =
@@ -37,6 +48,11 @@ export async function* getSitesObject(
       ? site.string
       : []
 
+  // Fetch organization
+  const organization = await helpers.findOneCached('organizations', '', {
+    slug: request.params.org
+  })
+
   // Fetch stations
   const stations = await helpers.findMany(
     'stations',
@@ -48,16 +64,30 @@ export async function* getSitesObject(
         // TODO: Sort! We should default to _id. Check other services.
         $limit: 2000
       },
-      request.params && request.params.org
-        ? { organization_id: await helpers.orgId(request.params.org) }
+      organization &&
+        organization.data &&
+        organization.data.length &&
+        organization.data[0]._id
+        ? { organization_id: await helpers.orgId(organization.data[0]._id) }
         : undefined,
       sites.length
-        ? { _id: { $in: sites.map(str => str.split(':')[1]) } }
+        ? { slug: { $in: sites.map(str => str.split(':')[1]) } }
         : undefined
     )
   )
 
   yield soapEnvelopeStart() +
+    soapHeaderStart() +
+    soapWsaAction('GetSitesObjectResponse') +
+    soapWsaMessageID(uniqueid || uuid()) +
+    soapWsaRelatesTo(uniqueid || uuid()) +
+    soapWsaTo() +
+    soapWsseSecurityStart() +
+    soapWsuTimestampStart(uniqueid || uuid()) +
+    soapWsuInfo({ date }) +
+    soapWsuTimestampEnd() +
+    soapWsseSecurityEnd() +
+    soapHeaderEnd() +
     soapBodyStart() +
     responseStart('GetSitesObjectResponse') +
     sitesResponseStart() +
@@ -73,9 +103,11 @@ export async function* getSitesObject(
     queryInfoEnd()
 
   for (const station of stations) {
+    const externalRef = await helpers.externalRefs(station.external_refs)
+
     yield siteStart() +
       siteInfoStart() +
-      siteInfoType({ station }) +
+      siteInfoType({ externalRef, station }) +
       siteInfoEnd() +
       siteEnd()
   }
@@ -87,7 +119,7 @@ export async function* getSitesObject(
 }
 
 export default async (request, reply, ctx) => {
-  reply
+  return reply
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)
     .send(

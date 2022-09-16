@@ -114,6 +114,40 @@ export function createHelpers({ cache, webAPI }) {
       return data
     },
 
+    async externalRefs(extRef) {
+      const obj = {}
+      extRef.forEach(ref => {
+        if (ref.type === 'his.odm.sites.SiteID') {
+          obj.siteId = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.SiteCode') {
+          obj.siteCode = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.VerticalDatum') {
+          obj.verticalDatum = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.LocalX') {
+          obj.localX = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.LocalY') {
+          obj.localY = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.PosAccuracy_m') {
+          obj.posAccuracy_m = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.State') {
+          obj.state = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.County') {
+          obj.county = ref.identifier
+        }
+        if (ref.type === 'his.odm.sites.Comments') {
+          obj.comments = ref.identifier
+        }
+      })
+      return obj
+    },
+
     // NOTE: Async since we could add slug lookup in the future
     async orgId(org) {
       if (org === 'WOF_ORG') return process.env.WOF_ORG

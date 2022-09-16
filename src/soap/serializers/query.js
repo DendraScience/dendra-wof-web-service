@@ -9,6 +9,9 @@ export function queryInfoEnd() {
 }
 
 export function queryInfoType({ date = new Date(), method, parameters }) {
+  if (method === 'GetSitesObject') {
+    method = 'GetSites'
+  }
   return (
     `<creationTime>${date.toISOString()}</creationTime>` +
     `<criteria MethodCalled="${method}">` +

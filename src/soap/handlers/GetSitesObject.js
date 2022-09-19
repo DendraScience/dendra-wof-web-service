@@ -48,11 +48,6 @@ export async function* getSitesObject(
       ? site.string
       : []
 
-  // Fetch organization
-  const organization = await helpers.findOneCached('organizations', '', {
-    slug: request.params.org
-  })
-
   // Fetch stations
   const stations = await helpers.findMany(
     'stations',
@@ -61,17 +56,22 @@ export async function* getSitesObject(
         is_enabled: true,
         is_hidden: false,
         // TODO: Paginate to allow for more than 2000
-        // TODO: Sort! We should default to _id. Check other services.
-        $limit: 2000
+        $limit: 2000,
+        $sort: { _id: 1 }
       },
-      organization &&
-        organization.data &&
-        organization.data.length &&
-        organization.data[0]._id
-        ? { organization_id: await helpers.orgId(organization.data[0]._id) }
-        : undefined,
       sites.length
-        ? { slug: { $in: sites.map(str => str.split(':')[1]) } }
+        ? {
+            slug: {
+              $in: sites.map(str => {
+                const parts = str.split(':')
+                return helpers.safeName(
+                  (request.params.org || parts[0] || '-') +
+                    '-' +
+                    (parts[1] || '-')
+                )
+              })
+            }
+          }
         : undefined
     )
   )
@@ -103,11 +103,11 @@ export async function* getSitesObject(
     queryInfoEnd()
 
   for (const station of stations) {
-    const externalRef = await helpers.externalRefs(station.external_refs)
+    const externalRefs = helpers.externalRefs(station.external_refs)
 
     yield siteStart() +
       siteInfoStart() +
-      siteInfoType({ externalRef, station }) +
+      siteInfoType({ externalRefs, station }) +
       siteInfoEnd() +
       siteEnd()
   }

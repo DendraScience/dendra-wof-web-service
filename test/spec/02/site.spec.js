@@ -29,93 +29,92 @@ describe('Serializers', function () {
       expect(siteInfoEnd()).to.equal('</siteInfo>')
     })
 
-    it('should serialize siteInfoType flavor 1', function () {
+    it('should serialize siteInfoType with station and externalRefs flavor 1', function () {
       expect(
         siteInfoType({
           station: {
-            _id: 'i98573457347593479537495388',
-            name: 'My Station',
+            _id: '631a4a3cf16fb05982b19980',
+            name: 'SiteName-full',
             organization_lookup: { slug: 'dendra' },
-            geo: { type: 'Point', coordinates: ['32.9029', '-96.5639', '4'] },
-            description: 'nice place'
+            geo: { type: 'Point', coordinates: [-71.01234, 42.39215, 55] }
+          },
+          externalRefs: {
+            siteCode: 'sitecode-full',
+            siteId: '17',
+            verticalDatum: 'NGVD29',
+            localX: '334366.79',
+            localY: '4695279.14',
+            posAccuracy_m: '100',
+            state: 'Massachusetts',
+            county: 'Suffolk',
+            comments: 'This is a full sites metadata record',
+            elevation_m: '55'
           }
         })
       ).to.equal(
-        '<siteName>My Station</siteName>' +
+        '<siteName>SiteName-full</siteName>' +
+          '<siteCode network="dendra" siteID="17">sitecode-full</siteCode>' +
           '<geoLocation>' +
-          '<geogLocation xsi:type="LatLonPointType" srs="EPSG:99999">' +
-          '<latitude>-96.5639</latitude>' +
-          '<longitude>32.9029</longitude>' +
+          '<geogLocation xsi:type="LatLonPointType">' +
+          '<latitude>42.39215</latitude>' +
+          '<longitude>-71.01234</longitude>' +
+          '</geogLocation>' +
+          '<localSiteXY projectionInformation="WGS 84 / UTM zone 19N">' +
+          '<X>334366.79</X>' +
+          '<Y>4695279.14</Y>' +
+          '</localSiteXY>' +
+          '</geoLocation>' +
+          '<elevation_m>55</elevation_m>' +
+          '<verticalDatum>NGVD29</verticalDatum>' +
+          '<siteProperty name="County">Suffolk</siteProperty>' +
+          '<siteProperty name="State">Massachusetts</siteProperty>' +
+          '<siteProperty name="Site Comments">This is a full sites metadata record</siteProperty>' +
+          '<siteProperty name="PosAccuracy_m">100</siteProperty>'
+      )
+    })
+
+    it('should serialize siteInfoType without externalRefs', function () {
+      expect(
+        siteInfoType({
+          station: {
+            _id: '631a4a3cf16fb05982b19980',
+            name: 'SiteName-min',
+            organization_lookup: { slug: 'dendra' },
+            geo: { type: 'Point', coordinates: [-71.01234, 42.39215, 55] }
+          }
+        })
+      ).to.equal(
+        '<siteName>SiteName-min</siteName>' +
+          '<geoLocation>' +
+          '<geogLocation xsi:type="LatLonPointType">' +
+          '<latitude>42.39215</latitude>' +
+          '<longitude>-71.01234</longitude>' +
           '</geogLocation>' +
           '</geoLocation>'
       )
     })
 
-    it('should serialize siteInfoType flavor 2', function () {
+    it('should serialize siteInfoType with station and externalRefs flavor 2', function () {
       expect(
         siteInfoType({
           station: {
-            _id: 'i98573457347593479537495388',
-            name: 'My Station',
+            _id: '631a4a3cf16fb05982b19980',
+            name: 'SiteName-min',
             organization_lookup: { slug: 'dendra' },
-            description: 'nice place'
-          }
-        })
-      ).to.equal('<siteName>My Station</siteName>')
-    })
-
-    it('should serialize siteInfoType flavor 3', function () {
-      expect(
-        siteInfoType({
-          station: {
-            _id: 'i98573457347593479537495388',
-            name: 'My Station',
-            geo: { type: 'Point', coordinates: ['32.9029', '-96.5639', '4'] },
-            description: 'nice place'
+            geo: { type: 'Point', coordinates: [-71.01234, 42.39215, 55] }
+          },
+          externalRefs: {
+            siteCode: 'sitecode-min',
+            siteId: '18'
           }
         })
       ).to.equal(
-        '<siteName>My Station</siteName>' +
+        '<siteName>SiteName-min</siteName>' +
+          '<siteCode network="dendra" siteID="18">sitecode-min</siteCode>' +
           '<geoLocation>' +
-          '<geogLocation xsi:type="LatLonPointType" srs="EPSG:99999">' +
-          '<latitude>-96.5639</latitude>' +
-          '<longitude>32.9029</longitude>' +
-          '</geogLocation>' +
-          '</geoLocation>'
-      )
-    })
-
-    it('should serialize siteInfoType flavor 4', function () {
-      expect(
-        siteInfoType({
-          station: {
-            _id: 'i98573457347593479537495388',
-            name: 'My Station',
-            organization_lookup: { slug: 'dendra' },
-            geo: { type: 'Cords', coordinates: ['32.9029', '-96.5639', '4'] },
-            description: 'nice place'
-          }
-        })
-      ).to.equal('<siteName>My Station</siteName>')
-    })
-
-    it('should serialize siteInfoType flavor 5', function () {
-      expect(
-        siteInfoType({
-          station: {
-            _id: 'i98573457347593479537495388',
-            name: 'My Station',
-            organization_lookup: { slug: 'dendra' },
-            geo: { type: 'Point', coordinates: ['32.9029', '-96.5639'] },
-            description: 'nice place'
-          }
-        })
-      ).to.equal(
-        '<siteName>My Station</siteName>' +
-          '<geoLocation>' +
-          '<geogLocation xsi:type="LatLonPointType" srs="EPSG:99999">' +
-          '<latitude>-96.5639</latitude>' +
-          '<longitude>32.9029</longitude>' +
+          '<geogLocation xsi:type="LatLonPointType">' +
+          '<latitude>42.39215</latitude>' +
+          '<longitude>-71.01234</longitude>' +
           '</geogLocation>' +
           '</geoLocation>'
       )

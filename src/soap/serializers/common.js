@@ -34,6 +34,9 @@ export function soapWsaMessageID(uuid) {
 export function soapWsaRelatesTo(uuid) {
   return `<wsa:RelatesTo>urn:uuid:${uuid}</wsa:RelatesTo>`
 }
+// export function soapWsa({ el, uuid }) {
+//   return `<wsa:${el}>urn:uuid:${uuid}</wsa:${el}>`
+// }
 
 export function soapWsaTo() {
   return '<wsa:To>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</wsa:To>'

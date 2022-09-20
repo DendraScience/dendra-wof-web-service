@@ -24,6 +24,7 @@ import {
   soapWsaAction,
   soapWsaMessageID,
   soapWsaRelatesTo,
+  // soapWsa,
   soapWsaTo,
   soapWsuInfo,
   soapWsseSecurityStart,
@@ -81,6 +82,8 @@ export async function* getSitesObject(
     soapWsaAction('GetSitesObjectResponse') +
     soapWsaMessageID(uniqueid || uuid()) +
     soapWsaRelatesTo(uniqueid || uuid()) +
+    // soapWsa({ el: 'MessageID', uuid: uniqueid || uuid() }) +
+    // soapWsa({ el: 'RelatesTo', uuid: uniqueid || uuid() }) +
     soapWsaTo() +
     soapWsseSecurityStart() +
     soapWsuTimestampStart(uniqueid || uuid()) +

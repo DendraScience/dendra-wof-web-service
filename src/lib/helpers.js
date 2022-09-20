@@ -114,10 +114,44 @@ export function createHelpers({ cache, webAPI }) {
       return data
     },
 
+    externalRefs(extRefs) {
+      const obj = {}
+      extRefs.forEach(ref => {
+        if (ref.type === 'his.odm.sites.SiteID') {
+          obj.siteId = ref.identifier
+        } else if (ref.type === 'his.odm.sites.SiteCode') {
+          obj.siteCode = ref.identifier
+        } else if (ref.type === 'his.odm.sites.VerticalDatum') {
+          obj.verticalDatum = ref.identifier
+        } else if (ref.type === 'his.odm.sites.LocalX') {
+          obj.localX = ref.identifier
+        } else if (ref.type === 'his.odm.sites.LocalY') {
+          obj.localY = ref.identifier
+        } else if (ref.type === 'his.odm.sites.PosAccuracy_m') {
+          obj.posAccuracy_m = ref.identifier
+        } else if (ref.type === 'his.odm.sites.State') {
+          obj.state = ref.identifier
+        } else if (ref.type === 'his.odm.sites.County') {
+          obj.county = ref.identifier
+        } else if (ref.type === 'his.odm.sites.Comments') {
+          obj.comments = ref.identifier
+        } else if (ref.type === 'his.odm.sites.Elevation_m') {
+          obj.elevation_m = ref.identifier
+        }
+      })
+      return obj
+    },
+
     // NOTE: Async since we could add slug lookup in the future
-    async orgId(org) {
+    orgId(org) {
       if (org === 'WOF_ORG') return process.env.WOF_ORG
       return org
+    },
+
+    safeName(str, lc = true) {
+      return lc
+        ? str.replace(/\W/g, '-').toLowerCase()
+        : str.replace(/\W/g, '-')
     }
   }
 }

@@ -3,8 +3,14 @@
  */
 
 import * as sinon from 'sinon'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { getSitesObject } from '../../../src/soap/handlers/GetSitesObject.js'
 import { createHelpers } from '../../../src/lib/helpers.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Probably shpuld be moved to a utils?
 const SERVICE_1_1 = 'cuahsi_1_1.asmx'
@@ -32,32 +38,39 @@ describe('GetSitesObject handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSitesObject, we need to fake out findMany() and orgId()
+    // For getSitesObject, we need to fake out findOneCached(), findMany() and orgId()
+    const organizationFake = sinon.fake.returns({})
     const stations = sinon.fake.returns([])
     const orgIdFake = sinon.fake.returns('')
+    sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stations)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
     const date = new Date(1661964219333)
+    const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'
     const gen = getSitesObject(
       request,
-      Object.assign({ date, method, parameters }, ctx)
+      Object.assign({ date, method, parameters, uniqueid }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
-    expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"></criteria></queryInfo>'
+    const result = (await gen.next()).value.concat((await gen.next()).value)
+    const response = fs.readFileSync(
+      path.resolve(
+        __dirname,
+        '../../data/GetSitesObject/responses/no-params-and-no-stations.xml'
+      ),
+      'utf8'
     )
-    expect((await gen.next()).value).to.equal(
-      '</sitesResponse></GetSitesObjectResponse></soap:Body></soap:Envelope>'
-    )
+
+    expect(result).to.equal(response)
   })
 
   it('should handle getSitesObject with parameters and no station', async function () {
     const method = 'GetSitesObject'
     const parameters = {
       site: {
-        string: ['string1', 'string2']
+        string: ['woftest:sitecode-min', 'woftest:sitecode-full']
       },
       authToken: ''
     }
@@ -71,25 +84,32 @@ describe('GetSitesObject handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSitesObject, we need to fake out findMany() and orgId()
+    // For getSitesObject, we need to fake out findOneCached(), findMany() and orgId()
+    const organizationFake = sinon.fake.returns({})
     const stations = sinon.fake.returns([])
     const orgIdFake = sinon.fake.returns('')
+    sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stations)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
     const date = new Date(1661964219333)
+    const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'
     const gen = getSitesObject(
       request,
-      Object.assign({ date, method, parameters }, ctx)
+      Object.assign({ date, method, parameters, uniqueid }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
-    expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"><parameter name="site" value="string1"/><parameter name="site" value="string2"/></criteria></queryInfo>'
+    const result = (await gen.next()).value.concat((await gen.next()).value)
+    const response = fs.readFileSync(
+      path.resolve(
+        __dirname,
+        '../../data/GetSitesObject/responses/params-and-no-stations.xml'
+      ),
+      'utf8'
     )
-    expect((await gen.next()).value).to.equal(
-      '</sitesResponse></GetSitesObjectResponse></soap:Body></soap:Envelope>'
-    )
+
+    expect(result).to.equal(response)
   })
 
   it('should handle getSitesObject with station with no parameters', async function () {
@@ -110,58 +130,47 @@ describe('GetSitesObject handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSitesObject, we need to fake out findMany() and orgId()
-    const stations = sinon.fake.returns([
-      {
-        _id: 'i98573457347593479537495388',
-        name: 'Egypt River',
-        organization_lookup: { slug: 'IRWA' },
-        geo: {
-          type: 'Point',
-          coordinates: [42.6981327284, -70.8690423578, '4']
-        },
-        description: 'massachusetts'
-      },
-      {
-        _id: 'i4354457347593479537465668',
-        name: 'Fish Brook, Brookview Rd, Boxford',
-        organization_lookup: { slug: 'IRWA' },
-        geo: {
-          type: 'Point',
-          coordinates: [42.6584429984, -71.0279778157, '4']
-        },
-        description: 'massachusetts'
-      }
-    ])
+    const stations = fs.readFileSync(
+      path.resolve(__dirname, '../../data/stations.json'),
+      'utf8'
+    )
+    const stationData = JSON.parse(stations).data
+
+    // For getSitesObject, we need to fake out findOneCached(), findMany() and orgId()
+    const organizationFake = sinon.fake.returns({})
+    const stationsFake = sinon.fake.returns(stationData)
     const orgIdFake = sinon.fake.returns('')
-    sinon.replace(helpers, 'findMany', stations)
+    sinon.replace(helpers, 'findOneCached', organizationFake)
+    sinon.replace(helpers, 'findMany', stationsFake)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
     const date = new Date(1661964219333)
+    const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'
     const gen = getSitesObject(
       request,
-      Object.assign({ date, method, parameters }, ctx)
+      Object.assign({ date, method, parameters, uniqueid }, ctx)
     )
     // Followup with with expect statements to check yielded results
-    expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"></criteria></queryInfo>'
+    const result = (await gen.next()).value
+      .concat((await gen.next()).value)
+      .concat((await gen.next()).value)
+      .concat((await gen.next()).value)
+    const response = fs.readFileSync(
+      path.resolve(
+        __dirname,
+        '../../data/GetSitesObject/responses/stations-and-no-params.xml'
+      ),
+      'utf8'
     )
-    expect((await gen.next()).value).to.equal(
-      '<site><siteInfo><siteName>Egypt River</siteName><siteCode network="IRWA">i98573457347593479537495388</siteCode><geoLocation><geogLocation xsi:type="LatLonPointType"><latitude>-70.8690423578</latitude><longitude>42.6981327284</longitude></geogLocation></geoLocation><elevation_m>4</elevation_m><siteProperty name="Site Comments">massachusetts</siteProperty></siteInfo></site>'
-    )
-    expect((await gen.next()).value).to.equal(
-      '<site><siteInfo><siteName>Fish Brook, Brookview Rd, Boxford</siteName><siteCode network="IRWA">i4354457347593479537465668</siteCode><geoLocation><geogLocation xsi:type="LatLonPointType"><latitude>-71.0279778157</latitude><longitude>42.6584429984</longitude></geogLocation></geoLocation><elevation_m>4</elevation_m><siteProperty name="Site Comments">massachusetts</siteProperty></siteInfo></site>'
-    )
-    expect((await gen.next()).value).to.equal(
-      '</sitesResponse></GetSitesObjectResponse></soap:Body></soap:Envelope>'
-    )
+
+    expect(result).to.equal(response)
   })
 
   it('should handle getSitesObject with station with parameters', async function () {
     const method = 'GetSitesObject'
     const parameters = {
       site: {
-        string: ['string1', 'string2']
+        string: ['woftest:sitecode-min', 'woftest:sitecode-full']
       },
       authToken: ''
     }
@@ -175,51 +184,40 @@ describe('GetSitesObject handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSitesObject, we need to fake out findMany() and orgId()
-    const stations = sinon.fake.returns([
-      {
-        _id: 'i98573457347593479537495388',
-        name: 'Egypt River',
-        organization_lookup: { slug: 'IRWA' },
-        geo: {
-          type: 'Point',
-          coordinates: [42.6981327284, -70.8690423578, '4']
-        },
-        description: 'massachusetts'
-      },
-      {
-        _id: 'i4354457347593479537465668',
-        name: 'Fish Brook, Brookview Rd, Boxford',
-        organization_lookup: { slug: 'IRWA' },
-        geo: {
-          type: 'Point',
-          coordinates: [42.6584429984, -71.0279778157, '4']
-        },
-        description: 'massachusetts'
-      }
-    ])
+    const stations = fs.readFileSync(
+      path.resolve(__dirname, '../../data/stations.json'),
+      'utf8'
+    )
+    const stationData = JSON.parse(stations).data
+
+    // For getSitesObject, we need to fake out findOneCached(),findMany() and orgId()
+    const organizationFake = sinon.fake.returns({})
+    const stationsFake = sinon.fake.returns(stationData)
     const orgIdFake = sinon.fake.returns('')
-    sinon.replace(helpers, 'findMany', stations)
+    sinon.replace(helpers, 'findOneCached', organizationFake)
+    sinon.replace(helpers, 'findMany', stationsFake)
     sinon.replace(helpers, 'orgId', orgIdFake)
 
     const date = new Date(1661964219333)
+    const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'
     const gen = getSitesObject(
       request,
-      Object.assign({ date, method, parameters }, ctx)
+      Object.assign({ date, method, parameters, uniqueid }, ctx)
     )
 
     // Followup with with expect statements to check yielded results
-    expect((await gen.next()).value).to.equal(
-      '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetSitesObjectResponse xmlns="http://www.cuahsi.org/his/1.1/ws/"><sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"><queryInfo><creationTime>2022-08-31T16:43:39.333Z</creationTime><criteria MethodCalled="GetSitesObject"><parameter name="site" value="string1"/><parameter name="site" value="string2"/></criteria></queryInfo>'
+    const result = (await gen.next()).value
+      .concat((await gen.next()).value)
+      .concat((await gen.next()).value)
+      .concat((await gen.next()).value)
+    const response = fs.readFileSync(
+      path.resolve(
+        __dirname,
+        '../../data/GetSitesObject/responses/stations-and-params.xml'
+      ),
+      'utf8'
     )
-    expect((await gen.next()).value).to.equal(
-      '<site><siteInfo><siteName>Egypt River</siteName><siteCode network="IRWA">i98573457347593479537495388</siteCode><geoLocation><geogLocation xsi:type="LatLonPointType"><latitude>-70.8690423578</latitude><longitude>42.6981327284</longitude></geogLocation></geoLocation><elevation_m>4</elevation_m><siteProperty name="Site Comments">massachusetts</siteProperty></siteInfo></site>'
-    )
-    expect((await gen.next()).value).to.equal(
-      '<site><siteInfo><siteName>Fish Brook, Brookview Rd, Boxford</siteName><siteCode network="IRWA">i4354457347593479537465668</siteCode><geoLocation><geogLocation xsi:type="LatLonPointType"><latitude>-71.0279778157</latitude><longitude>42.6584429984</longitude></geogLocation></geoLocation><elevation_m>4</elevation_m><siteProperty name="Site Comments">massachusetts</siteProperty></siteInfo></site>'
-    )
-    expect((await gen.next()).value).to.equal(
-      '</sitesResponse></GetSitesObjectResponse></soap:Body></soap:Envelope>'
-    )
+
+    expect(result).to.equal(response)
   })
 })

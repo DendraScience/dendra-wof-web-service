@@ -1,5 +1,5 @@
 import { Readable } from 'stream'
-import { CacheControls, ContentTypes, Headers } from '../../lib/utils.js'
+import { CacheControls, ContentTypes, Headers, uuid } from '../../lib/utils.js'
 import {
   queryInfoStart,
   queryInfoEnd,
@@ -19,12 +19,24 @@ import {
   soapBodyStart,
   soapBodyEnd,
   soapEnvelopeStart,
-  soapEnvelopeEnd
+  soapEnvelopeEnd,
+  soapHeaderStart,
+  soapWsaAction,
+  soapWsaMessageID,
+  soapWsaRelatesTo,
+  // soapWsa,
+  soapWsaTo,
+  soapWsuInfo,
+  soapWsseSecurityStart,
+  soapWsseSecurityEnd,
+  soapWsuTimestampStart,
+  soapWsuTimestampEnd,
+  soapHeaderEnd
 } from '../serializers/common.js'
 
 export async function* getSitesObject(
   request,
-  { date = new Date(), helpers, method, parameters }
+  { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
   const sites =
@@ -45,19 +57,40 @@ export async function* getSitesObject(
         is_enabled: true,
         is_hidden: false,
         // TODO: Paginate to allow for more than 2000
-        // TODO: Sort! We should default to _id. Check other services.
-        $limit: 2000
+        $limit: 2000,
+        $sort: { _id: 1 }
       },
-      request.params && request.params.org
-        ? { organization_id: await helpers.orgId(request.params.org) }
-        : undefined,
       sites.length
-        ? { _id: { $in: sites.map(str => str.split(':')[1]) } }
+        ? {
+            slug: {
+              $in: sites.map(str => {
+                const parts = str.split(':')
+                return helpers.safeName(
+                  (request.params.org || parts[0] || '-') +
+                    '-' +
+                    (parts[1] || '-')
+                )
+              })
+            }
+          }
         : undefined
     )
   )
 
   yield soapEnvelopeStart() +
+    soapHeaderStart() +
+    soapWsaAction('GetSitesObjectResponse') +
+    soapWsaMessageID(uniqueid || uuid()) +
+    soapWsaRelatesTo(uniqueid || uuid()) +
+    // soapWsa({ el: 'MessageID', uuid: uniqueid || uuid() }) +
+    // soapWsa({ el: 'RelatesTo', uuid: uniqueid || uuid() }) +
+    soapWsaTo() +
+    soapWsseSecurityStart() +
+    soapWsuTimestampStart(uniqueid || uuid()) +
+    soapWsuInfo({ date }) +
+    soapWsuTimestampEnd() +
+    soapWsseSecurityEnd() +
+    soapHeaderEnd() +
     soapBodyStart() +
     responseStart('GetSitesObjectResponse') +
     sitesResponseStart() +
@@ -73,9 +106,11 @@ export async function* getSitesObject(
     queryInfoEnd()
 
   for (const station of stations) {
+    const externalRefs = helpers.externalRefs(station.external_refs)
+
     yield siteStart() +
       siteInfoStart() +
-      siteInfoType({ station }) +
+      siteInfoType({ externalRefs, station }) +
       siteInfoEnd() +
       siteEnd()
   }
@@ -87,7 +122,7 @@ export async function* getSitesObject(
 }
 
 export default async (request, reply, ctx) => {
-  reply
+  return reply
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)
     .send(

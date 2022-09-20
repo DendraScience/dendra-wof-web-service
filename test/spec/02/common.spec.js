@@ -1,9 +1,21 @@
 /**
  * Serializers common tests
  */
+import { uuid } from '../../../src/lib/utils.js'
 import {
   methodType,
   responseStart,
+  soapHeaderStart,
+  soapHeaderEnd,
+  soapWsaAction,
+  soapWsaMessageID,
+  soapWsaRelatesTo,
+  soapWsaTo,
+  soapWsseSecurityStart,
+  soapWsseSecurityEnd,
+  soapWsuTimestampStart,
+  soapWsuTimestampEnd,
+  soapWsuInfo,
   soapBodyStart,
   soapBodyEnd,
   soapEnvelopeStart,
@@ -34,6 +46,64 @@ describe('Serializers', function () {
       )
     })
 
+    it('should serialize soapHeaderStart', function () {
+      expect(soapHeaderStart()).to.equal('<soap:Header>')
+    })
+
+    it('should serialize soapHeaderEnd', function () {
+      expect(soapHeaderEnd()).to.equal('</soap:Header>')
+    })
+
+    it('should serialize soapWsaAction', function () {
+      expect(soapWsaAction('GetSitesObjectResponse')).to.equal(
+        '<wsa:Action>http://www.cuahsi.org/his/1.1/ws/GetSitesObjectResponse</wsa:Action>'
+      )
+    })
+    it('should serialize soapWsaMessageID', function () {
+      const uniqueid = uuid()
+      expect(soapWsaMessageID(uniqueid)).to.equal(
+        `<wsa:MessageID>urn:uuid:${uniqueid}</wsa:MessageID>`
+      )
+    })
+    it('should serialize soapWsaRelatesTo', function () {
+      const uniqueid = uuid()
+      expect(soapWsaRelatesTo(uniqueid)).to.equal(
+        `<wsa:RelatesTo>urn:uuid:${uniqueid}</wsa:RelatesTo>`
+      )
+    })
+    it('should serialize soapWsaTo', function () {
+      expect(soapWsaTo()).to.equal(
+        '<wsa:To>http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous</wsa:To>'
+      )
+    })
+
+    it('should serialize soapWsseSecurityStart', function () {
+      expect(soapWsseSecurityStart('MessageID')).to.equal('<wsse:Security>')
+    })
+
+    it('should serialize soapWsseSecurityEnd', function () {
+      expect(soapWsseSecurityEnd()).to.equal('</wsse:Security>')
+    })
+
+    it('should serialize soapWsuTimestampStart', function () {
+      const timestamp = uuid()
+      expect(soapWsuTimestampStart(timestamp)).to.equal(
+        `<wsu:Timestamp wsu:Id="Timestamp-${timestamp}">`
+      )
+    })
+
+    it('should serialize soapWsuTimestampEnd', function () {
+      expect(soapWsuTimestampEnd()).to.equal('</wsu:Timestamp>')
+    })
+
+    it('should serialize soapWsuInfo', function () {
+      const date = new Date(1661964219333)
+      expect(soapWsuInfo({ date })).to.equal(
+        '<wsu:Created>2022-08-31T16:43:39.333Z</wsu:Created>' +
+          '<wsu:Expires>2022-08-31T16:48:39.333Z</wsu:Expires>'
+      )
+    })
+
     it('should serialize soapBodyStart', function () {
       expect(soapBodyStart()).to.equal('<soap:Body>')
     })
@@ -45,8 +115,11 @@ describe('Serializers', function () {
     it('should serialize soapEnvelopeStart', function () {
       expect(soapEnvelopeStart()).to.equal(
         '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
-          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
-          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema">'
+          ' xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"' +
+          ' xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"' +
+          ' xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"' +
+          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
       )
     })
 
@@ -62,8 +135,11 @@ describe('Serializers', function () {
         })
       ).to.equal(
         '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
-          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
-          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema">' +
+          ' xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"' +
+          ' xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"' +
+          ' xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"' +
+          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' +
           '<soap:Body>' +
           '<soap:Fault>' +
           '<faultcode>soap:Server</faultcode>' +

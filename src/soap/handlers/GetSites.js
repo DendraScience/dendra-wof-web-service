@@ -46,8 +46,16 @@ export async function* getSites(
     site.string > ''
       ? [site.string]
       : site && typeof site === 'object' && Array.isArray(site.string)
-      ? site.string
+      ? site.string.filter(str => !!str)
       : []
+
+  // Fetch organization
+  const organization =
+    typeof request.params.org === 'string'
+      ? await helpers.findOneCached('organizations', '', {
+          slug: helpers.safeName(request.params.org)
+        })
+      : undefined
 
   // Fetch stations
   const stations = await helpers.findMany(
@@ -60,6 +68,12 @@ export async function* getSites(
         $limit: 2000,
         $sort: { _id: 1 }
       },
+      organization &&
+        organization.data &&
+        organization.data.length &&
+        organization.data[0]._id
+        ? { organization_id: helpers.orgId(organization.data[0]._id) }
+        : undefined,
       sites.length
         ? {
             slug: {

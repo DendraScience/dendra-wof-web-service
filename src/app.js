@@ -149,13 +149,16 @@ export default async logger => {
       }
     )
     fastify.post(
-      `/:org(${SLUG_REGEXP_STR})/${SERVICE_1_1}`,
+      `/:org/${SERVICE_1_1}`,
       {
         errorHandler: soapErrorHandler,
         prefixTrailingSlash: 'both',
         schema: SoapRequestSchema
       },
       async (request, reply) => {
+        if (request.params && request.params.org) {
+          request.params.org = helpers.orgId(request.params.org)
+        }
         return handlePost(request, reply, {
           cache,
           helpers,

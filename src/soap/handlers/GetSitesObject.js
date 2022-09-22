@@ -24,7 +24,6 @@ import {
   soapWsaAction,
   soapWsaMessageID,
   soapWsaRelatesTo,
-  // soapWsa,
   soapWsaTo,
   soapWsuInfo,
   soapWsseSecurityStart,
@@ -46,8 +45,16 @@ export async function* getSitesObject(
     site.string > ''
       ? [site.string]
       : site && typeof site === 'object' && Array.isArray(site.string)
-      ? site.string
+      ? site.string.filter(str => !!str)
       : []
+
+  // Fetch organization
+  const organization =
+    typeof request.params.org === 'string'
+      ? await helpers.findOneCached('organizations', '', {
+          slug: helpers.safeName(request.params.org)
+        })
+      : undefined
 
   // Fetch stations
   const stations = await helpers.findMany(
@@ -60,6 +67,12 @@ export async function* getSitesObject(
         $limit: 2000,
         $sort: { _id: 1 }
       },
+      organization &&
+        organization.data &&
+        organization.data.length &&
+        organization.data[0]._id
+        ? { organization_id: helpers.orgId(organization.data[0]._id) }
+        : undefined,
       sites.length
         ? {
             slug: {
@@ -82,8 +95,6 @@ export async function* getSitesObject(
     soapWsaAction('GetSitesObjectResponse') +
     soapWsaMessageID(uniqueid || uuid()) +
     soapWsaRelatesTo(uniqueid || uuid()) +
-    // soapWsa({ el: 'MessageID', uuid: uniqueid || uuid() }) +
-    // soapWsa({ el: 'RelatesTo', uuid: uniqueid || uuid() }) +
     soapWsaTo() +
     soapWsseSecurityStart() +
     soapWsuTimestampStart(uniqueid || uuid()) +

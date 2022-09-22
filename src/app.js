@@ -156,9 +156,6 @@ export default async logger => {
         schema: SoapRequestSchema
       },
       async (request, reply) => {
-        if (request.params && request.params.org) {
-          request.params.org = helpers.orgId(request.params.org)
-        }
         return handlePost(request, reply, {
           cache,
           helpers,

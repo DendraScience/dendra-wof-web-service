@@ -38,13 +38,13 @@ describe('GetSites handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSites, we need to fake out findOneCached(), findMany() and orgId()
+    // For getSites, we need to fake out findOneCached(), findMany() and org()
     const organizationFake = sinon.fake.returns({})
     const findManyFake = sinon.fake.returns([])
-    const orgIdFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', findManyFake)
-    sinon.replace(helpers, 'orgId', orgIdFake)
+    sinon.replace(helpers, 'org', orgFake)
 
     const date = new Date(1661964219333)
     const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'
@@ -84,13 +84,13 @@ describe('GetSites handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSites, we need to fake out findOneCached(), findMany() and orgId()
+    // For getSites, we need to fake out findOneCached(), findMany() and org()
     const organizationFake = sinon.fake.returns({})
     const findManyFake = sinon.fake.returns([])
-    const orgIdFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', findManyFake)
-    sinon.replace(helpers, 'orgId', orgIdFake)
+    sinon.replace(helpers, 'org', orgFake)
 
     const date = new Date(1661964219333)
     const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'
@@ -136,13 +136,13 @@ describe('GetSites handlers', function () {
     )
     const stationData = JSON.parse(stations).data
 
-    // For getSites, we need to fake out findOneCached(), findMany() and orgId()
+    // For getSites, we need to fake out findOneCached(), findMany() and org()
     const organizationFake = sinon.fake.returns({})
     const stationsFake = sinon.fake.returns(stationData)
-    const orgIdFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stationsFake)
-    sinon.replace(helpers, 'orgId', orgIdFake)
+    sinon.replace(helpers, 'org', orgFake)
 
     const date = new Date(1661964219333)
     const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'
@@ -191,13 +191,13 @@ describe('GetSites handlers', function () {
     )
     const stationData = JSON.parse(stations).data
 
-    // For getSites, we need to fake out findOneCached(), findMany() and orgId()
+    // For getSites, we need to fake out findOneCached(), findMany() and org()
     const organizationFake = sinon.fake.returns({})
     const stationsFake = sinon.fake.returns(stationData)
-    const orgIdFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stationsFake)
-    sinon.replace(helpers, 'orgId', orgIdFake)
+    sinon.replace(helpers, 'org', orgFake)
 
     const date = new Date(1661964219333)
     const uniqueid = '1065b42b-0a44-4e53-a146-32bbd580308b'

@@ -54,12 +54,11 @@ export async function* getSites(
       : undefined
 
   // Fetch organization
-  const organization =
-    typeof org === 'string'
-      ? await helpers.findOneCached('organizations', '', {
-          slug: helpers.safeName(org)
-        })
-      : undefined
+  const organization = org
+    ? await helpers.findOneCached('organizations', '', {
+        slug: helpers.safeName(org)
+      })
+    : undefined
 
   // Fetch stations
   const stations = await helpers.findMany(
@@ -76,7 +75,7 @@ export async function* getSites(
         organization.data &&
         organization.data.length &&
         organization.data[0]._id
-        ? { organization_id: helpers.org(organization.data[0]._id) }
+        ? { organization_id: organization.data[0]._id }
         : undefined,
       sites.length
         ? {

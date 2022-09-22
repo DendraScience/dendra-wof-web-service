@@ -24,8 +24,9 @@ import { CacheControls, ContentTypes, Headers } from './lib/utils.js'
 
 const { NotFound } = httpErrors
 
-const SERVICE_1_1 = 'cuahsi_1_1.asmx'
+const SERVICE_1_1 = 'cuahsi_1_1'
 const SLUG_REGEXP_STR = '^[a-z][a-z0-9-]{2,}[a-z0-9]$'
+const ORG_REGEXP_STR = '^[A-Za-z][A-Za-z0-9-_]{2,}[A-Za-z0-9]$'
 
 export default async logger => {
   const app = {}
@@ -149,7 +150,7 @@ export default async logger => {
       }
     )
     fastify.post(
-      `/:org/${SERVICE_1_1}`,
+      `/:org(${ORG_REGEXP_STR})/${SERVICE_1_1}`,
       {
         errorHandler: soapErrorHandler,
         prefixTrailingSlash: 'both',

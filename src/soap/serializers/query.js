@@ -11,6 +11,8 @@ export function queryInfoEnd() {
 export function queryInfoType({ date = new Date(), method, parameters }) {
   if (method === 'GetSitesObject') {
     method = 'GetSites'
+  } else if (method === 'GetVariablesObject') {
+    method = 'GetVariableInfo'
   }
   return (
     `<creationTime>${date.toISOString()}</creationTime>` +

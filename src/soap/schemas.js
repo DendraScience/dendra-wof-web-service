@@ -89,6 +89,25 @@ export const GetSitesObject = {
 }
 
 /*
+  GetVariablesXXX methods.
+ */
+export const getVariablesType = {
+  additionalProperties: false,
+  properties: {
+    authToken
+  },
+  type: 'object'
+}
+
+export const GetVariablesObject = {
+  properties: {
+    GetVariablesObject: getVariablesType
+  },
+  required: ['GetVariablesObject'],
+  type: 'object'
+}
+
+/*
   SOAP bleh.
  */
 
@@ -100,7 +119,13 @@ export const SoapRequestSchema = {
         additionalProperties: false,
         properties: {
           'soap:Body': {
-            oneOf: [GetSiteInfo, GetSiteInfoObject, GetSites, GetSitesObject]
+            oneOf: [
+              GetSiteInfo,
+              GetSiteInfoObject,
+              GetSites,
+              GetSitesObject,
+              GetVariablesObject
+            ]
           }
         },
         required: ['soap:Body'],

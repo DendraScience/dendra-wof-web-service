@@ -142,6 +142,13 @@ export function createHelpers({ cache, webAPI }) {
       return obj
     },
 
+    externalRefsMap(extRefs) {
+      return extRefs.reduce((map, ref) => {
+        map.set(ref.type, ref.identifier)
+        return map
+      }, new Map())
+    },
+
     // NOTE: Async since we could add slug lookup in the future
     org(org) {
       if (org === 'WOF_ORG') return process.env.WOF_ORG

@@ -143,7 +143,7 @@ export function createHelpers({ cache, webAPI }) {
     },
 
     // NOTE: Async since we could add slug lookup in the future
-    orgId(org) {
+    org(org) {
       if (org === 'WOF_ORG') return process.env.WOF_ORG
       return org
     },

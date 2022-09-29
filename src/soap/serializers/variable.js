@@ -9,24 +9,41 @@ export function variableEnd() {
   return '</variable>'
 }
 
-export function variableInfoType({ datastream, unitCV, variableCV }) {
-  const variableEl = (el, key) => {
-    return datastream.terms &&
-      datastream.terms.odm &&
-      datastream.terms.odm[key] &&
-      variableCV[key] &&
-      variableCV[key][datastream.terms.odm[key]]
-      ? `<${el}>${encodeXML(
-          variableCV[key][datastream.terms.odm[key]]
-        )}</${el}>`
-      : ''
+export function variableInfoType({ datastream, refsMap, unitCV }) {
+  const toNameCase = str => {
+    return str.replace(
+      /\w\S*/g,
+      txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    )
   }
+
+  const variableEl = (el, key) => {
+    const result = refsMap && refsMap.get(`his.odm.variables.${key}`)
+    return result ? `<${el}>${encodeXML(result)}</${el}>` : ''
+  }
+
+  const variableCode = refsMap && refsMap.get(`his.odm.variables.VariableCode`)
+  const variableID = refsMap && refsMap.get(`his.odm.variables.VariableID`)
+  const variableNoDataValue =
+    refsMap && refsMap.get(`his.odm.variables.NoDataValue`)
+  const timeUnitsName = refsMap && refsMap.get(`his.odm.units.TimeUnitsName`)
+  const timeSupport = refsMap && refsMap.get(`his.odm.variables.TimeSupport`)
+  const speciation = refsMap && refsMap.get(`his.odm.variables.Speciation`)
+  const isRegular = refsMap && refsMap.get(`his.odm.variables.IsRegular`)
+
   return (
-    `<variableCode vocabulary="dendra" default="true">${encodeXML(
-      datastream._id
-    )}</variableCode>` +
+    `${
+      variableCode
+        ? `<variableCode vocabulary="${encodeXML(
+            (datastream.organization_lookup &&
+              datastream.organization_lookup.slug) ||
+              'dendra'
+          )}" default="true" ${
+            variableID ? `variableID="${variableID}` : ''
+          }">${encodeXML(variableCode)}</variableCode>`
+        : ''
+    } ` +
     variableEl('variableName', 'VariableName') +
-    `<variableDescription>${encodeXML(datastream.name)}</variableDescription>` +
     variableEl('valueType', 'ValueType') +
     variableEl('dataType', 'DataType') +
     variableEl('generalCategory', 'GeneralCategory') +
@@ -35,78 +52,24 @@ export function variableInfoType({ datastream, unitCV, variableCV }) {
     datastream.terms_info.unit_tag &&
     unitCV[datastream.terms_info.unit_tag]
       ? '<unit>' + unitsType(unitCV[datastream.terms_info.unit_tag]) + '</unit>'
-      : '')
-  )
-}
-
-export function variableDetails({ datastream, refsMap, unitCV }) {
-  const variableElement = (el, key) => {
-    return refsMap && refsMap.get(`his.odm.variables.${key}`)
-      ? `<${el}>${encodeXML(refsMap.get(`his.odm.variables.${key}`))}</${el}>`
-      : ''
-  }
-  return (
-    `${
-      refsMap && refsMap.get(`his.odm.variables.VariableCode`)
-        ? `<variableCode vocabulary="dendra" default="true" ${
-            refsMap.get(`his.odm.variables.VariableID`)
-              ? `variableID="${refsMap.get(`his.odm.variables.VariableID`)}`
-              : ''
-          } ">${encodeXML(
-            refsMap.get(`his.odm.variables.VariableCode`)
-          )}</variableCode>`
-        : ''
-    } ` +
-    variableElement('variableName', 'VariableName') +
-    `<variableDescription>${encodeXML(datastream.name)}</variableDescription>` +
-    variableElement('valueType', 'ValueType') +
-    variableElement('dataType', 'DataType') +
-    variableElement('generalCategory', 'GeneralCategory') +
-    variableElement('sampleMedium', 'SampleMedium') +
-    (datastream.terms_info &&
-    datastream.terms_info.unit_tag &&
-    unitCV[datastream.terms_info.unit_tag]
-      ? '<unit>' + unitsType(unitCV[datastream.terms_info.unit_tag]) + '</unit>'
       : '') +
-    (refsMap && refsMap.get(`his.odm.variables.NoDataValue`)
-      ? `<noDataValue>${refsMap.get(
-          `his.odm.variables.NoDataValue`
-        )}</noDataValue>`
+    (variableNoDataValue
+      ? `<noDataValue>${encodeXML(variableNoDataValue)}</noDataValue>`
       : '') +
-    '<timeScale isRegular="true">' +
-    (refsMap &&
-    (refsMap.get(`his.odm.units.TimeUnitsName`) ||
-      refsMap.get(`his.odm.units.TimeUnitsType`) ||
-      refsMap.get(`his.odm.units.TimeUnitsAbbreviation`) ||
-      refsMap.get(`his.odm.units.TimeUnitsCode`))
+    `<timeScale ${isRegular ? 'isRegular="true"' : ''}>` +
+    (timeUnitsName &&
+    unitCV[`dt_Unit_${toNameCase(timeUnitsName).replace(/\s/g, '')}`]
       ? '<unit>' +
-        unitsType({
-          unitName: refsMap.get(`his.odm.units.TimeUnitsName`)
-            ? refsMap.get(`his.odm.units.TimeUnitsName`)
-            : undefined,
-          unitType: refsMap.get(`his.odm.units.TimeUnitsType`)
-            ? refsMap.get(`his.odm.units.TimeUnitsType`)
-            : undefined,
-          unitAbbreviation: refsMap.get(`his.odm.units.TimeUnitsAbbreviation`)
-            ? refsMap.get(`his.odm.units.TimeUnitsAbbreviation`)
-            : undefined,
-          unitCode: refsMap.get(`his.odm.units.TimeUnitsCode`)
-            ? refsMap.get(`his.odm.units.TimeUnitsCode`)
-            : undefined
-        }) +
+        unitsType(
+          unitCV[`dt_Unit_${toNameCase(timeUnitsName).replace(/\s/g, '')}`]
+        ) +
         '</unit>'
       : '') +
-    (refsMap && refsMap.get(`his.odm.variables.TimeSupport`)
-      ? `<timeSupport>${
-          refsMap && refsMap.get(`his.odm.variables.TimeSupport`)
-        }</timeSupport>`
+    (timeSupport
+      ? `<timeSupport>${encodeXML(timeSupport)}</timeSupport>`
       : '') +
     '</timeScale>' +
-    (refsMap && refsMap.get(`his.odm.variables.Speciation`)
-      ? `<speciation>${refsMap.get(
-          'his.odm.variables.Speciation'
-        )}</speciation>`
-      : '')
+    (speciation ? `<speciation>${encodeXML(speciation)}</speciation>` : '')
   )
 }
 

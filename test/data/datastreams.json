@@ -1,0 +1,307 @@
+{
+  "total": 2,
+  "limit": 200,
+  "skip": 0,
+  "data": [
+    {
+      "_id": "633355b7bcd7f8902fe03c4f",
+      "is_enabled": true,
+      "name": "Test Min Surface water Phosphorus Organic full milligrams per liter Field Observation QC2",
+      "organization_id": "63178ea946b9b7496258a28d",
+      "source_type": "sensor",
+      "state": "ready",
+      "station_id": "631a4a3cf16fb05982b19980",
+      "datapoints_config": [
+        {
+          "params": {
+            "query": {
+              "api": "default",
+              "db": "service_woftest",
+              "fc": "datavalues",
+              "sc": "\"time\", \"utc_offset\",\"DataValue\"",
+              "wc": "MethodID = '17' and QualityControlLevelID = '2' and SiteID = '17' and SourceID = '8' and VariableID = '21'",
+              "utc_offset": -18000,
+              "coalesce": false
+            }
+          },
+          "begins_at": "2014-01-30T09:00:00.000Z",
+          "ends_before": "2014-02-03T09:00:00.000Z",
+          "path": "/influx/select"
+        }
+      ],
+      "terms": {
+        "odm": {
+          "DataType": "RegularSampling",
+          "GeneralCategory": "WaterQuality",
+          "SampleMedium": "SurfaceWater",
+          "ValueType": "FieldObservation",
+          "VariableName": "PhosphorusOrganic",
+          "SiteType": "Stream"
+        },
+        "dt": { "Unit": "MilligramPerLiter" }
+      },
+      "external_refs": [
+        { "identifier": "37", "type": "his.odm.seriescatalog.SeriesID" },
+        { "identifier": "17", "type": "his.odm.sites.SiteID" },
+        { "identifier": "sitecode-full", "type": "his.odm.sites.SiteCode" },
+        { "identifier": "SiteName-full", "type": "his.odm.sites.SiteName" },
+        { "identifier": "Stream", "type": "his.odm.sites.SiteType" },
+        { "identifier": "21", "type": "his.odm.variables.VariableID" },
+        {
+          "identifier": "VariableCode-full",
+          "type": "his.odm.variables.VariableCode"
+        },
+        {
+          "identifier": "Phosphorus, organic",
+          "type": "his.odm.variables.VariableName"
+        },
+        { "identifier": "P", "type": "his.odm.variables.Speciation" },
+        {
+          "identifier": "Surface water",
+          "type": "his.odm.variables.SampleMedium"
+        },
+        {
+          "identifier": "Field Observation",
+          "type": "his.odm.variables.ValueType"
+        },
+        { "identifier": "1", "type": "his.odm.variables.TimeSupport" },
+        { "identifier": "104", "type": "his.odm.units.TimeUnitsID" },
+        { "identifier": "day", "type": "his.odm.units.TimeUnitsName" },
+        {
+          "identifier": "Regular Sampling",
+          "type": "his.odm.variables.DataType"
+        },
+        {
+          "identifier": "Water Quality",
+          "type": "his.odm.variables.GeneralCategory"
+        },
+        { "identifier": "17", "type": "his.odm.methods.MethodID" },
+        {
+          "identifier": "Full Method description",
+          "type": "his.odm.methods.MethodDescription"
+        },
+        { "identifier": "8", "type": "his.odm.sources.SourceID" },
+        { "identifier": "CUAHSI", "type": "his.odm.sources.Organization" },
+        {
+          "identifier": "Consortium of Universities for the Advancement of Hydrologic Science, Inc",
+          "type": "his.odm.sources.SourceDescription"
+        },
+        { "identifier": "CUAHSI-Citation", "type": "his.odm.sources.Citation" },
+        { "identifier": "CUAHSI-Citation", "type": "his.odm.sources.Citation" },
+        {
+          "identifier": "2",
+          "type": "his.odm.qualitycontrollevels.QualityControlLevelID"
+        },
+        {
+          "identifier": "2",
+          "type": "his.odm.qualitycontrollevels.QualityControlLevelCode"
+        },
+        {
+          "identifier": "2014-01-30T01:00:00.000",
+          "type": "his.odm.datavalues.BeginDateTime"
+        },
+        {
+          "identifier": "2014-02-03T01:00:00.000",
+          "type": "his.odm.datavalues.EndDateTime"
+        },
+        {
+          "identifier": "2014-01-30T09:00:00.000Z",
+          "type": "his.odm.datavalues.BeginDateTimeUTC"
+        },
+        {
+          "identifier": "2014-02-03T09:00:00.000Z",
+          "type": "his.odm.datavalues.EndDateTimeUTC"
+        },
+        { "identifier": "5", "type": "his.odm.datavalues.ValueCount" },
+        { "identifier": "/influx/select", "type": "path" },
+        {
+          "identifier": "https://www.cuahsi.org/",
+          "type": "his.odm.methods.MethodLink"
+        },
+        {
+          "identifier": "MethodCode-full",
+          "type": "his.odm.methods.MethodCode"
+        },
+        { "identifier": "true", "type": "his.odm.variables.IsRegular" },
+        { "identifier": "-9999", "type": "his.odm.variables.NoDataValue" }
+      ],
+      "is_geo_protected": false,
+      "is_hidden": false,
+      "version_id": "6333576546b9b7364d58a406",
+      "updated_at": "2022-09-27T20:04:53.026Z",
+      "updated_by": "625e693a3761130ea8c373f5",
+      "created_at": "2022-09-27T19:57:43.356Z",
+      "created_by": "624bc1e0bbee671607389b07",
+      "terms_info": {
+        "class_keys": [
+          "odm__DataType_RegularSampling__GeneralCategory_WaterQuality__SampleMedium_SurfaceWater__SiteType_Stream__ValueType_FieldObservation__VariableName_PhosphorusOrganic"
+        ],
+        "class_tags": [
+          "odm_DataType_RegularSampling",
+          "odm_GeneralCategory_WaterQuality",
+          "odm_SampleMedium_SurfaceWater",
+          "odm_SiteType_Stream",
+          "odm_ValueType_FieldObservation",
+          "odm_VariableName_PhosphorusOrganic"
+        ],
+        "unit_tag": "dt_Unit_MilligramPerLiter"
+      },
+      "extent": {
+        "begins_at": "2014-01-30T09:00:00.000Z",
+        "ends_before": "2014-02-03T09:00:00.000Z"
+      },
+      "access_levels_resolved": { "member_level": 3, "public_level": 3 },
+      "general_config_resolved": { "default_time_zone": "EST" },
+      "organization_lookup": { "name": "WOF Test", "slug": "woftest" },
+      "station_lookup": {
+        "name": "SiteName-full",
+        "slug": "woftest-sitecode-full",
+        "time_zone": "EST",
+        "utc_offset": -18000
+      }
+    },
+    {
+      "_id": "6333560346b9b7716358a404",
+      "is_enabled": true,
+      "name": "Test Full Surface water Phosphorus Organic milligrams per liter",
+      "organization_id": "63178ea946b9b7496258a28d",
+      "source_type": "sensor",
+      "state": "ready",
+      "station_id": "631a49c1dcff611a00040cb0",
+      "datapoints_config": [
+        {
+          "params": {
+            "query": {
+              "api": "default",
+              "db": "service_woftest",
+              "fc": "datavalues",
+              "sc": "\"time\", \"utc_offset\",\"DataValue\"",
+              "wc": "MethodID = '18' and QualityControlLevelID = '-9999' and SiteID = '18' and SourceID = '9' and VariableID = '22'",
+              "utc_offset": -18000,
+              "coalesce": false
+            }
+          },
+          "begins_at": "2014-01-30T09:00:00.000Z",
+          "ends_before": "2014-02-03T09:00:00.000Z",
+          "path": "/influx/select"
+        }
+      ],
+      "terms": {
+        "odm": {
+          "DataType": "Unknown",
+          "GeneralCategory": "Unknown",
+          "SampleMedium": "Unknown",
+          "ValueType": "Unknown",
+          "VariableName": "PhosphorusOrganic",
+          "SiteType": "Unknown"
+        },
+        "dt": { "Unit": "MilligramPerLiter" }
+      },
+      "external_refs": [
+        { "identifier": "38", "type": "his.odm.seriescatalog.SeriesID" },
+        { "identifier": "18", "type": "his.odm.sites.SiteID" },
+        { "identifier": "sitecode-min", "type": "his.odm.sites.SiteCode" },
+        { "identifier": "SiteName-min", "type": "his.odm.sites.SiteName" },
+        { "identifier": "Unknown", "type": "his.odm.sites.SiteType" },
+        { "identifier": "22", "type": "his.odm.variables.VariableID" },
+        {
+          "identifier": "VariableCode-min",
+          "type": "his.odm.variables.VariableCode"
+        },
+        {
+          "identifier": "Phosphorus, organic",
+          "type": "his.odm.variables.VariableName"
+        },
+        { "identifier": "Unknown", "type": "his.odm.variables.Speciation" },
+        { "identifier": "Unknown", "type": "his.odm.variables.SampleMedium" },
+        { "identifier": "Unknown", "type": "his.odm.variables.ValueType" },
+        { "identifier": "0", "type": "his.odm.variables.TimeSupport" },
+        { "identifier": "104", "type": "his.odm.units.TimeUnitsID" },
+        { "identifier": "day", "type": "his.odm.units.TimeUnitsName" },
+        { "identifier": "Unknown", "type": "his.odm.variables.DataType" },
+        {
+          "identifier": "Unknown",
+          "type": "his.odm.variables.GeneralCategory"
+        },
+        { "identifier": "18", "type": "his.odm.methods.MethodID" },
+        {
+          "identifier": "Unknown",
+          "type": "his.odm.methods.MethodDescription"
+        },
+        { "identifier": "9", "type": "his.odm.sources.SourceID" },
+        { "identifier": "CUAHSI", "type": "his.odm.sources.Organization" },
+        {
+          "identifier": "Unknown",
+          "type": "his.odm.sources.SourceDescription"
+        },
+        { "identifier": "Unknown", "type": "his.odm.sources.Citation" },
+        { "identifier": "Unknown", "type": "his.odm.sources.Citation" },
+        {
+          "identifier": "-9999",
+          "type": "his.odm.qualitycontrollevels.QualityControlLevelID"
+        },
+        {
+          "identifier": "-9999",
+          "type": "his.odm.qualitycontrollevels.QualityControlLevelCode"
+        },
+        {
+          "identifier": "2014-01-30T01:00:00.000",
+          "type": "his.odm.datavalues.BeginDateTime"
+        },
+        {
+          "identifier": "2014-02-03T01:00:00.000",
+          "type": "his.odm.datavalues.EndDateTime"
+        },
+        {
+          "identifier": "2014-01-30T09:00:00.000Z",
+          "type": "his.odm.datavalues.BeginDateTimeUTC"
+        },
+        {
+          "identifier": "2014-02-03T09:00:00.000Z",
+          "type": "his.odm.datavalues.EndDateTimeUTC"
+        },
+        { "identifier": "5", "type": "his.odm.datavalues.ValueCount" },
+        { "identifier": "/influx/select", "type": "path" },
+        {
+          "identifier": "MethodCode-min",
+          "type": "his.odm.methods.MethodCode"
+        },
+        { "identifier": "-9999", "type": "his.odm.variables.NoDataValue" }
+      ],
+      "is_geo_protected": false,
+      "is_hidden": false,
+      "version_id": "6333564dbcd7f87f11e03c53",
+      "updated_at": "2022-09-27T20:00:13.127Z",
+      "updated_by": "625e693a3761130ea8c373f5",
+      "created_at": "2022-09-27T19:58:59.560Z",
+      "created_by": "624bc1e0bbee671607389b07",
+      "terms_info": {
+        "class_keys": [
+          "odm__DataType_Unknown__GeneralCategory_Unknown__SampleMedium_Unknown__SiteType_Unknown__ValueType_Unknown__VariableName_PhosphorusOrganic"
+        ],
+        "class_tags": [
+          "odm_DataType_Unknown",
+          "odm_GeneralCategory_Unknown",
+          "odm_SampleMedium_Unknown",
+          "odm_SiteType_Unknown",
+          "odm_ValueType_Unknown",
+          "odm_VariableName_PhosphorusOrganic"
+        ],
+        "unit_tag": "dt_Unit_MilligramPerLiter"
+      },
+      "extent": {
+        "begins_at": "2014-01-30T09:00:00.000Z",
+        "ends_before": "2014-02-03T09:00:00.000Z"
+      },
+      "access_levels_resolved": { "member_level": 3, "public_level": 3 },
+      "general_config_resolved": { "default_time_zone": "EST" },
+      "organization_lookup": { "name": "WOF Test", "slug": "woftest" },
+      "station_lookup": {
+        "name": "SiteName-min",
+        "slug": "woftest-sitecode-min",
+        "time_zone": "EST",
+        "utc_offset": -18000
+      }
+    }
+  ]
+}

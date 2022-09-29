@@ -1,3 +1,4 @@
+import { encodeXML } from 'entities'
 import { Readable } from 'stream'
 import { CacheControls, ContentTypes, Headers, uuid } from '../../lib/utils.js'
 import {
@@ -19,13 +20,15 @@ import {
   soapEnvelopeEnd
 } from '../serializers/common.js'
 import {
+  variablesResultStart,
   variablesResponseStart,
   variablesStart,
   variableStart,
   variableInfoType,
   variableEnd,
   variablesEnd,
-  variablesResponseEnd
+  variablesResponseEnd,
+  variablesResultEnd
 } from '../serializers/variable.js'
 import {
   queryInfoStart,
@@ -34,7 +37,7 @@ import {
   queryInfoEnd
 } from '../serializers/query.js'
 
-export async function* getVariablesObject(
+export async function* getVariables(
   request,
   { date = new Date(), helpers, method, uniqueid }
 ) {
@@ -65,16 +68,19 @@ export async function* getVariablesObject(
     soapWsseSecurityEnd() +
     soapHeaderEnd() +
     soapBodyStart() +
-    responseStart('GetVariablesObjectResponse') +
-    variablesResponseStart() +
-    queryInfoStart() +
-    queryInfoType({
-      date,
-      method,
-      parameters: [['variable']]
-    }) +
-    queryInfoNote({ note: 'OD Web Service' }) +
-    queryInfoEnd()
+    responseStart('GetVariablesResponse') +
+    variablesResultStart() +
+    encodeXML(
+      variablesResponseStart() +
+        queryInfoStart() +
+        queryInfoType({
+          date,
+          method,
+          parameters: [['variable']]
+        }) +
+        queryInfoNote({ note: 'OD Web Service' }) +
+        queryInfoEnd()
+    )
 
   // Fetch datastreams
   const datastreamsParams = Object.assign(
@@ -94,7 +100,7 @@ export async function* getVariablesObject(
   let datastreams = await helpers.findMany('datastreams', datastreamsParams)
 
   if (datastreams && datastreams.length) {
-    yield variablesStart()
+    yield encodeXML(variablesStart())
   }
 
   const variableCodes = new Set()
@@ -109,13 +115,16 @@ export async function* getVariablesObject(
           : undefined
       const variableCode =
         refsMap && refsMap.get('his.odm.variables.VariableCode')
+
       // Normalize datastreams to unique variables
       if (variableCode && !variableCodes.has(variableCode)) {
         variableCodes.add(variableCode)
 
-        yield variableStart() +
-          variableInfoType({ datastream, refsMap, unitCV }) +
-          variableEnd()
+        yield encodeXML(
+          variableStart() +
+            variableInfoType({ datastream, refsMap, unitCV }) +
+            variableEnd()
+        )
       }
 
       // Stay async friendly; scan 200 at a time (hardcoded)
@@ -137,11 +146,12 @@ export async function* getVariablesObject(
 
   // datastream.length condition is not possible; if datastream, variableCodes has size
   if (variableCodes.size) {
-    yield variablesEnd()
+    yield encodeXML(variablesEnd())
   }
 
-  yield variablesResponseEnd() +
-    '</GetVariablesObjectResponse>' +
+  yield encodeXML(variablesResponseEnd()) +
+    variablesResultEnd() +
+    '</GetVariablesResponse>' +
     soapBodyEnd() +
     soapEnvelopeEnd()
 }
@@ -151,7 +161,7 @@ export default async (request, reply, ctx) => {
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)
     .send(
-      Readable.from(getVariablesObject(request, ctx), {
+      Readable.from(getVariables(request, ctx), {
         autoDestroy: true
       })
     )

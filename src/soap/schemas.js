@@ -99,6 +99,14 @@ export const getVariablesType = {
   type: 'object'
 }
 
+export const GetVariables = {
+  properties: {
+    GetVariables: getVariablesType
+  },
+  required: ['GetVariables'],
+  type: 'object'
+}
+
 export const GetVariablesObject = {
   properties: {
     GetVariablesObject: getVariablesType
@@ -124,6 +132,7 @@ export const SoapRequestSchema = {
               GetSiteInfoObject,
               GetSites,
               GetSitesObject,
+              GetVariables,
               GetVariablesObject
             ]
           }

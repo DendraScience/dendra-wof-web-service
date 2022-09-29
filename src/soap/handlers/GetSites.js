@@ -4,6 +4,7 @@ import { CacheControls, ContentTypes, Headers, uuid } from '../../lib/utils.js'
 import {
   queryInfoStart,
   queryInfoEnd,
+  queryInfoNote,
   queryInfoType
 } from '../serializers/query.js'
 import {
@@ -114,9 +115,13 @@ export async function* getSites(
           date,
           method,
           parameters: [
-            ['authToken', parameters.authToken],
+            // ['authToken', parameters.authToken],
             ...sites.map(str => ['site', str])
           ]
+        }) +
+        queryInfoNote({
+          note: 'ALL Sites(empty request)',
+          vis: !sites.length
         }) +
         queryInfoEnd()
     )

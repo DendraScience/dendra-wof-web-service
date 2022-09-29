@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Probably should be moved to a utils?
-const SERVICE_1_1 = 'cuahsi_1_1.asmx'
+const SERVICE_1_1 = 'cuahsi_1_1'
 
 describe('GetSites handlers', function () {
   afterEach(() => {

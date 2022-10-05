@@ -1,11 +1,33 @@
+import { encodeXML } from 'entities'
 import { methodType, sourceType, timePeriodType } from './common.js'
 
-export function seriesMethod({ thingType }) {
-  return '<method>' + methodType(thingType) + '</method>'
+// TODO: change code to get data from 'thing-types'
+export function seriesMethod({ refsMap }) {
+  if (!(refsMap && typeof refsMap === 'object')) return ''
+
+  const id = refsMap.get('his.odm.methods.MethodID')
+  const description = refsMap.get('his.odm.methods.MethodDescription')
+
+  return (
+    `<method ${id ? `methodID="${encodeXML(id)}"` : ''}>` +
+    methodType({ description }) +
+    '</method>'
+  )
 }
 
-export function seriesSource({ organization }) {
-  return '<source>' + sourceType(organization) + '</source>'
+export function seriesSource({ refsMap }) {
+  if (!(refsMap && typeof refsMap === 'object')) return ''
+
+  const sourceID = refsMap.get('his.odm.sources.SourceID')
+  const name = refsMap.get('his.odm.sources.Organization')
+  const description = refsMap.get('his.odm.sources.SourceDescription')
+  const citation = refsMap.get('his.odm.sources.Citation')
+
+  return (
+    `<source ${sourceID ? `sourceID="${sourceID}` : ''}">` +
+    sourceType({ citation, description, name }) +
+    `</source>`
+  )
 }
 
 export function seriesStart() {
@@ -17,37 +39,83 @@ export function seriesEnd() {
 }
 
 export function seriesCatalogStart() {
-  return '<seriesCatalog>'
+  return '<seriesCatalog menuGroupName="" serviceWsdl="https://hydroportal.cuahsi.org/woftest/cuahsi_1_1.asmx?WSDL">'
 }
 
 export function seriesCatalogEnd() {
   return '</seriesCatalog>'
 }
 
-export function variableTimeInterval({ firstDatapoint, lastDatapoint }) {
-  return firstDatapoint && lastDatapoint
-    ? '<variableTimeInterval>' +
+export function variableTimeInterval({
+  firstDatapoint,
+  lastDatapoint,
+  refsMap
+}) {
+  if (
+    !(refsMap && typeof refsMap === 'object') &&
+    !firstDatapoint &&
+    !lastDatapoint
+  )
+    return ''
+
+  const beginDateTime =
+    (firstDatapoint && firstDatapoint.lt) ||
+    refsMap.get('his.odm.datavalues.BeginDateTime')
+  const endDateTime =
+    (lastDatapoint && lastDatapoint.lt) ||
+    refsMap.get('his.odm.datavalues.EndDateTime')
+  const beginDateTimeUTC =
+    (lastDatapoint && lastDatapoint.lt) ||
+    refsMap.get('his.odm.datavalues.BeginDateTimeUTC')
+  const endDateTimeUTC =
+    (firstDatapoint && firstDatapoint.t) ||
+    refsMap.get('his.odm.datavalues.EndDateTimeUTC')
+
+  return beginDateTime || endDateTime || beginDateTimeUTC || endDateTimeUTC
+    ? '<variableTimeInterval xsi:type="TimeIntervalType">' +
         timePeriodType({
-          beginDateTime: firstDatapoint.lt,
-          endDateTime: lastDatapoint.lt,
-          beginDateTimeUTC: firstDatapoint.t,
-          endDateTimeUTC: lastDatapoint.t
+          beginDateTime,
+          endDateTime,
+          beginDateTimeUTC,
+          endDateTimeUTC
         }) +
         '</variableTimeInterval>'
     : ''
 }
 
-export function valueCount({ datastream, firstDatapoint, lastDatapoint }) {
-  return datastream &&
-    datastream.general_config_resolved &&
-    datastream.general_config_resolved.sample_interval &&
-    firstDatapoint &&
-    lastDatapoint
-    ? '<valueCount countIsEstimated="true">' +
-        Math.floor(
-          (new Date(lastDatapoint.t) - new Date(firstDatapoint.t)) /
-            datastream.general_config_resolved.sample_interval
-        ) +
-        '</valueCount>'
-    : ''
+// TODO: change to orginal code
+export function valueCount({ refsMap }) {
+  if (!(refsMap && typeof refsMap === 'object')) return ''
+
+  const valueCount = refsMap.get('his.odm.datavalues.ValueCount')
+
+  return `${
+    valueCount ? `<valueCount>${encodeXML(valueCount)}</valueCount>` : ''
+  }`
+}
+
+export function qualityControlLevelInfo({ refsMap }) {
+  if (!(refsMap && typeof refsMap === 'object')) return ''
+
+  const qualityControlLevelID = refsMap.get(
+    'his.odm.qualitycontrollevels.QualityControlLevelID'
+  )
+  const qualityControlLevelCode = refsMap.get(
+    'his.odm.qualitycontrollevels.QualityControlLevelCode'
+  )
+  const definition = refsMap.get('his.odm.qualitycontrollevels.Definition')
+
+  return `<qualityControlLevel ${
+    qualityControlLevelID
+      ? `qualityControlLevelID="${encodeXML(qualityControlLevelID)}"`
+      : ''
+  }>${
+    qualityControlLevelCode
+      ? `<qualityControlLevelCode>${encodeXML(
+          qualityControlLevelCode
+        )}</qualityControlLevelCode>`
+      : ''
+  }${
+    definition ? `<definition>${encodeXML(definition)}</definition>` : ''
+  }</qualityControlLevel>`
 }

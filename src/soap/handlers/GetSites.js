@@ -109,19 +109,16 @@ export async function* getSites(
     responseStart('GetSitesResponse') +
     '<GetSitesResult>' +
     encodeXML(
-      sitesResponseStart() +
+      sitesResponseStart({ isObject: false }) +
         queryInfoStart() +
         queryInfoType({
           date,
           method,
-          parameters: [
-            // ['authToken', parameters.authToken],
-            ...sites.map(str => ['site', str])
-          ]
+          parameters: [...sites.map(str => ['site', str])]
         }) +
         queryInfoNote({
           note: 'ALL Sites(empty request)',
-          vis: !sites.length
+          visible: !sites.length
         }) +
         queryInfoEnd()
     )

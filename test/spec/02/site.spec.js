@@ -120,9 +120,21 @@ describe('Serializers', function () {
       )
     })
 
-    it('should serialize sitesResponseStart', function () {
-      expect(sitesResponseStart()).to.equal(
+    it('should serialize sitesResponseStart flavor 1', function () {
+      expect(sitesResponseStart({ isObject: true })).to.equal(
         '<sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
+      )
+    })
+
+    it('should serialize sitesResponseStart flavor 2', function () {
+      expect(sitesResponseStart({ isObject: false })).to.equal(
+        '<sitesResponse' +
+          ' xmlns:gml="http://www.opengis.net/gml"' +
+          ' xmlns:xlink="http://www.w3.org/1999/xlink"' +
+          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+          ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
+          ' xmlns="http://www.cuahsi.org/waterML/1.1/">'
       )
     })
 

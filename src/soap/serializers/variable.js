@@ -10,13 +10,6 @@ export function variableEnd() {
 }
 
 export function variableInfoType({ datastream, refsMap, unitCV }) {
-  const toNameCase = str => {
-    return str.replace(
-      /\w\S*/g,
-      txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-    )
-  }
-
   const variableEl = (el, key) => {
     const result = refsMap && refsMap.get(`his.odm.variables.${key}`)
     return result ? `<${el}>${encodeXML(result)}</${el}>` : ''
@@ -26,11 +19,10 @@ export function variableInfoType({ datastream, refsMap, unitCV }) {
   const variableID = refsMap && refsMap.get(`his.odm.variables.VariableID`)
   const variableNoDataValue =
     refsMap && refsMap.get(`his.odm.variables.NoDataValue`)
-  const timeUnitsName = refsMap && refsMap.get(`his.odm.units.TimeUnitsName`)
   const timeSupport = refsMap && refsMap.get(`his.odm.variables.TimeSupport`)
   const speciation = refsMap && refsMap.get(`his.odm.variables.Speciation`)
   const isRegular = refsMap && refsMap.get(`his.odm.variables.IsRegular`)
-
+  const timeUnitTag = refsMap.get('time_unit_tag')
   return (
     `${
       variableCode
@@ -57,13 +49,8 @@ export function variableInfoType({ datastream, refsMap, unitCV }) {
       ? `<noDataValue>${encodeXML(variableNoDataValue)}</noDataValue>`
       : '') +
     `<timeScale ${isRegular ? 'isRegular="true"' : ''}>` +
-    (timeUnitsName &&
-    unitCV[`dt_Unit_${toNameCase(timeUnitsName).replace(/\s/g, '')}`]
-      ? '<unit>' +
-        unitsType(
-          unitCV[`dt_Unit_${toNameCase(timeUnitsName).replace(/\s/g, '')}`]
-        ) +
-        '</unit>'
+    (timeUnitTag && unitCV[`dt_Unit_${timeUnitTag}`]
+      ? '<unit>' + unitsType(unitCV[`dt_Unit_${timeUnitTag}`]) + '</unit>'
       : '') +
     (timeSupport
       ? `<timeSupport>${encodeXML(timeSupport)}</timeSupport>`
@@ -81,12 +68,18 @@ export function variablesResultEnd() {
   return '</GetVariablesResult>'
 }
 
-export function variablesResponseStart() {
+// variablesObject have not 3 attributes
+export function variablesResponseStart({ isObject = false }) {
   return (
     '<variablesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"' +
-    ' xmlns:gml="http://www.opengis.net/gml"' +
-    ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
-    ' xmlns:xlink="http://www.w3.org/1999/xlink">'
+    `${
+      !isObject
+        ? ' xmlns:gml="http://www.opengis.net/gml"' +
+          ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
+          ' xmlns:xlink="http://www.w3.org/1999/xlink"'
+        : ''
+    }` +
+    '>'
   )
 }
 

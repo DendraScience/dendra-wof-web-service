@@ -40,10 +40,20 @@ describe('Serializers', function () {
       )
     })
 
-    it('should serialize queryInfoNote', function () {
+    it('should serialize queryInfoNote flavor 1', function () {
       expect(queryInfoNote({ note: 'OD Web Service' })).to.equal(
         '<note>OD Web Service</note>'
       )
+    })
+
+    it('should serialize queryInfoNote flavor 2', function () {
+      expect(queryInfoNote({ note: '' })).to.equal('')
+    })
+
+    it('should serialize queryInfoNote flavor 3', function () {
+      expect(
+        queryInfoNote({ note: 'ALL Sites(empty request)', visible: false })
+      ).to.equal('')
     })
   })
 })

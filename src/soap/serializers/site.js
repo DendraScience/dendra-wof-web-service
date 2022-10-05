@@ -79,10 +79,31 @@ export function siteInfoType({ externalRefs, station }) {
   )
 }
 
-export function sitesResponseStart() {
-  return '<sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
+// GetSitesObject have not 3 attributes
+export function sitesResponseStart({ isObject = false }) {
+  return (
+    '<sitesResponse' +
+    `${
+      !isObject
+        ? ' xmlns:gml="http://www.opengis.net/gml"' +
+          ' xmlns:xlink="http://www.w3.org/1999/xlink"' +
+          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+          ' xmlns:wtr="http://www.cuahsi.org/waterML/"'
+        : ''
+    }` +
+    ' xmlns="http://www.cuahsi.org/waterML/1.1/">'
+  )
 }
 
 export function sitesResponseEnd() {
   return '</sitesResponse>'
+}
+
+export function getSiteInfoResultStart() {
+  return '<GetSiteInfoResult>'
+}
+
+export function getSiteInfoResultEnd() {
+  return '</GetSiteInfoResult>'
 }

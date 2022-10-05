@@ -100,7 +100,7 @@ export default async logger => {
       return request
     })
 
-    const helpers = createHelpers({ cache, webAPI })
+    const helpers = createHelpers({ cache, logger, webAPI })
 
     /*
       Set up web service and routes.

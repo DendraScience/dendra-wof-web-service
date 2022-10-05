@@ -2,25 +2,28 @@
  * Helpers for caching and mapping vocabulary.
  */
 
-export function createHelpers({ cache, webAPI }) {
+export function createHelpers({ cache, logger, webAPI }) {
   return {
     async findDatapoint(query, last) {
-      const resp = await webAPI.get('/datapoints', {
-        params: Object.assign({}, query, {
-          $limit: 1,
-          $sort: {
-            time: last ? -1 : 1
-          }
-        })
-      })
       try {
+        const resp = await webAPI.get('/datapoints', {
+          params: Object.assign({}, query, {
+            $limit: 1,
+            $sort: {
+              time: last ? -1 : 1
+            }
+          })
+        })
         return (
           resp.data &&
           resp.data.data &&
           resp.data.data.length &&
           resp.data.data[0]
         )
-      } catch (err) {}
+      } catch (err) {
+        logger.error(err)
+        return false
+      }
     },
 
     async findMany(entity, params) {
@@ -43,7 +46,7 @@ export function createHelpers({ cache, webAPI }) {
     async findOne(entity, id, params) {
       const url = `/${entity}/${id}`
       const resp = await webAPI.get(url, { params })
-      return resp.data
+      return (resp.data && resp.data.data) || []
     },
 
     async findOneCached(entity, id, params, scope = '') {

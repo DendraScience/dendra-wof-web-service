@@ -54,7 +54,7 @@ export async function* getVariablesObject(
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
-    soapWsaAction('GetVariablesResponse') +
+    soapWsaAction('GetVariablesObjectResponse') +
     soapWsaMessageID(uniqueid || uuid()) +
     soapWsaRelatesTo(uniqueid || uuid()) +
     soapWsaTo() +
@@ -66,7 +66,7 @@ export async function* getVariablesObject(
     soapHeaderEnd() +
     soapBodyStart() +
     responseStart('GetVariablesObjectResponse') +
-    variablesResponseStart() +
+    variablesResponseStart({ isObject: true }) +
     queryInfoStart() +
     queryInfoType({
       date,
@@ -109,6 +109,7 @@ export async function* getVariablesObject(
           : undefined
       const variableCode =
         refsMap && refsMap.get('his.odm.variables.VariableCode')
+
       // Normalize datastreams to unique variables
       if (variableCode && !variableCodes.has(variableCode)) {
         variableCodes.add(variableCode)

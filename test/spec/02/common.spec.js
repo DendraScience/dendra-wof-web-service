@@ -28,15 +28,9 @@ import {
 
 describe('Serializers', function () {
   describe('common', function () {
-    it('should serialize methodType flavor 1', function () {
-      expect(methodType({ _id: '1234', name: 'my method' })).to.equal(
-        '<methodCode>1234</methodCode><methodDescription>my method</methodDescription>'
-      )
-    })
-
-    it('should serialize methodType flavor 2', function () {
-      expect(methodType({ _id: '1234' })).to.equal(
-        '<methodCode>1234</methodCode>'
+    it('should serialize methodType', function () {
+      expect(methodType({ description: 'Full Method description' })).to.equal(
+        '<methodDescription>Full Method description</methodDescription>'
       )
     })
 
@@ -169,10 +163,10 @@ describe('Serializers', function () {
     it('should serialize unitsType', function () {
       expect(
         unitsType({
-          unitName: 'percent',
-          unitType: 'Dimensionless',
-          unitAbbreviation: '%',
-          unitCode: '1'
+          UnitsName: 'percent',
+          UnitsType: 'Dimensionless',
+          UnitsAbbreviation: '%',
+          UnitsID: '1'
         })
       ).to.equal(
         '<unitName>percent</unitName>' +

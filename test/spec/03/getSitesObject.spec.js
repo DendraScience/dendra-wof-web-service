@@ -138,7 +138,9 @@ describe('GetSitesObject handlers', function () {
 
     // For getSitesObject, we need to fake out findOneCached(), findMany() and org()
     const organizationFake = sinon.fake.returns({})
-    const stationsFake = sinon.fake.returns(stationData)
+    const stationsFake = sinon.stub()
+    stationsFake.onFirstCall().returns(stationData)
+    stationsFake.onSecondCall().returns([])
     const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stationsFake)
@@ -192,7 +194,9 @@ describe('GetSitesObject handlers', function () {
 
     // For getSitesObject, we need to fake out findOneCached(),findMany() and org()
     const organizationFake = sinon.fake.returns({})
-    const stationsFake = sinon.fake.returns(stationData)
+    const stationsFake = sinon.stub()
+    stationsFake.onFirstCall().returns(stationData)
+    stationsFake.onSecondCall().returns([])
     const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stationsFake)

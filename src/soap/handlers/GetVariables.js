@@ -71,7 +71,7 @@ export async function* getVariables(
     responseStart('GetVariablesResponse') +
     variablesResultStart() +
     encodeXML(
-      variablesResponseStart() +
+      variablesResponseStart({ isObject: false }) +
         queryInfoStart() +
         queryInfoType({
           date,

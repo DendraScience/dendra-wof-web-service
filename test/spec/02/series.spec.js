@@ -1,7 +1,6 @@
 /**
  * Serializers series tests
  */
-
 import {
   seriesMethod,
   seriesSource,
@@ -10,32 +9,36 @@ import {
   seriesCatalogStart,
   seriesCatalogEnd,
   variableTimeInterval,
-  valueCount
+  valueCount,
+  qualityControlLevelInfo
 } from '../../../src/soap/serializers/series.js'
 
 describe('Serializers', function () {
   describe('series', function () {
     it('should serialize seriesMethod', function () {
-      expect(
-        seriesMethod({
-          thingType: { _id: 'i98573457347593479537495388', name: 'GetSiteInfo' }
-        })
-      ).to.equal(
-        '<method><methodCode>i98573457347593479537495388</methodCode><methodDescription>GetSiteInfo</methodDescription></method>'
+      const refsMap = new Map([
+        ['his.odm.methods.MethodID', '17'],
+        ['his.odm.methods.MethodDescription', 'Full Method description']
+      ])
+
+      expect(seriesMethod({ refsMap })).to.equal(
+        '<method methodID="17"><methodDescription>Full Method description</methodDescription></method>'
       )
     })
 
     it('should serialize seriesSource', function () {
-      expect(
-        seriesSource({
-          organization: {
-            name: 'water',
-            description:
-              'a substance composed of the chemical elements hydrogen and oxygen and existing in gaseous, liquid, and solid states'
-          }
-        })
-      ).to.equal(
-        '<source><organization>water</organization><sourceDescription>a substance composed of the chemical elements hydrogen and oxygen and existing in gaseous, liquid, and solid states</sourceDescription></source>'
+      const refsMap = new Map([
+        ['his.odm.sources.SourceID', '18'],
+        ['his.odm.sources.Organization', 'CUAHSI'],
+        [
+          'his.odm.sources.SourceDescription',
+          'Consortium of Universities for the Advancement of Hydrologic Science, Inc'
+        ],
+        ['his.odm.sources.Citation', 'CUAHSI-Citation']
+      ])
+
+      expect(seriesSource({ refsMap })).to.equal(
+        '<source sourceID="18"><organization>CUAHSI</organization><sourceDescription>Consortium of Universities for the Advancement of Hydrologic Science, Inc</sourceDescription><citation>CUAHSI-Citation</citation></source>'
       )
     })
 
@@ -48,7 +51,9 @@ describe('Serializers', function () {
     })
 
     it('should serialize seriesCatalogStart', function () {
-      expect(seriesCatalogStart()).to.equal('<seriesCatalog>')
+      expect(seriesCatalogStart()).to.equal(
+        '<seriesCatalog menuGroupName="" serviceWsdl="https://hydroportal.cuahsi.org/woftest/cuahsi_1_1.asmx?WSDL">'
+      )
     })
 
     it('should serialize seriesCatalogEnd', function () {
@@ -56,26 +61,52 @@ describe('Serializers', function () {
     })
 
     it('should serialize variableTimeInterval', function () {
-      const firstDatapoint = {
-        lt: new Date(1661964219333).toISOString(),
-        t: new Date(1663089496079).toISOString()
-      }
-      const lastDatapoint = {
-        lt: new Date(1661964219333).toISOString(),
-        t: new Date(1663089496079).toISOString()
-      }
-      expect(variableTimeInterval({ firstDatapoint, lastDatapoint })).to.equal(
-        '<variableTimeInterval><beginDateTime>2022-08-31T16:43:39</beginDateTime><endDateTime>2022-08-31T16:43:39</endDateTime><beginDateTimeUTC>2022-09-13T17:18:16</beginDateTimeUTC><endDateTimeUTC>2022-09-13T17:18:16</endDateTimeUTC></variableTimeInterval>'
+      const refsMap = new Map([
+        [
+          'his.odm.datavalues.BeginDateTime',
+          new Date(1661964219333).toISOString()
+        ],
+        [
+          'his.odm.datavalues.EndDateTime',
+          new Date(1663089496079).toISOString()
+        ],
+        [
+          'his.odm.datavalues.BeginDateTimeUTC',
+          new Date(1661964219333).toISOString()
+        ],
+        [
+          'his.odm.datavalues.EndDateTimeUTC',
+          new Date(1663089496079).toISOString()
+        ]
+      ])
+
+      expect(variableTimeInterval({ refsMap })).to.equal(
+        '<variableTimeInterval xsi:type="TimeIntervalType"><beginDateTime>2022-08-31T16:43:39</beginDateTime><endDateTime>2022-09-13T17:18:16</endDateTime><beginDateTimeUTC>2022-08-31T16:43:39</beginDateTimeUTC><endDateTimeUTC>2022-09-13T17:18:16</endDateTimeUTC></variableTimeInterval>'
       )
     })
 
     it('should serialize valueCount', function () {
-      const datastream = { general_config_resolved: { sample_interval: 10 } }
-      const firstDatapoint = { t: new Date(1661964219333).toISOString() }
-      const lastDatapoint = { t: new Date(1663089496079).toISOString() }
-      expect(
-        valueCount({ datastream, firstDatapoint, lastDatapoint })
-      ).to.equal('<valueCount countIsEstimated="true">112527674</valueCount>')
+      const refsMap = new Map([['his.odm.datavalues.ValueCount', '5']])
+
+      expect(valueCount({ refsMap })).to.equal('<valueCount>5</valueCount>')
+    })
+
+    it('should serialize qualityControlLevelInfo', function () {
+      const refsMap = new Map([
+        ['his.odm.qualitycontrollevels.QualityControlLevelID', '2'],
+        ['his.odm.qualitycontrollevels.QualityControlLevelCode', '3'],
+        [
+          'his.odm.qualitycontrollevels.Definition',
+          'Quality Assurance Project Plan (QAPP)'
+        ]
+      ])
+
+      expect(qualityControlLevelInfo({ refsMap })).to.equal(
+        '<qualityControlLevel qualityControlLevelID="2">' +
+          '<qualityControlLevelCode>3</qualityControlLevelCode>' +
+          '<definition>Quality Assurance Project Plan (QAPP)</definition>' +
+          '</qualityControlLevel>'
+      )
     })
   })
 })

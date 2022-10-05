@@ -31,12 +31,18 @@ describe('Serializers', function () {
       expect(variablesResultEnd()).to.equal('</GetVariablesResult>')
     })
 
-    it('should serialize variablesResponseStart', function () {
-      expect(variablesResponseStart()).to.equal(
+    it('should serialize variablesResponseStart flavor 1', function () {
+      expect(variablesResponseStart({ isObject: false })).to.equal(
         '<variablesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"' +
           ' xmlns:gml="http://www.opengis.net/gml"' +
           ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
           ' xmlns:xlink="http://www.w3.org/1999/xlink">'
+      )
+    })
+
+    it('should serialize variablesResponseStart flavor 2', function () {
+      expect(variablesResponseStart({ isObject: true })).to.equal(
+        '<variablesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
       )
     })
 

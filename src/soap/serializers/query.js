@@ -13,8 +13,14 @@ export function queryInfoType({ date = new Date(), method, parameters }) {
     case 'GetSitesObject':
       method = 'GetSites'
       break
+    case 'GetVariables':
+      method = 'GetVariableInfo'
+      break
     case 'GetVariablesObject':
       method = 'GetVariableInfo'
+      break
+    case 'GetSiteInfoObject':
+      method = 'GetSiteInfo'
       break
   }
 
@@ -33,6 +39,8 @@ export function queryInfoType({ date = new Date(), method, parameters }) {
   )
 }
 
-export function queryInfoNote({ note, vis = true }) {
-  return vis ? `<note>${note}</note>` : ''
+export function queryInfoNote({ note, visible = true }) {
+  if (!(note && typeof note === 'string')) return ''
+
+  return visible ? `<note>${note}</note>` : ''
 }

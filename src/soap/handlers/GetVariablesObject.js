@@ -136,8 +136,7 @@ export async function* getVariablesObject(
     )
   }
 
-  // datastream.length condition is not possible; if datastream, variableCodes has size
-  if (variableCodes.size) {
+  if (variableCodes.size || (datastreams && datastreams.length)) {
     yield variablesEnd()
   }
 

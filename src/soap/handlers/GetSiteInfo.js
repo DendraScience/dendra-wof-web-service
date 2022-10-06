@@ -57,7 +57,7 @@ export async function* getSiteInfo(
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
-  const parts = site.split(':')
+  const parts = site && site.split(':')
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -71,9 +71,8 @@ export async function* getSiteInfo(
     : undefined
 
   // Fetch stations
-  const stations = await helpers.findOne(
+  const stations = await helpers.findMany(
     'stations',
-    '',
     Object.assign(
       {
         is_enabled: true,

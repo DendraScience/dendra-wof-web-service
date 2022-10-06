@@ -22,7 +22,6 @@ export function createHelpers({ cache, logger, webAPI }) {
         )
       } catch (err) {
         logger.error(err)
-        return false
       }
     },
 
@@ -46,7 +45,7 @@ export function createHelpers({ cache, logger, webAPI }) {
     async findOne(entity, id, params) {
       const url = `/${entity}/${id}`
       const resp = await webAPI.get(url, { params })
-      return (resp.data && resp.data.data) || []
+      return (resp.data && resp.data.data) || {}
     },
 
     async findOneCached(entity, id, params, scope = '') {

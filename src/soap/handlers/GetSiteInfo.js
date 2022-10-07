@@ -57,7 +57,7 @@ export async function* getSiteInfo(
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
-  const parts = site && site.split(':')
+  const parts = (site && site.split(':')) || []
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -76,7 +76,8 @@ export async function* getSiteInfo(
     Object.assign(
       {
         is_enabled: true,
-        is_hidden: false
+        is_hidden: false,
+        $limit: 1
       },
       organization &&
         organization.data &&
@@ -93,6 +94,8 @@ export async function* getSiteInfo(
         : undefined
     )
   )
+
+  if (!stations.length) throw new Error('Station not found')
 
   // Fetch datastreams for station
   const datastreamsParams = Object.assign(
@@ -141,13 +144,14 @@ export async function* getSiteInfo(
         siteStart()
     )
 
+  // Will only be one station since $limit=1
   for (const station of stations) {
-    const externalRefs = station.external_refs
-      ? helpers.externalRefs(station.external_refs)
+    const refsMap = station.external_refs
+      ? helpers.externalRefsMap(station.external_refs)
       : undefined
 
     yield encodeXML(
-      siteInfoStart() + siteInfoType({ externalRefs, station }) + siteInfoEnd()
+      siteInfoStart() + siteInfoType({ refsMap, station }) + siteInfoEnd()
     )
   }
 

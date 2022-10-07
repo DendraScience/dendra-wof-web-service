@@ -61,37 +61,35 @@ export async function* getSites(
       })
     : undefined
 
-  // Fetch stations
-  const stations = await helpers.findMany(
-    'stations',
-    Object.assign(
-      {
-        is_enabled: true,
-        is_hidden: false,
-        // TODO: Paginate to allow for more than 2000
-        $limit: 2000,
-        $sort: { _id: 1 }
-      },
-      organization &&
-        organization.data &&
-        organization.data.length &&
-        organization.data[0]._id
-        ? { organization_id: organization.data[0]._id }
-        : undefined,
-      sites.length
-        ? {
-            slug: {
-              $in: sites.map(str => {
-                const parts = str.split(':')
-                return helpers.safeName(
-                  (org || parts[0] || '-') + '-' + (parts[1] || '-')
-                )
-              })
-            }
+  const stationParams = Object.assign(
+    {
+      is_enabled: true,
+      is_hidden: false,
+      $limit: 2000,
+      $sort: { _id: 1 }
+    },
+    organization &&
+      organization.data &&
+      organization.data.length &&
+      organization.data[0]._id
+      ? { organization_id: organization.data[0]._id }
+      : undefined,
+    sites.length
+      ? {
+          slug: {
+            $in: sites.map(str => {
+              const parts = str.split(':')
+              return helpers.safeName(
+                (org || parts[0] || '-') + '-' + (parts[1] || '-')
+              )
+            })
           }
-        : undefined
-    )
+        }
+      : undefined
   )
+
+  // Fetch stations
+  let stations = await helpers.findMany('stations', stationParams)
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
@@ -123,14 +121,34 @@ export async function* getSites(
         queryInfoEnd()
     )
 
-  for (const station of stations) {
-    const externalRefs = helpers.externalRefs(station.external_refs)
-    yield encodeXML(
-      siteStart() +
-        siteInfoStart() +
-        siteInfoType({ externalRefs, station }) +
-        siteInfoEnd() +
-        siteEnd()
+  while (stations.length) {
+    let i = 0
+
+    for (const station of stations) {
+      const refsMap = helpers.externalRefsMap(station.external_refs)
+
+      yield encodeXML(
+        siteStart() +
+          siteInfoStart() +
+          siteInfoType({ refsMap, station }) +
+          siteInfoEnd() +
+          siteEnd()
+      )
+
+      // Stay async friendly; scan 200 at a time (hardcoded)
+      i++
+      if (!(i % 200)) await new Promise(resolve => setImmediate(resolve))
+    }
+
+    // Fetch next page
+    stations = await helpers.findMany(
+      'stations',
+      Object.assign(
+        {
+          _id: { $gt: stations[stations.length - 1]._id }
+        },
+        stationParams
+      )
     )
   }
 

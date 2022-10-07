@@ -45,7 +45,7 @@ export function createHelpers({ cache, logger, webAPI }) {
     async findOne(entity, id, params) {
       const url = `/${entity}/${id}`
       const resp = await webAPI.get(url, { params })
-      return (resp.data && resp.data.data) || {}
+      return resp.data && resp.data.data
     },
 
     async findOneCached(entity, id, params, scope = '') {
@@ -114,34 +114,6 @@ export function createHelpers({ cache, logger, webAPI }) {
         cache.set('variableCV', data)
       }
       return data
-    },
-
-    externalRefs(extRefs) {
-      const obj = {}
-      extRefs.forEach(ref => {
-        if (ref.type === 'his.odm.sites.SiteID') {
-          obj.siteId = ref.identifier
-        } else if (ref.type === 'his.odm.sites.SiteCode') {
-          obj.siteCode = ref.identifier
-        } else if (ref.type === 'his.odm.sites.VerticalDatum') {
-          obj.verticalDatum = ref.identifier
-        } else if (ref.type === 'his.odm.sites.LocalX') {
-          obj.localX = ref.identifier
-        } else if (ref.type === 'his.odm.sites.LocalY') {
-          obj.localY = ref.identifier
-        } else if (ref.type === 'his.odm.sites.PosAccuracy_m') {
-          obj.posAccuracy_m = ref.identifier
-        } else if (ref.type === 'his.odm.sites.State') {
-          obj.state = ref.identifier
-        } else if (ref.type === 'his.odm.sites.County') {
-          obj.county = ref.identifier
-        } else if (ref.type === 'his.odm.sites.Comments') {
-          obj.comments = ref.identifier
-        } else if (ref.type === 'his.odm.sites.Elevation_m') {
-          obj.elevation_m = ref.identifier
-        }
-      })
-      return obj
     },
 
     externalRefsMap(extRefs) {

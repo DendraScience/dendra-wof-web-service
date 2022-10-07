@@ -121,11 +121,11 @@ export async function* getSitesObject(
     let i = 0
 
     for (const station of stations) {
-      const externalRefs = helpers.externalRefs(station.external_refs)
+      const refsMap = helpers.externalRefsMap(station.external_refs)
 
       yield siteStart() +
         siteInfoStart() +
-        siteInfoType({ externalRefs, station }) +
+        siteInfoType({ refsMap, station }) +
         siteInfoEnd() +
         siteEnd()
 

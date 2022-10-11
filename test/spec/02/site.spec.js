@@ -30,6 +30,18 @@ describe('Serializers', function () {
     })
 
     it('should serialize siteInfoType with station and externalRefs flavor 1', function () {
+      const refsMap = new Map([
+        ['his.odm.sites.SiteID', '17'],
+        ['his.odm.sites.SiteCode', 'sitecode-full'],
+        ['his.odm.sites.VerticalDatum', 'NGVD29'],
+        ['his.odm.sites.LocalX', '334366.79'],
+        ['his.odm.sites.LocalY', '4695279.14'],
+        ['his.odm.sites.PosAccuracy_m', '100'],
+        ['his.odm.sites.State', 'Massachusetts'],
+        ['his.odm.sites.County', 'Suffolk'],
+        ['his.odm.sites.Comments', 'This is a full sites metadata record'],
+        ['his.odm.sites.Elevation_m', '55']
+      ])
       expect(
         siteInfoType({
           station: {
@@ -38,18 +50,7 @@ describe('Serializers', function () {
             organization_lookup: { slug: 'dendra' },
             geo: { type: 'Point', coordinates: [-71.01234, 42.39215, 55] }
           },
-          externalRefs: {
-            siteCode: 'sitecode-full',
-            siteId: '17',
-            verticalDatum: 'NGVD29',
-            localX: '334366.79',
-            localY: '4695279.14',
-            posAccuracy_m: '100',
-            state: 'Massachusetts',
-            county: 'Suffolk',
-            comments: 'This is a full sites metadata record',
-            elevation_m: '55'
-          }
+          refsMap
         })
       ).to.equal(
         '<siteName>SiteName-full</siteName>' +
@@ -95,6 +96,10 @@ describe('Serializers', function () {
     })
 
     it('should serialize siteInfoType with station and externalRefs flavor 2', function () {
+      const refsMap = new Map([
+        ['his.odm.sites.SiteID', '18'],
+        ['his.odm.sites.SiteCode', 'sitecode-min']
+      ])
       expect(
         siteInfoType({
           station: {
@@ -103,10 +108,7 @@ describe('Serializers', function () {
             organization_lookup: { slug: 'dendra' },
             geo: { type: 'Point', coordinates: [-71.01234, 42.39215, 55] }
           },
-          externalRefs: {
-            siteCode: 'sitecode-min',
-            siteId: '18'
-          }
+          refsMap
         })
       ).to.equal(
         '<siteName>SiteName-min</siteName>' +
@@ -120,9 +122,21 @@ describe('Serializers', function () {
       )
     })
 
-    it('should serialize sitesResponseStart', function () {
-      expect(sitesResponseStart()).to.equal(
+    it('should serialize sitesResponseStart flavor 1', function () {
+      expect(sitesResponseStart({ isObject: true })).to.equal(
         '<sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
+      )
+    })
+
+    it('should serialize sitesResponseStart flavor 2', function () {
+      expect(sitesResponseStart({ isObject: false })).to.equal(
+        '<sitesResponse' +
+          ' xmlns:gml="http://www.opengis.net/gml"' +
+          ' xmlns:xlink="http://www.w3.org/1999/xlink"' +
+          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+          ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
+          ' xmlns="http://www.cuahsi.org/waterML/1.1/">'
       )
     })
 

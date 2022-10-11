@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 // Probably should be moved to a utils?
-const SERVICE_1_1 = 'cuahsi_1_1.asmx'
+const SERVICE_1_1 = 'cuahsi_1_1'
 
 describe('GetSites handlers', function () {
   afterEach(() => {
@@ -138,7 +138,9 @@ describe('GetSites handlers', function () {
 
     // For getSites, we need to fake out findOneCached(), findMany() and org()
     const organizationFake = sinon.fake.returns({})
-    const stationsFake = sinon.fake.returns(stationData)
+    const stationsFake = sinon.stub()
+    stationsFake.onFirstCall().returns(stationData)
+    stationsFake.onSecondCall().returns([])
     const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stationsFake)
@@ -193,7 +195,9 @@ describe('GetSites handlers', function () {
 
     // For getSites, we need to fake out findOneCached(), findMany() and org()
     const organizationFake = sinon.fake.returns({})
-    const stationsFake = sinon.fake.returns(stationData)
+    const stationsFake = sinon.stub()
+    stationsFake.onFirstCall().returns(stationData)
+    stationsFake.onSecondCall().returns([])
     const orgFake = sinon.fake.returns('')
     sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'findMany', stationsFake)

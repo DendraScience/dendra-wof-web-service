@@ -16,16 +16,25 @@ export function siteInfoEnd() {
   return '</siteInfo>'
 }
 
-export function siteInfoType({ externalRefs, station }) {
+export function siteInfoType({ refsMap, station }) {
+  const siteId = refsMap && refsMap.get('his.odm.sites.SiteID')
+  const siteCode = refsMap && refsMap.get('his.odm.sites.SiteCode')
+  const verticalDatum = refsMap && refsMap.get('his.odm.sites.VerticalDatum')
+  const localX = refsMap && refsMap.get('his.odm.sites.LocalX')
+  const localY = refsMap && refsMap.get('his.odm.sites.LocalY')
+  const posAccuracyM = refsMap && refsMap.get('his.odm.sites.PosAccuracy_m')
+  const state = refsMap && refsMap.get('his.odm.sites.State')
+  const county = refsMap && refsMap.get('his.odm.sites.County')
+  const comments = refsMap && refsMap.get('his.odm.sites.Comments')
+  const elevationM = refsMap && refsMap.get('his.odm.sites.Elevation_m')
+
   return (
     `<siteName>${encodeXML(station.name)}</siteName>` +
-    (externalRefs && externalRefs.siteCode
+    (siteCode
       ? `<siteCode network="${encodeXML(
           (station.organization_lookup && station.organization_lookup.slug) ||
             'dendra'
-        )}" siteID="${externalRefs.siteId}">${encodeXML(
-          externalRefs.siteCode
-        )}</siteCode>`
+        )}" siteID="${siteId}">${encodeXML(siteCode)}</siteCode>`
       : '') +
     (station.geo && station.geo.type === 'Point'
       ? '<geoLocation>' +
@@ -34,55 +43,62 @@ export function siteInfoType({ externalRefs, station }) {
         `<longitude>${encodeXML(station.geo.coordinates[0] + '')}</longitude>` +
         '</geogLocation>' +
         `${
-          externalRefs && (externalRefs.localX || externalRefs.localY)
+          localX || localY
             ? `<localSiteXY projectionInformation="WGS 84 / UTM zone 19N">${
-                externalRefs.localX
-                  ? `<X>${encodeXML(externalRefs.localX)}</X>`
-                  : ''
-              }${
-                externalRefs.localY
-                  ? `<Y>${encodeXML(externalRefs.localY)}</Y>`
-                  : ''
-              }</localSiteXY>`
+                localX ? `<X>${encodeXML(localX)}</X>` : ''
+              }${localY ? `<Y>${encodeXML(localY)}</Y>` : ''}</localSiteXY>`
             : ''
         }` +
         '</geoLocation>'
       : '') +
-    (externalRefs && externalRefs.elevation_m
-      ? `<elevation_m>${encodeXML(externalRefs.elevation_m)}</elevation_m>`
+    (elevationM ? `<elevation_m>${encodeXML(elevationM)}</elevation_m>` : '') +
+    (verticalDatum
+      ? `<verticalDatum>${encodeXML(verticalDatum)}</verticalDatum>`
       : '') +
-    (externalRefs && externalRefs.verticalDatum
-      ? `<verticalDatum>${encodeXML(
-          externalRefs.verticalDatum
-        )}</verticalDatum>`
+    (county
+      ? `<siteProperty name="County">${encodeXML(county)}</siteProperty>`
       : '') +
-    (externalRefs && externalRefs.county
-      ? `<siteProperty name="County">${encodeXML(
-          externalRefs.county
-        )}</siteProperty>`
+    (state
+      ? `<siteProperty name="State">${encodeXML(state)}</siteProperty>`
       : '') +
-    (externalRefs && externalRefs.state
-      ? `<siteProperty name="State">${encodeXML(
-          externalRefs.state
-        )}</siteProperty>`
-      : '') +
-    (externalRefs && externalRefs.comments
+    (comments
       ? `<siteProperty name="Site Comments">${encodeXML(
-          externalRefs.comments
+          comments
         )}</siteProperty>`
       : '') +
-    (externalRefs && externalRefs.posAccuracy_m
+    (posAccuracyM
       ? `<siteProperty name="PosAccuracy_m">${encodeXML(
-          externalRefs.posAccuracy_m
+          posAccuracyM
         )}</siteProperty>`
       : '')
   )
 }
 
-export function sitesResponseStart() {
-  return '<sitesResponse xmlns="http://www.cuahsi.org/waterML/1.1/">'
+// GetSitesObject have not 3 attributes
+export function sitesResponseStart({ isObject = false }) {
+  return (
+    '<sitesResponse' +
+    `${
+      !isObject
+        ? ' xmlns:gml="http://www.opengis.net/gml"' +
+          ' xmlns:xlink="http://www.w3.org/1999/xlink"' +
+          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
+          ' xmlns:wtr="http://www.cuahsi.org/waterML/"'
+        : ''
+    }` +
+    ' xmlns="http://www.cuahsi.org/waterML/1.1/">'
+  )
 }
 
 export function sitesResponseEnd() {
   return '</sitesResponse>'
+}
+
+export function getSiteInfoResultStart() {
+  return '<GetSiteInfoResult>'
+}
+
+export function getSiteInfoResultEnd() {
+  return '</GetSiteInfoResult>'
 }

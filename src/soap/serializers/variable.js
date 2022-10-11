@@ -9,24 +9,33 @@ export function variableEnd() {
   return '</variable>'
 }
 
-export function variableInfoType({ datastream, unitCV, variableCV }) {
+export function variableInfoType({ datastream, refsMap, unitCV }) {
   const variableEl = (el, key) => {
-    return datastream.terms &&
-      datastream.terms.odm &&
-      datastream.terms.odm[key] &&
-      variableCV[key] &&
-      variableCV[key][datastream.terms.odm[key]]
-      ? `<${el}>${encodeXML(
-          variableCV[key][datastream.terms.odm[key]]
-        )}</${el}>`
-      : ''
+    const result = refsMap && refsMap.get(`his.odm.variables.${key}`)
+    return result ? `<${el}>${encodeXML(result)}</${el}>` : ''
   }
+
+  const variableCode = refsMap && refsMap.get(`his.odm.variables.VariableCode`)
+  const variableID = refsMap && refsMap.get(`his.odm.variables.VariableID`)
+  const variableNoDataValue =
+    refsMap && refsMap.get(`his.odm.variables.NoDataValue`)
+  const timeSupport = refsMap && refsMap.get(`his.odm.variables.TimeSupport`)
+  const speciation = refsMap && refsMap.get(`his.odm.variables.Speciation`)
+  const isRegular = refsMap && refsMap.get(`his.odm.variables.IsRegular`)
+  const timeUnitTag = refsMap.get('time_unit_tag')
   return (
-    `<variableCode vocabulary="dendra" default="true">${encodeXML(
-      datastream._id
-    )}</variableCode>` +
+    `${
+      variableCode
+        ? `<variableCode vocabulary="${encodeXML(
+            (datastream.organization_lookup &&
+              datastream.organization_lookup.slug) ||
+              'dendra'
+          )}" default="true" ${
+            variableID ? `variableID="${variableID}` : ''
+          }">${encodeXML(variableCode)}</variableCode>`
+        : ''
+    } ` +
     variableEl('variableName', 'VariableName') +
-    `<variableDescription>${encodeXML(datastream.name)}</variableDescription>` +
     variableEl('valueType', 'ValueType') +
     variableEl('dataType', 'DataType') +
     variableEl('generalCategory', 'GeneralCategory') +
@@ -35,6 +44,53 @@ export function variableInfoType({ datastream, unitCV, variableCV }) {
     datastream.terms_info.unit_tag &&
     unitCV[datastream.terms_info.unit_tag]
       ? '<unit>' + unitsType(unitCV[datastream.terms_info.unit_tag]) + '</unit>'
-      : '')
+      : '') +
+    (variableNoDataValue
+      ? `<noDataValue>${encodeXML(variableNoDataValue)}</noDataValue>`
+      : '') +
+    `<timeScale ${isRegular ? 'isRegular="true"' : ''}>` +
+    (timeUnitTag && unitCV[`dt_Unit_${timeUnitTag}`]
+      ? '<unit>' + unitsType(unitCV[`dt_Unit_${timeUnitTag}`]) + '</unit>'
+      : '') +
+    (timeSupport
+      ? `<timeSupport>${encodeXML(timeSupport)}</timeSupport>`
+      : '') +
+    '</timeScale>' +
+    (speciation ? `<speciation>${encodeXML(speciation)}</speciation>` : '')
   )
+}
+
+export function variablesResultStart() {
+  return '<GetVariablesResult>'
+}
+
+export function variablesResultEnd() {
+  return '</GetVariablesResult>'
+}
+
+// variablesObject have not 3 attributes
+export function variablesResponseStart({ isObject = false }) {
+  return (
+    '<variablesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"' +
+    `${
+      !isObject
+        ? ' xmlns:gml="http://www.opengis.net/gml"' +
+          ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
+          ' xmlns:xlink="http://www.w3.org/1999/xlink"'
+        : ''
+    }` +
+    '>'
+  )
+}
+
+export function variablesResponseEnd() {
+  return '</variablesResponse>'
+}
+
+export function variablesStart() {
+  return '<variables>'
+}
+
+export function variablesEnd() {
+  return '</variables>'
 }

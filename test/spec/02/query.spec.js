@@ -4,7 +4,8 @@
 import {
   queryInfoStart,
   queryInfoEnd,
-  queryInfoType
+  queryInfoType,
+  queryInfoNote
 } from '../../../src/soap/serializers/query.js'
 describe('Serializers', function () {
   describe('query', function () {
@@ -23,9 +24,8 @@ describe('Serializers', function () {
         queryInfoType({
           method,
           parameters: [
-            ['authToken', ''],
-            ['site', 'string'],
-            ['site', 'string']
+            ['site', 'woftest:sitecode-min'],
+            ['site', 'woftest:sitecode-full']
           ],
           date: new Date(1661964219333)
         })
@@ -34,10 +34,26 @@ describe('Serializers', function () {
           1661964219333
         ).toISOString()}</creationTime>` +
           '<criteria MethodCalled="GetSiteObject">' +
-          '<parameter name="site" value="string"/>' +
-          '<parameter name="site" value="string"/>' +
+          '<parameter name="site" value="woftest:sitecode-min"/>' +
+          '<parameter name="site" value="woftest:sitecode-full"/>' +
           '</criteria>'
       )
+    })
+
+    it('should serialize queryInfoNote flavor 1', function () {
+      expect(queryInfoNote({ note: 'OD Web Service' })).to.equal(
+        '<note>OD Web Service</note>'
+      )
+    })
+
+    it('should serialize queryInfoNote flavor 2', function () {
+      expect(queryInfoNote({ note: '' })).to.equal('')
+    })
+
+    it('should serialize queryInfoNote flavor 3', function () {
+      expect(
+        queryInfoNote({ note: 'ALL Sites(empty request)', visible: false })
+      ).to.equal('')
     })
   })
 })

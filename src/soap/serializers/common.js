@@ -3,12 +3,9 @@ import { encodeXML } from 'entities'
 export function methodType(data) {
   if (!(data && typeof data === 'object')) return ''
 
-  return (
-    (data._id ? `<methodCode>${encodeXML(data._id)}</methodCode>` : '') +
-    (data.name
-      ? `<methodDescription>${encodeXML(data.name)}</methodDescription>`
-      : '')
-  )
+  return data.description
+    ? `<methodDescription>${encodeXML(data.description)}</methodDescription>`
+    : ''
 }
 
 export function responseStart(el) {
@@ -114,7 +111,8 @@ export function sourceType(data) {
     (data.name ? `<organization>${encodeXML(data.name)}</organization>` : '') +
     (data.description
       ? `<sourceDescription>${encodeXML(data.description)}</sourceDescription>`
-      : '')
+      : '') +
+    (data.citation ? `<citation>${encodeXML(data.citation)}</citation>` : '')
   )
 }
 
@@ -122,16 +120,18 @@ export function unitsType(data) {
   if (!(data && typeof data === 'object')) return ''
 
   return (
-    (data.unitName ? `<unitName>${encodeXML(data.unitName)}</unitName>` : '') +
-    (data.unitType ? `<unitType>${encodeXML(data.unitType)}</unitType>` : '') +
-    (data.unitAbbreviation
+    (data.UnitsName
+      ? `<unitName>${encodeXML(data.UnitsName)}</unitName>`
+      : '') +
+    (data.UnitsType
+      ? `<unitType>${encodeXML(data.UnitsType)}</unitType>`
+      : '') +
+    (data.UnitsAbbreviation
       ? `<unitAbbreviation>${encodeXML(
-          data.unitAbbreviation
+          data.UnitsAbbreviation
         )}</unitAbbreviation>`
       : '') +
-    (data.unitCode
-      ? `<unitCode>${encodeXML(data.unitCode + '')}</unitCode>`
-      : '')
+    (data.UnitsID ? `<unitCode>${encodeXML(data.UnitsID)}</unitCode>` : '')
   )
 }
 

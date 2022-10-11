@@ -155,7 +155,9 @@ export async function* getSiteInfo(
     )
   }
 
-  yield encodeXML(seriesCatalogStart())
+  if (datastreams && datastreams.length) {
+    yield encodeXML(seriesCatalogStart(org || parts[0]))
+  }
 
   const variableCodes = new Set()
 
@@ -217,9 +219,11 @@ export async function* getSiteInfo(
     )
   }
 
-  yield encodeXML(seriesCatalogEnd() + siteEnd())
+  if (variableCodes.size || (datastreams && datastreams.length)) {
+    yield encodeXML(seriesCatalogEnd())
+  }
 
-  yield encodeXML(sitesResponseEnd()) +
+  yield encodeXML(siteEnd() + sitesResponseEnd()) +
     getSiteInfoResultEnd() +
     '</GetSiteInfoResponse>' +
     soapBodyEnd() +

@@ -147,7 +147,9 @@ export async function* getSiteInfoObject(
     yield siteInfoStart() + siteInfoType({ refsMap, station }) + siteInfoEnd()
   }
 
-  yield seriesCatalogStart()
+  if (datastreams && datastreams.length) {
+    yield seriesCatalogStart(org || parts[0])
+  }
 
   const variableCodes = new Set()
 
@@ -207,9 +209,12 @@ export async function* getSiteInfoObject(
     )
   }
 
-  yield seriesCatalogEnd() + siteEnd()
+  if (variableCodes.size || (datastreams && datastreams.length)) {
+    yield seriesCatalogEnd()
+  }
 
-  yield sitesResponseEnd() +
+  yield siteEnd() +
+    sitesResponseEnd() +
     '</GetSiteInfoObjectResponse>' +
     soapBodyEnd() +
     soapEnvelopeEnd()

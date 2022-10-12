@@ -6,6 +6,10 @@ export const authToken = {
   type: 'string'
 }
 
+export const variable = {
+  oneOf: [{ type: 'array' }]
+}
+
 /*
   GetSiteInfoXXX methods.
  */
@@ -116,6 +120,34 @@ export const GetVariablesObject = {
 }
 
 /*
+  GetVariableInfoXXX methods.
+ */
+export const getVariableInfoType = {
+  additionalProperties: false,
+  properties: {
+    variable,
+    authToken
+  },
+  type: 'object'
+}
+
+export const GetVariableInfo = {
+  properties: {
+    GetVariableInfo: getVariableInfoType
+  },
+  required: ['GetVariableInfo'],
+  type: 'object'
+}
+
+export const GetVariableInfoObject = {
+  properties: {
+    GetVariableInfoObject: getVariableInfoType
+  },
+  required: ['GetVariableInfoObject'],
+  type: 'object'
+}
+
+/*
   SOAP bleh.
  */
 
@@ -133,7 +165,9 @@ export const SoapRequestSchema = {
               GetSites,
               GetSitesObject,
               GetVariables,
-              GetVariablesObject
+              GetVariablesObject,
+              GetVariableInfo,
+              GetVariableInfoObject
             ]
           }
         },

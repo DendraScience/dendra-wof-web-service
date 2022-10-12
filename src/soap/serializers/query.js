@@ -8,15 +8,21 @@ export function queryInfoEnd() {
   return '</queryInfo>'
 }
 
-export function queryInfoType({ date = new Date(), method, parameters }) {
+// GetVariableInfo/Object have variableParam tag
+export function queryInfoType({
+  date = new Date(),
+  method,
+  parameters,
+  variableParam
+}) {
   switch (method) {
     case 'GetSitesObject':
       method = 'GetSites'
       break
     case 'GetVariables':
-      method = 'GetVariableInfo'
-      break
     case 'GetVariablesObject':
+    case 'GetVariableInfo':
+    case 'GetVariableInfoObject':
       method = 'GetVariableInfo'
       break
     case 'GetSiteInfoObject':
@@ -27,6 +33,9 @@ export function queryInfoType({ date = new Date(), method, parameters }) {
   return (
     `<creationTime>${date.toISOString()}</creationTime>` +
     `<criteria MethodCalled="${method}">` +
+    `${
+      variableParam ? `<variableParam>${variableParam}</variableParam>` : ''
+    }` +
     parameters
       .map(
         parameter =>

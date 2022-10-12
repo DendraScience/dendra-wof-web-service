@@ -12,6 +12,11 @@ export function responseStart(el) {
   return `<${el} xmlns="http://www.cuahsi.org/his/1.1/ws/">`
 }
 
+// attribute Url is different in GetVariableInfoObject
+export function responseWaterMLStart(el) {
+  return `<${el} xmlns="http://www.cuahsi.org/waterML/1.1/">`
+}
+
 export function soapHeaderStart() {
   return '<soap:Header>'
 }

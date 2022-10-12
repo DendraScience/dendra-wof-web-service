@@ -68,15 +68,31 @@ export function variablesResultEnd() {
   return '</GetVariablesResult>'
 }
 
-// variablesObject have not 3 attributes
-export function variablesResponseStart({ isObject = false }) {
+/* 
+  variablesObject have not 3 attributes;
+  GetVariableInfoObject have no attributes;
+  GetvariableInfo have additional 2 attributes
+*/
+export function variablesResponseStart({
+  hasAttribute = true,
+  isObject = false,
+  isVariableInfo = false
+}) {
   return (
-    '<variablesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"' +
+    `<variablesResponse${
+      hasAttribute ? ' xmlns="http://www.cuahsi.org/waterML/1.1/"' : ''
+    }` +
     `${
       !isObject
         ? ' xmlns:gml="http://www.opengis.net/gml"' +
           ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
           ' xmlns:xlink="http://www.w3.org/1999/xlink"'
+        : ''
+    }` +
+    `${
+      isVariableInfo
+        ? ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
         : ''
     }` +
     '>'
@@ -93,4 +109,12 @@ export function variablesStart() {
 
 export function variablesEnd() {
   return '</variables>'
+}
+
+export function getVariableInfoResultStart() {
+  return '<GetVariableInfoResult>'
+}
+
+export function getVariableInfoResultEnd() {
+  return '</GetVariableInfoResult>'
 }

@@ -16,6 +16,7 @@ import xmlBodyParser from 'fastify-xml-body-parser'
 import Agent, { HttpsAgent } from 'agentkeepalive'
 import LRU from 'lru-cache'
 import httpErrors from 'http-errors'
+import { fileURLToPath } from 'url'
 import soapMethodHandlers from './soap/handlers/methods.js'
 import { soapErrorHandler } from './soap/handlers/common.js'
 import { SoapRequestSchema } from './soap/schemas.js'
@@ -24,6 +25,8 @@ import { CacheControls, ContentTypes, Headers } from './lib/utils.js'
 
 const { NotFound } = httpErrors
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 const SERVICE_1_1 = 'cuahsi_1_1'
 const ORG_REGEXP_STR = '^[A-Za-z][A-Za-z0-9-_]{2,}[A-Za-z0-9]$'
 

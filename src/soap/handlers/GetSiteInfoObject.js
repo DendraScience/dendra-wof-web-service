@@ -55,7 +55,7 @@ export async function* getSiteInfoObject(
 ) {
   const { site } = parameters
   const siteValue = site && site.length ? site[0] : undefined
-  const parts = (siteValue && siteValue.split(':')) || []
+  const siteParts = siteValue && siteValue.split(':')
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -64,7 +64,7 @@ export async function* getSiteInfoObject(
   // Fetch organization
   const organization = org
     ? await helpers.findOneCached('organizations', '', {
-        slug: helpers.safeName(org)
+        slug: helpers.slugify(org)
       })
     : undefined
 
@@ -74,7 +74,7 @@ export async function* getSiteInfoObject(
     Object.assign(
       {
         is_enabled: true,
-        is_hidden: false,
+        state: 'ready',
         $limit: 1
       },
       organization &&
@@ -83,17 +83,11 @@ export async function* getSiteInfoObject(
         organization.data[0]._id
         ? { organization_id: organization.data[0]._id }
         : undefined,
-      siteValue
+      siteParts
         ? {
-            slug: {
-              $in: [
-                (
-                  (org || parts[0] || '-') +
-                  '-' +
-                  (parts[1] || '-')
-                ).toLowerCase()
-              ]
-            }
+            slug: helpers.slugify(
+              (org || siteParts[0] || '-') + '-' + (siteParts[1] || '-')
+            )
           }
         : undefined
     )
@@ -105,7 +99,7 @@ export async function* getSiteInfoObject(
   const datastreamsParams = Object.assign(
     {
       is_enabled: true,
-      is_hidden: false,
+      state: 'ready',
       $limit: 2000,
       $sort: { _id: 1 }
     },
@@ -155,7 +149,7 @@ export async function* getSiteInfoObject(
   }
 
   if (datastreams && datastreams.length) {
-    yield seriesCatalogStart(org || parts[0])
+    yield seriesCatalogStart(org || siteParts[0])
   }
 
   const variableCodes = new Set()

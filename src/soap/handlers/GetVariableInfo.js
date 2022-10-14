@@ -43,7 +43,7 @@ export async function* getVariableInfo(
 ) {
   const { variable } = parameters
   const variableValue = variable && variable.length ? variable[0] : undefined
-  const parts = (variableValue && variableValue.split(':')) || []
+  const variableParts = variableValue && variableValue.split(':')
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -52,7 +52,7 @@ export async function* getVariableInfo(
   // Fetch organization
   const organization = org
     ? await helpers.findOneCached('organizations', '', {
-        slug: helpers.safeName(org)
+        slug: helpers.slugify(org)
       })
     : undefined
 
@@ -63,7 +63,7 @@ export async function* getVariableInfo(
     {
       is_enabled: true,
       state: 'ready',
-      $limit: variableValue ? 1 : 2000,
+      $limit: variableParts ? 1 : 2000,
       $sort: { _id: 1 }
     },
     organization &&
@@ -72,10 +72,10 @@ export async function* getVariableInfo(
       organization.data[0]._id
       ? { organization_id: organization.data[0]._id }
       : undefined,
-    variableValue
+    variableParts
       ? {
           'external_refs.type': 'his.odm.variables.VariableCode',
-          'external_refs.identifier': parts[1]
+          'external_refs.identifier': variableParts[1]
         }
       : undefined
   )

@@ -49,11 +49,28 @@ export async function* getVariables(
   // Fetch organization
   const organization = org
     ? await helpers.findOneCached('organizations', '', {
-        slug: helpers.safeName(org)
+        slug: helpers.slugify(org)
       })
     : undefined
 
   const unitCV = await helpers.getUnitCV()
+
+  // Fetch datastreams
+  const datastreamsParams = Object.assign(
+    {
+      is_enabled: true,
+      state: 'ready',
+      $limit: 2000,
+      $sort: { _id: 1 }
+    },
+    organization &&
+      organization.data &&
+      organization.data.length &&
+      organization.data[0]._id
+      ? { organization_id: organization.data[0]._id }
+      : undefined
+  )
+  let datastreams = await helpers.findMany('datastreams', datastreamsParams)
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
@@ -81,23 +98,6 @@ export async function* getVariables(
         queryInfoNote({ note: 'OD Web Service' }) +
         queryInfoEnd()
     )
-
-  // Fetch datastreams
-  const datastreamsParams = Object.assign(
-    {
-      is_enabled: true,
-      is_hidden: false,
-      $limit: 2000,
-      $sort: { _id: 1 }
-    },
-    organization &&
-      organization.data &&
-      organization.data.length &&
-      organization.data[0]._id
-      ? { organization_id: organization.data[0]._id }
-      : undefined
-  )
-  let datastreams = await helpers.findMany('datastreams', datastreamsParams)
 
   if (datastreams && datastreams.length) {
     yield encodeXML(variablesStart())

@@ -56,14 +56,14 @@ export async function* getSitesObject(
   // Fetch organization
   const organization = org
     ? await helpers.findOneCached('organizations', '', {
-        slug: helpers.safeName(org)
+        slug: helpers.slugify(org)
       })
     : undefined
 
   const stationParams = Object.assign(
     {
       is_enabled: true,
-      is_hidden: false,
+      state: 'ready',
       $limit: 2000,
       $sort: { _id: 1 }
     },
@@ -78,7 +78,7 @@ export async function* getSitesObject(
           slug: {
             $in: sites.map(str => {
               const parts = str.split(':')
-              return helpers.safeName(
+              return helpers.slugify(
                 (org || parts[0] || '-') + '-' + (parts[1] || '-')
               )
             })

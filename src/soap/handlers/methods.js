@@ -4,6 +4,8 @@ import GetSites from './GetSites.js'
 import GetSitesObject from './GetSitesObject.js'
 import GetVariables from './GetVariables.js'
 import GetVariablesObject from './GetVariablesObject.js'
+import GetVariableInfo from './GetVariableInfo.js'
+import GetVariableInfoObject from './GetVariableInfoObject.js'
 
 // Named exports for convenience
 export default {
@@ -12,5 +14,7 @@ export default {
   GetSites,
   GetSitesObject,
   GetVariables,
-  GetVariablesObject
+  GetVariablesObject,
+  GetVariableInfo,
+  GetVariableInfoObject
 }

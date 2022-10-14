@@ -54,7 +54,8 @@ export async function* getSiteInfoObject(
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
-  const parts = (site && site.split(':')) || []
+  const siteValue = site && site.length ? site[0] : undefined
+  const siteParts = siteValue && siteValue.split(':')
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -63,7 +64,7 @@ export async function* getSiteInfoObject(
   // Fetch organization
   const organization = org
     ? await helpers.findOneCached('organizations', '', {
-        slug: helpers.safeName(org)
+        slug: helpers.slugify(org)
       })
     : undefined
 
@@ -73,7 +74,7 @@ export async function* getSiteInfoObject(
     Object.assign(
       {
         is_enabled: true,
-        is_hidden: false,
+        state: 'ready',
         $limit: 1
       },
       organization &&
@@ -82,11 +83,11 @@ export async function* getSiteInfoObject(
         organization.data[0]._id
         ? { organization_id: organization.data[0]._id }
         : undefined,
-      site
+      siteParts
         ? {
-            slug: {
-              $in: [(org || parts[0] || '-') + '-' + (parts[1] || '-')]
-            }
+            slug: helpers.slugify(
+              (org || siteParts[0] || '-') + '-' + (siteParts[1] || '-')
+            )
           }
         : undefined
     )
@@ -98,7 +99,7 @@ export async function* getSiteInfoObject(
   const datastreamsParams = Object.assign(
     {
       is_enabled: true,
-      is_hidden: false,
+      state: 'ready',
       $limit: 2000,
       $sort: { _id: 1 }
     },
@@ -127,13 +128,13 @@ export async function* getSiteInfoObject(
     soapWsseSecurityEnd() +
     soapHeaderEnd() +
     soapBodyStart() +
-    responseStart('GetSiteInfoObjectResponse ') +
+    responseStart('GetSiteInfoObjectResponse') +
     sitesResponseStart({ isObject: true }) +
     queryInfoStart() +
     queryInfoType({
       date,
       method,
-      parameters: [['site', (org || parts[0]) + ':' + parts[1]]]
+      parameters: [['site', siteValue || undefined]]
     }) +
     queryInfoEnd() +
     siteStart()
@@ -147,7 +148,9 @@ export async function* getSiteInfoObject(
     yield siteInfoStart() + siteInfoType({ refsMap, station }) + siteInfoEnd()
   }
 
-  yield seriesCatalogStart()
+  if (datastreams && datastreams.length) {
+    yield seriesCatalogStart(org || siteParts[0])
+  }
 
   const variableCodes = new Set()
 
@@ -207,9 +210,12 @@ export async function* getSiteInfoObject(
     )
   }
 
-  yield seriesCatalogEnd() + siteEnd()
+  if (variableCodes.size || (datastreams && datastreams.length)) {
+    yield seriesCatalogEnd()
+  }
 
-  yield sitesResponseEnd() +
+  yield siteEnd() +
+    sitesResponseEnd() +
     '</GetSiteInfoObjectResponse>' +
     soapBodyEnd() +
     soapEnvelopeEnd()

@@ -129,10 +129,10 @@ export function createHelpers({ cache, logger, webAPI }) {
       return org
     },
 
-    safeName(str, lc = true) {
+    slugify(str, lc = true) {
       return lc
-        ? str.replace(/\W/g, '-').toLowerCase()
-        : str.replace(/\W/g, '-')
+        ? str.replace(/[^A-Za-z0-9]/g, '-').toLowerCase()
+        : str.replace(/[^A-Za-z0-9]/g, '-')
     }
   }
 }

@@ -38,8 +38,8 @@ export function seriesEnd() {
   return '</series>'
 }
 
-export function seriesCatalogStart() {
-  return '<seriesCatalog menuGroupName="" serviceWsdl="https://hydroportal.cuahsi.org/woftest/cuahsi_1_1.asmx?WSDL">'
+export function seriesCatalogStart(org) {
+  return `<seriesCatalog menuGroupName="" serviceWsdl="https://hydroportal.cuahsi.org/${org}/cuahsi_1_1.asmx?WSDL">`
 }
 
 export function seriesCatalogEnd() {
@@ -65,10 +65,10 @@ export function variableTimeInterval({
     (lastDatapoint && lastDatapoint.lt) ||
     refsMap.get('his.odm.datavalues.EndDateTime')
   const beginDateTimeUTC =
-    (lastDatapoint && lastDatapoint.lt) ||
+    (firstDatapoint && firstDatapoint.t) ||
     refsMap.get('his.odm.datavalues.BeginDateTimeUTC')
   const endDateTimeUTC =
-    (firstDatapoint && firstDatapoint.t) ||
+    (lastDatapoint && lastDatapoint.t) ||
     refsMap.get('his.odm.datavalues.EndDateTimeUTC')
 
   return beginDateTime || endDateTime || beginDateTimeUTC || endDateTimeUTC

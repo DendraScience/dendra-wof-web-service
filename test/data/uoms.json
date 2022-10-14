@@ -1,0 +1,43 @@
+{
+  "total": 2,
+  "limit": 200,
+  "skip": 0,
+  "data": [
+    {
+      "_id": "day",
+      "library_config": {
+        "wof_web_service": {
+          "UnitsID": "104",
+          "UnitsName": "day",
+          "UnitsType": "Time",
+          "UnitsAbbreviation": "d"
+        }
+      },
+      "som_id": "met",
+      "unit_tags": ["dt_Unit_Day"],
+      "version_id": "633dc7b1bcd7f84ae3e041c8",
+      "updated_at": "2022-10-05T18:06:41.934Z",
+      "updated_by": "624bc1e0bbee671607389b07",
+      "created_at": "2022-09-29T20:18:41.317Z",
+      "created_by": "624bc1e0bbee671607389b07"
+    },
+    {
+      "_id": "milligram-per-liter",
+      "library_config": {
+        "wof_web_service": {
+          "UnitsID": "199",
+          "UnitsName": "milligrams per liter",
+          "UnitsType": "Concentration",
+          "UnitsAbbreviation": "mg/L"
+        }
+      },
+      "som_id": "met",
+      "unit_tags": ["dt_Unit_MilligramPerLiter"],
+      "version_id": "633dc7ddbcd7f81d28e0421c",
+      "updated_at": "2022-10-05T18:07:25.541Z",
+      "updated_by": "624bc1e0bbee671607389b07",
+      "created_at": "2022-09-29T20:20:04.476Z",
+      "created_by": "624bc1e0bbee671607389b07"
+    }
+  ]
+}

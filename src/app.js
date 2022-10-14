@@ -49,7 +49,7 @@ export default async logger => {
             'utf8'
           )
         )
-      return
+      return reply
     }
 
     throw new NotFound()

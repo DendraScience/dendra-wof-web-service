@@ -57,7 +57,8 @@ export async function* getSiteInfo(
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
-  const parts = (site && site.split(':')) || []
+  const siteValue = site && site.length ? site[0] : undefined
+  const parts = (siteValue && siteValue.split(':')) || []
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -85,10 +86,16 @@ export async function* getSiteInfo(
         organization.data[0]._id
         ? { organization_id: organization.data[0]._id }
         : undefined,
-      site
+      siteValue
         ? {
             slug: {
-              $in: [(org || parts[0] || '-') + '-' + (parts[1] || '-')]
+              $in: [
+                (
+                  (org || parts[0] || '-') +
+                  '-' +
+                  (parts[1] || '-')
+                ).toLowerCase()
+              ]
             }
           }
         : undefined
@@ -138,7 +145,7 @@ export async function* getSiteInfo(
         queryInfoType({
           date,
           method,
-          parameters: [['site', (org || parts[0]) + ':' + parts[1]]]
+          parameters: [['site', siteValue || undefined]]
         }) +
         queryInfoEnd() +
         siteStart()

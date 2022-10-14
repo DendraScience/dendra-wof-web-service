@@ -62,10 +62,10 @@ export function variableTimeInterval({
     (firstDatapoint && firstDatapoint.lt) ||
     refsMap.get('his.odm.datavalues.BeginDateTime')
   const endDateTime =
-    (firstDatapoint && firstDatapoint.t) ||
+    (lastDatapoint && lastDatapoint.lt) ||
     refsMap.get('his.odm.datavalues.EndDateTime')
   const beginDateTimeUTC =
-    (lastDatapoint && lastDatapoint.lt) ||
+    (firstDatapoint && firstDatapoint.t) ||
     refsMap.get('his.odm.datavalues.BeginDateTimeUTC')
   const endDateTimeUTC =
     (lastDatapoint && lastDatapoint.t) ||

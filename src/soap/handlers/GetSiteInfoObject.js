@@ -54,7 +54,8 @@ export async function* getSiteInfoObject(
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
-  const parts = (site && site.split(':')) || []
+  const siteValue = site && site.length ? site[0] : undefined
+  const parts = (siteValue && siteValue.split(':')) || []
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -82,10 +83,16 @@ export async function* getSiteInfoObject(
         organization.data[0]._id
         ? { organization_id: organization.data[0]._id }
         : undefined,
-      site
+      siteValue
         ? {
             slug: {
-              $in: [(org || parts[0] || '-') + '-' + (parts[1] || '-')]
+              $in: [
+                (
+                  (org || parts[0] || '-') +
+                  '-' +
+                  (parts[1] || '-')
+                ).toLowerCase()
+              ]
             }
           }
         : undefined
@@ -127,13 +134,13 @@ export async function* getSiteInfoObject(
     soapWsseSecurityEnd() +
     soapHeaderEnd() +
     soapBodyStart() +
-    responseStart('GetSiteInfoObjectResponse ') +
+    responseStart('GetSiteInfoObjectResponse') +
     sitesResponseStart({ isObject: true }) +
     queryInfoStart() +
     queryInfoType({
       date,
       method,
-      parameters: [['site', (org || parts[0]) + ':' + parts[1]]]
+      parameters: [['site', siteValue || undefined]]
     }) +
     queryInfoEnd() +
     siteStart()

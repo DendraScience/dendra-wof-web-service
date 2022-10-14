@@ -23,7 +23,7 @@ describe('GetSiteInfo handlers', function () {
   it('should handle getSiteInfo with station, datastreams, params, uoms and variableTimeInterval', async function () {
     const method = 'GetSiteInfo'
     const parameters = {
-      site: 'woftest:sitecode-full',
+      site: ['woftest:sitecode-full'],
       authToken: ''
     }
     const request = { params: { org: '' } }
@@ -50,10 +50,10 @@ describe('GetSiteInfo handlers', function () {
     const variableTimeInterval = {
       firstDatapoint: {
         lt: new Date(1661964219333).toISOString(),
-        t: new Date(1663089496079).toISOString()
+        t: new Date(1661964219333).toISOString()
       },
       lastDatapoint: {
-        lt: new Date(1661964219333).toISOString(),
+        lt: new Date(1663089496079).toISOString(),
         t: new Date(1663089496079).toISOString()
       }
     }
@@ -108,7 +108,7 @@ describe('GetSiteInfo handlers', function () {
   it('should handle getSiteInfo with station, params, uoms and no datastream', async function () {
     const method = 'GetSiteInfo'
     const parameters = {
-      site: 'woftest:sitecode-full',
+      site: ['woftest:sitecode-full'],
       authToken: ''
     }
     const request = { params: { org: '' } }
@@ -185,7 +185,7 @@ describe('GetSiteInfo handlers', function () {
   it('should handle getSiteInfo with station, datastreams, params and uoms', async function () {
     const method = 'GetSiteInfo'
     const parameters = {
-      site: 'woftest:sitecode-full',
+      site: ['woftest:sitecode-full'],
       authToken: ''
     }
     const request = { params: { org: '' } }

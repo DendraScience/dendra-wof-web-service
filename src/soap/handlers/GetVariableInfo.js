@@ -42,8 +42,8 @@ export async function* getVariableInfo(
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { variable } = parameters
-  const variableParam = variable && variable.length ? variable[0] : undefined
-  const parts = (variableParam && variableParam.split(':')) || []
+  const variableValue = variable && variable.length ? variable[0] : undefined
+  const parts = (variableValue && variableValue.split(':')) || []
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -63,7 +63,7 @@ export async function* getVariableInfo(
     {
       is_enabled: true,
       state: 'ready',
-      $limit: variableParam ? 1 : 2000,
+      $limit: variableValue ? 1 : 2000,
       $sort: { _id: 1 }
     },
     organization &&
@@ -72,10 +72,12 @@ export async function* getVariableInfo(
       organization.data[0]._id
       ? { organization_id: organization.data[0]._id }
       : undefined,
-    {
-      'external_refs.type': 'his.odm.variables.VariableCode',
-      'external_refs.identifier': parts[1]
-    }
+    variableValue
+      ? {
+          'external_refs.type': 'his.odm.variables.VariableCode',
+          'external_refs.identifier': parts[1]
+        }
+      : undefined
   )
   let datastreams = await helpers.findMany('datastreams', datastreamsParams)
 
@@ -102,15 +104,8 @@ export async function* getVariableInfo(
         queryInfoType({
           date,
           method,
-          parameters: [
-            [
-              'variable',
-              parts[1] ? (org || parts[0]) + ':' + parts[1] : undefined
-            ]
-          ],
-          variableParam: parts[1]
-            ? (org || parts[0]) + ':' + parts[1]
-            : undefined
+          parameters: [['variable', variableValue || undefined]],
+          variableParam: variableValue || undefined
         }) +
         queryInfoNote({ note: 'OD Web Service' }) +
         queryInfoEnd()
@@ -150,7 +145,7 @@ export async function* getVariableInfo(
     }
 
     // Fetch next page ; fetch if variable have not provided
-    datastreams = !variableParam
+    datastreams = !variableValue
       ? await helpers.findMany(
           'datastreams',
           Object.assign(

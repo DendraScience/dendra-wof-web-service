@@ -31,6 +31,7 @@ export function createHelpers({ cache, logger, webAPI }) {
       return (resp.data && resp.data.data) || []
     },
 
+    // Need to fix this
     async findManyCached(entity, params, scope = '') {
       const url = `/${entity}`
       let data = cache.get(scope + url)

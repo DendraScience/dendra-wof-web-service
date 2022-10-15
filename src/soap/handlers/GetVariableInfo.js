@@ -51,8 +51,9 @@ export async function* getVariableInfo(
 
   // Fetch organization
   const organization = org
-    ? await helpers.findOneCached('organizations', '', {
-        slug: helpers.slugify(org)
+    ? await helpers.findMany('organizations', {
+        slug: helpers.slugify(org),
+        $limit: 1
       })
     : undefined
 
@@ -66,11 +67,8 @@ export async function* getVariableInfo(
       $limit: variableParts ? 1 : 2000,
       $sort: { _id: 1 }
     },
-    organization &&
-      organization.data &&
-      organization.data.length &&
-      organization.data[0]._id
-      ? { organization_id: organization.data[0]._id }
+    organization && organization.length && organization[0]._id
+      ? { organization_id: organization[0]._id }
       : undefined,
     variableParts
       ? {

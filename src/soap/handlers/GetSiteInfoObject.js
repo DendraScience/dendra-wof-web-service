@@ -63,8 +63,9 @@ export async function* getSiteInfoObject(
 
   // Fetch organization
   const organization = org
-    ? await helpers.findOneCached('organizations', '', {
-        slug: helpers.slugify(org)
+    ? await helpers.findMany('organizations', {
+        slug: helpers.slugify(org),
+        $limit: 1
       })
     : undefined
 
@@ -77,11 +78,8 @@ export async function* getSiteInfoObject(
         state: 'ready',
         $limit: 1
       },
-      organization &&
-        organization.data &&
-        organization.data.length &&
-        organization.data[0]._id
-        ? { organization_id: organization.data[0]._id }
+      organization && organization.length && organization[0]._id
+        ? { organization_id: organization[0]._id }
         : undefined,
       siteParts
         ? {
@@ -103,11 +101,8 @@ export async function* getSiteInfoObject(
       $limit: 2000,
       $sort: { _id: 1 }
     },
-    organization &&
-      organization.data &&
-      organization.data.length &&
-      organization.data[0]._id
-      ? { organization_id: organization.data[0]._id }
+    organization && organization.length && organization[0]._id
+      ? { organization_id: organization[0]._id }
       : undefined
   )
 

@@ -31,6 +31,7 @@ export function createHelpers({ cache, logger, webAPI }) {
       return (resp.data && resp.data.data) || []
     },
 
+    // TODO: Need to fix this
     async findManyCached(entity, params, scope = '') {
       const url = `/${entity}`
       let data = cache.get(scope + url)
@@ -48,6 +49,7 @@ export function createHelpers({ cache, logger, webAPI }) {
       return resp.data && resp.data.data
     },
 
+    // TODO: Need to fix this
     async findOneCached(entity, id, params, scope = '') {
       const url = `/${entity}/${id}`
       let data = cache.get(scope + url)

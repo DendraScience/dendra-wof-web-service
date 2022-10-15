@@ -1,6 +1,6 @@
 {
   "name": "@dendra-science/dendra-wof-web-service",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "WaterOneFlow Web Service to share hydrologic data with CUAHSI-HIS.",
   "license": "BSD-3-Clause",
   "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",

@@ -59,12 +59,12 @@ describe('GetSiteInfoObject handlers', function () {
     }
 
     // For getSiteInfoObject, we need to fake out
-    const organizationFake = sinon.fake.returns({})
-    const orgFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([stationData[1]])
-    findManyFake.onSecondCall().returns(datastreamsData)
-    findManyFake.onThirdCall().returns([])
+    findManyFake.onCall(0).returns([])
+    findManyFake.onCall(1).returns([stationData[1]])
+    findManyFake.onCall(2).returns(datastreamsData)
+    findManyFake.onCall(3).returns([])
     const getUnitCVFake = sinon.fake.returns({})
     const variableTimeIntervalFake = sinon.stub()
     variableTimeIntervalFake
@@ -73,7 +73,6 @@ describe('GetSiteInfoObject handlers', function () {
     variableTimeIntervalFake
       .onSecondCall()
       .returns(variableTimeInterval.lastDatapoint)
-    sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
@@ -147,14 +146,13 @@ describe('GetSiteInfoObject handlers', function () {
     })
 
     // For getSiteInfoObject, we need to fake out
-    const organizationFake = sinon.fake.returns({})
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([stationData[1]])
-    findManyFake.onSecondCall().returns([])
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns([stationData[1]])
+    findManyFake.onThirdCall().returns([])
     const getUnitCVFake = sinon.fake.returns(data)
     const time = sinon.fake.returns([])
-    sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
@@ -229,15 +227,14 @@ describe('GetSiteInfoObject handlers', function () {
     })
 
     // For getSiteInfoObject, we need to fake out
-    const organizationFake = sinon.fake.returns({})
-    const orgFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([stationData[1]])
-    findManyFake.onSecondCall().returns(datastreamsData)
-    findManyFake.onThirdCall().returns([])
+    findManyFake.onCall(0).returns([])
+    findManyFake.onCall(1).returns([stationData[1]])
+    findManyFake.onCall(2).returns(datastreamsData)
+    findManyFake.onCall(3).returns([])
     const getUnitCVFake = sinon.fake.returns(data)
     const time = sinon.fake.returns([])
-    sinon.replace(helpers, 'findOneCached', organizationFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)

@@ -41,14 +41,13 @@ describe('getVariableInfo handlers', function () {
     const datastreamsData = JSON.parse(datastreams).data
 
     // For getVariableInfo, we need to fake out
-    const organizationFake = sinon.fake.returns({})
-    const datastreamsFake = sinon.stub()
-    datastreamsFake.onFirstCall().returns(datastreamsData)
-    datastreamsFake.onSecondCall().returns([])
-    const orgFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns(datastreamsData)
+    findManyFake.onThirdCall().returns([])
     const getUnitCVFake = sinon.fake.returns([])
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', datastreamsFake)
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
 
@@ -117,14 +116,13 @@ describe('getVariableInfo handlers', function () {
     })
 
     // For getVariableInfo, we need to fake out
-    const organizationFake = sinon.fake.returns({})
-    const datastreamsFake = sinon.stub()
-    datastreamsFake.onFirstCall().returns(datastreamsData)
-    datastreamsFake.onSecondCall().returns([])
-    const orgFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns(datastreamsData)
+    findManyFake.onThirdCall().returns([])
     const getUnitCVFake = sinon.fake.returns(data)
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', datastreamsFake)
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
 
@@ -194,13 +192,12 @@ describe('getVariableInfo handlers', function () {
     })
 
     // For getVariableInfo, we need to fake out
-    const organizationFake = sinon.fake.returns({})
-    const datastreamsFake = sinon.stub()
-    datastreamsFake.onFirstCall().returns([datastreamsData[0]])
-    const orgFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns([datastreamsData[0]])
     const getUnitCVFake = sinon.fake.returns(data)
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', datastreamsFake)
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
 
@@ -269,13 +266,12 @@ describe('getVariableInfo handlers', function () {
     })
 
     // For getVariableInfo, we need to fake out
-    const organizationFake = sinon.fake.returns({})
-    const datastreamsFake = sinon.stub()
-    datastreamsFake.onFirstCall().returns([datastreamsData[1]])
-    const orgFake = sinon.fake.returns('')
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns([datastreamsData[1]])
     const getUnitCVFake = sinon.fake.returns(data)
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', datastreamsFake)
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
 

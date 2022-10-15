@@ -38,11 +38,11 @@ describe('GetSites handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSites, we need to fake out findOneCached(), findMany() and org()
-    const organizationFake = sinon.fake.returns({})
-    const findManyFake = sinon.fake.returns([])
-    const orgFake = sinon.fake.returns('')
-    sinon.replace(helpers, 'findOneCached', organizationFake)
+    // For getSites, we need to fake out findMany() and org()
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns([])
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
 
@@ -84,11 +84,11 @@ describe('GetSites handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getSites, we need to fake out findOneCached(), findMany() and org()
-    const organizationFake = sinon.fake.returns({})
-    const findManyFake = sinon.fake.returns([])
+    // For getSites, we need to fake out findMany() and org()
     const orgFake = sinon.fake.returns('')
-    sinon.replace(helpers, 'findOneCached', organizationFake)
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns([])
     sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
 
@@ -136,14 +136,13 @@ describe('GetSites handlers', function () {
     )
     const stationData = JSON.parse(stations).data
 
-    // For getSites, we need to fake out findOneCached(), findMany() and org()
-    const organizationFake = sinon.fake.returns({})
-    const stationsFake = sinon.stub()
-    stationsFake.onFirstCall().returns(stationData)
-    stationsFake.onSecondCall().returns([])
-    const orgFake = sinon.fake.returns('')
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', stationsFake)
+    // For getSites, we need to fake out findMany() and org()
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns(stationData)
+    findManyFake.onThirdCall().returns([])
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
 
     const date = new Date(1661964219333)
@@ -193,14 +192,13 @@ describe('GetSites handlers', function () {
     )
     const stationData = JSON.parse(stations).data
 
-    // For getSites, we need to fake out findOneCached(), findMany() and org()
-    const organizationFake = sinon.fake.returns({})
-    const stationsFake = sinon.stub()
-    stationsFake.onFirstCall().returns(stationData)
-    stationsFake.onSecondCall().returns([])
-    const orgFake = sinon.fake.returns('')
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', stationsFake)
+    // For getSites, we need to fake out findMany() and org()
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns(stationData)
+    findManyFake.onThirdCall().returns([])
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
 
     const date = new Date(1661964219333)

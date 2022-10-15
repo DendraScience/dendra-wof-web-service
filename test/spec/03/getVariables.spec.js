@@ -35,13 +35,13 @@ describe('getVariables handlers', function () {
       service: SERVICE_1_1
     }
 
-    // For getVariables, we need to fake out findOneCached(), findMany(), org() and getUnitCVFake()
-    const organizationFake = sinon.fake.returns({})
-    const datastreamsFake = sinon.fake.returns([])
-    const orgFake = sinon.fake.returns('')
+    // For getVariables, we need to fake out findMany(), org() and getUnitCVFake()
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns([])
     const getUnitCVFake = sinon.fake.returns([])
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', datastreamsFake)
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
 
@@ -84,15 +84,14 @@ describe('getVariables handlers', function () {
     )
     const datastreamsData = JSON.parse(datastreams).data
 
-    // For getVariables, we need to fake out findOneCached(), findMany(), org() and getUnitCVFake()
-    const organizationFake = sinon.fake.returns({})
-    const datastreamsFake = sinon.stub()
-    datastreamsFake.onFirstCall().returns(datastreamsData)
-    datastreamsFake.onSecondCall().returns([])
-    const orgFake = sinon.fake.returns('')
+    // For getVariables, we need to fake out findMany(), org() and getUnitCVFake()
+    const orgFake = sinon.fake.returns('woftest')
+    const findManyFake = sinon.stub()
+    findManyFake.onFirstCall().returns([])
+    findManyFake.onSecondCall().returns(datastreamsData)
+    findManyFake.onThirdCall().returns([])
     const getUnitCVFake = sinon.fake.returns([])
-    sinon.replace(helpers, 'findOneCached', organizationFake)
-    sinon.replace(helpers, 'findMany', datastreamsFake)
+    sinon.replace(helpers, 'findMany', findManyFake)
     sinon.replace(helpers, 'org', orgFake)
     sinon.replace(helpers, 'getUnitCV', getUnitCVFake)
 

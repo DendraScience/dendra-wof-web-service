@@ -55,12 +55,15 @@ export async function* getSites(
       : undefined
 
   // Fetch organization
-  const organization = org
-    ? await helpers.findMany('organizations', {
-        slug: helpers.slugify(org),
-        $limit: 1
-      })
-    : undefined
+  let organization
+  if (org) {
+    const organizations = await helpers.findMany('organizations', {
+      slug: helpers.slugify(org),
+      $limit: 1
+    })
+    if (!organizations.length) throw new Error('Organization not found')
+    organization = organizations[0]
+  }
 
   const stationParams = Object.assign(
     {
@@ -69,9 +72,7 @@ export async function* getSites(
       $limit: 2000,
       $sort: { _id: 1 }
     },
-    organization && organization.length && organization[0]._id
-      ? { organization_id: organization[0]._id }
-      : undefined,
+    organization ? { organization_id: organization._id } : undefined,
     sites.length
       ? {
           slug: {

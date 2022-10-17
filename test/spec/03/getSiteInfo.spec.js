@@ -61,7 +61,7 @@ describe('GetSiteInfo handlers', function () {
     // For getSiteInfo, we need to fake out
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onCall(0).returns([])
+    findManyFake.onCall(0).returns([{}])
     findManyFake.onCall(1).returns([stationData[1]])
     findManyFake.onCall(2).returns(datastreamsData)
     findManyFake.onCall(3).returns([])
@@ -148,7 +148,7 @@ describe('GetSiteInfo handlers', function () {
     // For getSiteInfo, we need to fake out
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([])
+    findManyFake.onFirstCall().returns([{}])
     findManyFake.onSecondCall().returns([stationData[1]])
     findManyFake.onThirdCall().returns([])
     const getUnitCVFake = sinon.fake.returns(data)
@@ -229,7 +229,7 @@ describe('GetSiteInfo handlers', function () {
     // For getSiteInfo, we need to fake out
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onCall(0).returns([])
+    findManyFake.onCall(0).returns([{}])
     findManyFake.onCall(1).returns([stationData[1]])
     findManyFake.onCall(2).returns(datastreamsData)
     findManyFake.onCall(3).returns([])

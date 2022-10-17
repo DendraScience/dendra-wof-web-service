@@ -65,12 +65,15 @@ export async function* getSiteInfo(
       : undefined
 
   // Fetch organization
-  const organization = org
-    ? await helpers.findMany('organizations', {
-        slug: helpers.slugify(org),
-        $limit: 1
-      })
-    : undefined
+  let organization
+  if (org) {
+    const organizations = await helpers.findMany('organizations', {
+      slug: helpers.slugify(org),
+      $limit: 1
+    })
+    if (!organizations.length) throw new Error('Organization not found')
+    organization = organizations[0]
+  }
 
   // Fetch stations
   const stations = await helpers.findMany(
@@ -81,9 +84,7 @@ export async function* getSiteInfo(
         state: 'ready',
         $limit: 1
       },
-      organization && organization.length && organization[0]._id
-        ? { organization_id: organization[0]._id }
-        : undefined,
+      organization ? { organization_id: organization._id } : undefined,
       siteParts
         ? {
             slug: helpers.slugify(
@@ -104,9 +105,7 @@ export async function* getSiteInfo(
       $limit: 2000,
       $sort: { _id: 1 }
     },
-    organization && organization.length && organization[0]._id
-      ? { organization_id: organization[0]._id }
-      : undefined
+    organization ? { organization_id: organization._id } : undefined
   )
 
   let datastreams = await helpers.findMany('datastreams', datastreamsParams)

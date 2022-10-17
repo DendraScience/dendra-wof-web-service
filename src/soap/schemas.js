@@ -19,8 +19,7 @@ export const getSiteInfoType = {
   properties: {
     authToken,
     site: {
-      type: 'array',
-      minLength: 1
+      oneOf: [{ type: 'array', items: { type: 'string', minLength: 1 } }]
     }
   },
   required: ['site'],

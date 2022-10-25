@@ -16,7 +16,7 @@ export function siteInfoEnd() {
   return '</siteInfo>'
 }
 
-export function siteInfoType({ refsMap, station }) {
+export function siteInfoType({ organizationRefsMap, refsMap, station }) {
   const siteId = refsMap && refsMap.get('his.odm.sites.SiteID')
   const siteCode = refsMap && refsMap.get('his.odm.sites.SiteCode')
   const verticalDatum = refsMap && refsMap.get('his.odm.sites.VerticalDatum')
@@ -27,13 +27,15 @@ export function siteInfoType({ refsMap, station }) {
   const county = refsMap && refsMap.get('his.odm.sites.County')
   const comments = refsMap && refsMap.get('his.odm.sites.Comments')
   const elevationM = refsMap && refsMap.get('his.odm.sites.Elevation_m')
+  const networkName =
+    organizationRefsMap &&
+    organizationRefsMap.get('his.odm.service.NetworkName')
 
   return (
     `<siteName>${encodeXML(station.name)}</siteName>` +
     (siteCode
       ? `<siteCode network="${encodeXML(
-          (station.organization_lookup && station.organization_lookup.slug) ||
-            'dendra'
+          networkName || 'dendra'
         )}" siteID="${siteId}">${encodeXML(siteCode)}</siteCode>`
       : '') +
     (station.geo && station.geo.type === 'Point'

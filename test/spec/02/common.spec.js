@@ -108,7 +108,8 @@ describe('Serializers', function () {
 
     it('should serialize soapEnvelopeStart', function () {
       expect(soapEnvelopeStart()).to.equal(
-        '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
+        '<?xml version="1.0" encoding="utf-8"?>' +
+          '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
           ' xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"' +
           ' xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"' +
           ' xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"' +
@@ -128,7 +129,8 @@ describe('Serializers', function () {
           request: { method: 'GETDATA', path: 'C://programFile' }
         })
       ).to.equal(
-        '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
+        '<?xml version="1.0" encoding="utf-8"?>' +
+          '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
           ' xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"' +
           ' xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"' +
           ' xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"' +

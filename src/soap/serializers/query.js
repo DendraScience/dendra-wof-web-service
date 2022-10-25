@@ -28,6 +28,9 @@ export function queryInfoType({
     case 'GetSiteInfoObject':
       method = 'GetSiteInfo'
       break
+    case 'GetValuesObject':
+      method = 'GetValues'
+      break
   }
 
   return (

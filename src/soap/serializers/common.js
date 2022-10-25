@@ -76,6 +76,7 @@ export function soapBodyEnd() {
 
 export function soapEnvelopeStart() {
   return (
+    '<?xml version="1.0" encoding="utf-8"?>' +
     '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"' +
     ' xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"' +
     ' xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"' +
@@ -116,8 +117,7 @@ export function sourceType(data) {
     (data.name ? `<organization>${encodeXML(data.name)}</organization>` : '') +
     (data.description
       ? `<sourceDescription>${encodeXML(data.description)}</sourceDescription>`
-      : '') +
-    (data.citation ? `<citation>${encodeXML(data.citation)}</citation>` : '')
+      : '')
   )
 }
 

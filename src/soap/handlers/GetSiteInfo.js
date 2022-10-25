@@ -102,6 +102,7 @@ export async function* getSiteInfo(
     {
       is_enabled: true,
       state: 'ready',
+      station_id: stations[0]._id,
       $limit: 2000,
       $sort: { _id: 1 }
     },
@@ -111,6 +112,11 @@ export async function* getSiteInfo(
   let datastreams = await helpers.findMany('datastreams', datastreamsParams)
 
   const unitCV = await helpers.getUnitCV()
+
+  const organizationRefsMap =
+    organization && organization.external_refs
+      ? helpers.externalRefsMap(organization.external_refs)
+      : undefined
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
@@ -146,7 +152,9 @@ export async function* getSiteInfo(
       : undefined
 
     yield encodeXML(
-      siteInfoStart() + siteInfoType({ refsMap, station }) + siteInfoEnd()
+      siteInfoStart() +
+        siteInfoType({ organizationRefsMap, refsMap, station }) +
+        siteInfoEnd()
     )
   }
 
@@ -154,7 +162,7 @@ export async function* getSiteInfo(
     yield encodeXML(seriesCatalogStart(org || siteParts[0]))
   }
 
-  const variableCodes = new Set()
+  const uniqueVariables = new Set()
 
   while (datastreams.length) {
     let i = 0
@@ -164,12 +172,23 @@ export async function* getSiteInfo(
         datastream && datastream.external_refs
           ? helpers.externalRefsMap(datastream.external_refs)
           : undefined
-      const variableCode =
-        refsMap && refsMap.get('his.odm.variables.VariableCode')
+      const variableID = refsMap && refsMap.get(`his.odm.variables.VariableID`)
+      const methodID = refsMap && refsMap.get('his.odm.methods.MethodID')
+      const sourceID = refsMap.get('his.odm.sources.SourceID')
+      const qualityControlLevelID = refsMap.get(
+        'his.odm.qualitycontrollevels.QualityControlLevelID'
+      )
+
+      const variableObj = {
+        methodID,
+        qualityControlLevelID,
+        sourceID,
+        variableID
+      }
 
       // Normalize datastreams to unique variables
-      if (variableCode && !variableCodes.has(variableCode)) {
-        variableCodes.add(variableCode)
+      if (!uniqueVariables.has(variableObj)) {
+        uniqueVariables.add(variableObj)
 
         const firstDatapoint = await helpers.findDatapoint({
           datastream_id: datastream._id
@@ -214,7 +233,7 @@ export async function* getSiteInfo(
     )
   }
 
-  if (variableCodes.size || (datastreams && datastreams.length)) {
+  if (uniqueVariables.size || (datastreams && datastreams.length)) {
     yield encodeXML(seriesCatalogEnd())
   }
 

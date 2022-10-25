@@ -139,6 +139,37 @@ export const GetVariableInfoObject = {
 }
 
 /*
+  GetValuesXXX methods.
+ */
+export const getValuesType = {
+  additionalProperties: false,
+  properties: {
+    location: { type: 'string' },
+    variable: { type: 'string' },
+    startDate: { type: 'string' },
+    endDate: { type: 'string' },
+    authToken
+  },
+  type: 'object'
+}
+
+export const GetValues = {
+  properties: {
+    GetValues: getValuesType
+  },
+  required: ['GetValues'],
+  type: 'object'
+}
+
+export const GetValuesObject = {
+  properties: {
+    GetValuesObject: getValuesType
+  },
+  required: ['GetValuesObject'],
+  type: 'object'
+}
+
+/*
   SOAP bleh.
  */
 
@@ -158,7 +189,9 @@ export const SoapRequestSchema = {
               GetVariables,
               GetVariablesObject,
               GetVariableInfo,
-              GetVariableInfoObject
+              GetVariableInfoObject,
+              GetValues,
+              GetValuesObject
             ]
           }
         },

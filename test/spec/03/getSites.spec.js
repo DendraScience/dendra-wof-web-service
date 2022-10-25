@@ -135,11 +135,16 @@ describe('GetSites handlers', function () {
       'utf8'
     )
     const stationData = JSON.parse(stations).data
+    const organization = fs.readFileSync(
+      path.resolve(__dirname, '../../data/organization.json'),
+      'utf8'
+    )
+    const organizationData = JSON.parse(organization).data
 
     // For getSites, we need to fake out findMany() and org()
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([{}])
+    findManyFake.onFirstCall().returns(organizationData)
     findManyFake.onSecondCall().returns(stationData)
     findManyFake.onThirdCall().returns([])
     sinon.replace(helpers, 'findMany', findManyFake)
@@ -191,11 +196,16 @@ describe('GetSites handlers', function () {
       'utf8'
     )
     const stationData = JSON.parse(stations).data
+    const organization = fs.readFileSync(
+      path.resolve(__dirname, '../../data/organization.json'),
+      'utf8'
+    )
+    const organizationData = JSON.parse(organization).data
 
     // For getSites, we need to fake out findMany() and org()
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([{}])
+    findManyFake.onFirstCall().returns(organizationData)
     findManyFake.onSecondCall().returns(stationData)
     findManyFake.onThirdCall().returns([])
     sinon.replace(helpers, 'findMany', findManyFake)

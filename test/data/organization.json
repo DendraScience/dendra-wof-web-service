@@ -1,0 +1,42 @@
+{
+  "total": 1,
+  "limit": 200,
+  "skip": 0,
+  "data": [
+    {
+      "_id": "63178ea946b9b7496258a28d",
+      "description": "Test Organization has standard and edge case example sites and datastreams for each function.",
+      "email": "collin@berkeley.edu",
+      "full_name": "Test Organization for WOF Test Cases",
+      "general_config": {
+        "default_time_zone": "EST",
+        "db_name": "ODM_mstest"
+      },
+      "is_enabled": true,
+      "is_hidden": false,
+      "sort_value": 100,
+      "name": "WOF Test",
+      "slug": "woftest",
+      "url": "http://ipswichriver.org/resources/monitoring-data/",
+      "external_refs": [
+        {
+          "identifier": "woftest",
+          "type": "his.odm.service.NetworkName"
+        }
+      ],
+      "version_id": "63583d24338316d19029171d",
+      "updated_at": "2022-10-25T19:46:44.169Z",
+      "updated_by": "624bc1e0bbee671607389b07",
+      "created_at": "2022-09-06T18:17:13.256Z",
+      "created_by": "624bc1e0bbee671607389b07",
+      "access_levels_resolved": {
+        "member_level": 3,
+        "public_level": 3
+      },
+      "general_config_resolved": {
+        "default_time_zone": "EST",
+        "db_name": "ODM_mstest"
+      }
+    }
+  ]
+}

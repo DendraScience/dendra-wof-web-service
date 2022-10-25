@@ -47,6 +47,11 @@ describe('GetSiteInfoObject handlers', function () {
       'utf8'
     )
     const datastreamsData = JSON.parse(datastreams).data
+    const organization = fs.readFileSync(
+      path.resolve(__dirname, '../../data/organization.json'),
+      'utf8'
+    )
+    const organizationData = JSON.parse(organization).data
     const variableTimeInterval = {
       firstDatapoint: {
         lt: new Date(1661964219333).toISOString(),
@@ -61,9 +66,9 @@ describe('GetSiteInfoObject handlers', function () {
     // For getSiteInfoObject, we need to fake out
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onCall(0).returns([{}])
+    findManyFake.onCall(0).returns(organizationData)
     findManyFake.onCall(1).returns([stationData[1]])
-    findManyFake.onCall(2).returns(datastreamsData)
+    findManyFake.onCall(2).returns([datastreamsData[0], datastreamsData[3]])
     findManyFake.onCall(3).returns([])
     const getUnitCVFake = sinon.fake.returns({})
     const variableTimeIntervalFake = sinon.stub()
@@ -131,6 +136,11 @@ describe('GetSiteInfoObject handlers', function () {
       'utf8'
     )
     const uomsData = JSON.parse(uoms).data
+    const organization = fs.readFileSync(
+      path.resolve(__dirname, '../../data/organization.json'),
+      'utf8'
+    )
+    const organizationData = JSON.parse(organization).data
 
     // Createing getUnitCV format
     const data = {}
@@ -148,7 +158,7 @@ describe('GetSiteInfoObject handlers', function () {
     // For getSiteInfoObject, we need to fake out
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([{}])
+    findManyFake.onFirstCall().returns(organizationData)
     findManyFake.onSecondCall().returns([stationData[1]])
     findManyFake.onThirdCall().returns([])
     const getUnitCVFake = sinon.fake.returns(data)
@@ -212,6 +222,11 @@ describe('GetSiteInfoObject handlers', function () {
       'utf8'
     )
     const uomsData = JSON.parse(uoms).data
+    const organization = fs.readFileSync(
+      path.resolve(__dirname, '../../data/organization.json'),
+      'utf8'
+    )
+    const organizationData = JSON.parse(organization).data
 
     // Createing getUnitCV format
     const data = {}
@@ -229,9 +244,9 @@ describe('GetSiteInfoObject handlers', function () {
     // For getSiteInfoObject, we need to fake out
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onCall(0).returns([{}])
+    findManyFake.onCall(0).returns(organizationData)
     findManyFake.onCall(1).returns([stationData[1]])
-    findManyFake.onCall(2).returns(datastreamsData)
+    findManyFake.onCall(2).returns([datastreamsData[0], datastreamsData[3]])
     findManyFake.onCall(3).returns([])
     const getUnitCVFake = sinon.fake.returns(data)
     const time = sinon.fake.returns([])

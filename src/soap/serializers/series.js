@@ -1,8 +1,9 @@
 import { encodeXML } from 'entities'
 import { methodType, sourceType, timePeriodType } from './common.js'
+import { metadataInfoType, contactInfoType } from './value.js'
 
 // TODO: change code to get data from 'thing-types'
-export function seriesMethod({ refsMap }) {
+export function seriesMethod({ hasMethodCode = false, refsMap }) {
   if (!(refsMap && typeof refsMap === 'object')) return ''
 
   const id = refsMap.get('his.odm.methods.MethodID')
@@ -10,12 +11,13 @@ export function seriesMethod({ refsMap }) {
 
   return (
     `<method ${id ? `methodID="${encodeXML(id)}"` : ''}>` +
+    `${id && hasMethodCode ? `<methodCode>${id}</methodCode>` : ''}` +
     methodType({ description }) +
     '</method>'
   )
 }
 
-export function seriesSource({ refsMap }) {
+export function seriesSource({ hasSourceCode = false, refsMap }) {
   if (!(refsMap && typeof refsMap === 'object')) return ''
 
   const sourceID = refsMap.get('his.odm.sources.SourceID')
@@ -23,9 +25,30 @@ export function seriesSource({ refsMap }) {
   const description = refsMap.get('his.odm.sources.SourceDescription')
   const citation = refsMap.get('his.odm.sources.Citation')
 
+  const contactName = refsMap.get('his.odm.sources.ContactName')
+  const email = refsMap.get('his.odm.sources.Email')
+  const phone = refsMap.get('his.odm.sources.Phone')
+  const address = refsMap.get('his.odm.sources.Address')
+  const sourceLink = refsMap.get('his.odm.sources.SourceLink')
+
   return (
     `<source ${sourceID ? `sourceID="${sourceID}` : ''}">` +
+    `${
+      hasSourceCode && sourceID ? `<sourceCode>${sourceID}</sourceCode>` : ''
+    }` +
     sourceType({ citation, description, name }) +
+    `${hasSourceCode ? metadataInfoType('') : ''}` +
+    `${
+      hasSourceCode
+        ? contactInfoType({ contactName, email, phone, address })
+        : ''
+    }` +
+    `${
+      hasSourceCode && sourceLink
+        ? `<sourceLink>${sourceLink}</sourceLink>`
+        : ''
+    }` +
+    `${citation ? `<citation>${encodeXML(citation)}</citation>` : ''}` +
     `</source>`
   )
 }
@@ -94,7 +117,7 @@ export function valueCount({ refsMap }) {
   }`
 }
 
-export function qualityControlLevelInfo({ refsMap }) {
+export function qualityControlLevelInfo({ hasExplanation = false, refsMap }) {
   if (!(refsMap && typeof refsMap === 'object')) return ''
 
   const qualityControlLevelID = refsMap.get(
@@ -104,6 +127,7 @@ export function qualityControlLevelInfo({ refsMap }) {
     'his.odm.qualitycontrollevels.QualityControlLevelCode'
   )
   const definition = refsMap.get('his.odm.qualitycontrollevels.Definition')
+  const explanation = refsMap.get('his.odm.qualitycontrollevels.Explanation')
 
   return `<qualityControlLevel ${
     qualityControlLevelID
@@ -115,7 +139,9 @@ export function qualityControlLevelInfo({ refsMap }) {
           qualityControlLevelCode
         )}</qualityControlLevelCode>`
       : ''
-  }${
-    definition ? `<definition>${encodeXML(definition)}</definition>` : ''
+  }${definition ? `<definition>${encodeXML(definition)}</definition>` : ''}${
+    hasExplanation && explanation
+      ? `<explanation>${encodeXML(explanation)}</explanation>`
+      : ''
   }</qualityControlLevel>`
 }

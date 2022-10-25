@@ -90,6 +90,11 @@ export async function* getSites(
   // Fetch stations
   let stations = await helpers.findMany('stations', stationParams)
 
+  const organizationRefsMap =
+    organization && organization.external_refs
+      ? helpers.externalRefsMap(organization.external_refs)
+      : undefined
+
   yield soapEnvelopeStart() +
     soapHeaderStart() +
     soapWsaAction('GetSitesResponse') +
@@ -129,7 +134,7 @@ export async function* getSites(
       yield encodeXML(
         siteStart() +
           siteInfoStart() +
-          siteInfoType({ refsMap, station }) +
+          siteInfoType({ organizationRefsMap, refsMap, station }) +
           siteInfoEnd() +
           siteEnd()
       )

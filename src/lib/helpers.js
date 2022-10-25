@@ -135,6 +135,12 @@ export function createHelpers({ cache, logger, webAPI }) {
       return lc
         ? str.replace(/[^A-Za-z0-9]/g, '-').toLowerCase()
         : str.replace(/[^A-Za-z0-9]/g, '-')
+    },
+    dateformater(str) {
+      if (!str) return
+
+      const dateUtc = str ? str + 'Z' : ''
+      return new Date(dateUtc).getTime()
     }
   }
 }

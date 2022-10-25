@@ -146,10 +146,10 @@ export const SoapRequestSchema = {
   body: {
     additionalProperties: false,
     properties: {
-      'soap:Envelope': {
+      Envelope: {
         additionalProperties: false,
         properties: {
-          'soap:Body': {
+          Body: {
             oneOf: [
               GetSiteInfo,
               GetSiteInfoObject,
@@ -162,11 +162,11 @@ export const SoapRequestSchema = {
             ]
           }
         },
-        required: ['soap:Body'],
+        required: ['Body'],
         type: 'object'
       }
     },
-    required: ['soap:Envelope'],
+    required: ['Envelope'],
     type: 'object'
   }
 }

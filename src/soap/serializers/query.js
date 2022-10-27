@@ -40,12 +40,13 @@ export function queryInfoType({
       variableParam ? `<variableParam>${variableParam}</variableParam>` : ''
     }` +
     parameters
-      .map(
-        parameter =>
-          `<parameter name="${parameter[0]}" ${
-            parameter[1] ? `value="${encodeXML(parameter[1])}"` : ''
-          }/>`
-      )
+      .map(parameter => {
+        return parameter
+          ? `<parameter name="${parameter[0]}" ${
+              parameter[1] ? `value="${encodeXML(parameter[1])}"` : ''
+            }/>`
+          : ''
+      })
       .join('') +
     '</criteria>'
   )

@@ -1,4 +1,5 @@
 import { Readable } from 'stream'
+import { encodeXML } from 'entities'
 import { CacheControls, ContentTypes, Headers, uuid } from '../../lib/utils.js'
 import {
   queryInfoStart,
@@ -7,7 +8,7 @@ import {
 } from '../serializers/query.js'
 import { siteInfoType } from '../serializers/site.js'
 import {
-  responseWaterMLStart,
+  responseStart,
   soapBodyStart,
   soapBodyEnd,
   soapEnvelopeStart,
@@ -30,6 +31,7 @@ import {
   variableEnd
 } from '../serializers/variable.js'
 import {
+  getValuesResultStart,
   timeSeriesResponseStart,
   timeSeriesStart,
   sourceInfoStart,
@@ -39,7 +41,8 @@ import {
   sourceInfoEnd,
   censorCodeInfo,
   timeSeriesEnd,
-  timeSeriesResponseEnd
+  timeSeriesResponseEnd,
+  getValuesResultEnd
 } from '../serializers/value.js'
 import {
   qualityControlLevelInfo,
@@ -47,7 +50,7 @@ import {
   seriesSource
 } from '../serializers/series.js'
 
-export async function* getValuesObject(
+export async function* getValues(
   request,
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
@@ -57,14 +60,6 @@ export async function* getValuesObject(
 
   const startDateValue = helpers.dateformater(startDate)
   const endDateValue = helpers.dateformater(endDate)
-
-  // Check for Invalid Date
-  if (startDate && !startDateValue) {
-    throw new Error(`Improper BeginDate ${startDate} Must be YYYY-MM-DD`)
-  }
-  if (endDate && !endDateValue) {
-    throw new Error(`Improper EndDate ${endDate} Must be YYYY-MM-DD`)
-  }
 
   const org =
     typeof request.params.org === 'string'
@@ -140,7 +135,7 @@ export async function* getValuesObject(
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
-    soapWsaAction('GetValuesObjectResponse') +
+    soapWsaAction('GetValuesResponse') +
     soapWsaMessageID(uniqueid || uuid()) +
     soapWsaRelatesTo(uniqueid || uuid()) +
     soapWsaTo() +
@@ -151,38 +146,49 @@ export async function* getValuesObject(
     soapWsseSecurityEnd() +
     soapHeaderEnd() +
     soapBodyStart() +
-    responseWaterMLStart('TimeSeriesResponse') +
-    timeSeriesResponseStart({ hasAttribute: false }) +
-    queryInfoStart() +
-    queryInfoType({
-      date,
-      method,
-      parameters: [
-        ['site', location || undefined],
-        ['variable', variable || undefined],
-        startDate ? ['startDate', startDate] : undefined,
-        endDate ? ['endDate', endDate] : undefined
-      ]
-    }) +
-    queryInfoEnd() +
-    timeSeriesStart()
+    responseStart('GetValuesResponse') +
+    getValuesResultStart() +
+    encodeXML(
+      timeSeriesResponseStart({ hasAttribute: true }) +
+        queryInfoStart() +
+        queryInfoType({
+          date,
+          method,
+          parameters: [
+            ['site', location || undefined],
+            ['variable', variable || undefined],
+            startDate ? ['startDate', startDate] : undefined,
+            endDate ? ['endDate', endDate] : undefined
+          ]
+        }) +
+        queryInfoEnd() +
+        timeSeriesStart()
+    )
 
   // Will only be one station since $limit=1
   for (const station of stations) {
-    yield sourceInfoStart() +
-      siteInfoType({ organizationRefsMap, refsMap: stationRefsMap, station }) +
-      sourceInfoEnd()
+    yield encodeXML(
+      sourceInfoStart() +
+        siteInfoType({
+          organizationRefsMap,
+          refsMap: stationRefsMap,
+          station
+        }) +
+        sourceInfoEnd()
+    )
   }
 
-  yield variableStart() +
-    variableInfoType({
-      datastream: datastreams[0],
-      refsMap: dataStreamRefsMap,
-      unitCV
-    }) +
-    variableEnd()
+  yield encodeXML(
+    variableStart() +
+      variableInfoType({
+        datastream: datastreams[0],
+        refsMap: dataStreamRefsMap,
+        unitCV
+      }) +
+      variableEnd()
+  )
 
-  yield valuesStart()
+  yield encodeXML(valuesStart())
 
   const qualityControlLevelCodes = new Map()
   const methodIds = new Map()
@@ -217,15 +223,17 @@ export async function* getValuesObject(
       })
 
       let datapoints = await helpers.findMany('datapoints', datapointsParams)
-      while (datapoints && datapoints.length) {
+      while (datapoints.length) {
         let j = 0
         for (const datapoint of datapoints) {
-          yield valueInfoType({
-            datapoint,
-            methodId,
-            sourceID,
-            qualityControlLevelCode
-          })
+          yield encodeXML(
+            valueInfoType({
+              datapoint,
+              methodId,
+              sourceID,
+              qualityControlLevelCode
+            })
+          )
           // Stay async friendly; scan 200 at a time (hardcoded)
           j++
           if (!(j % 200)) await new Promise(resolve => setImmediate(resolve))
@@ -275,36 +283,44 @@ export async function* getValuesObject(
   }
 
   for (const value of qualityControlLevelCodes.values()) {
-    yield qualityControlLevelInfo({
-      hasExplanation: true,
-      refsMap: value
-    })
+    yield encodeXML(
+      qualityControlLevelInfo({
+        hasExplanation: true,
+        refsMap: value
+      })
+    )
   }
 
   for (const value of methodIds.values()) {
-    yield seriesMethod({
-      hasMethodCode: true,
-      refsMap: value
-    })
+    yield encodeXML(
+      seriesMethod({
+        hasMethodCode: true,
+        refsMap: value
+      })
+    )
   }
 
   for (const value of sourceIDs.values()) {
-    yield seriesSource({
-      hasSourceCode: true,
-      refsMap: value
-    })
+    yield encodeXML(
+      seriesSource({
+        hasSourceCode: true,
+        refsMap: value
+      })
+    )
   }
 
-  yield censorCodeInfo({
-    censorCode: 'nc',
-    censorCodeDescription: 'not censored'
-  })
+  yield encodeXML(
+    censorCodeInfo({
+      censorCode: 'nc',
+      censorCodeDescription: 'not censored'
+    })
+  )
 
-  yield valuesEnd()
+  yield encodeXML(valuesEnd())
 
-  yield timeSeriesEnd() +
-    timeSeriesResponseEnd() +
-    '</TimeSeriesResponse>' +
+  yield encodeXML(timeSeriesEnd() + timeSeriesResponseEnd()) +
+    getValuesResultEnd() +
+    '</GetValuesResponse>' +
     soapBodyEnd() +
     soapEnvelopeEnd()
 }
@@ -314,7 +330,7 @@ export default async (request, reply, ctx) => {
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)
     .send(
-      Readable.from(getValuesObject(request, ctx), {
+      Readable.from(getValues(request, ctx), {
         autoDestroy: true
       })
     )

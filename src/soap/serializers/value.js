@@ -1,7 +1,14 @@
 import { encodeXML } from 'entities'
 
-export function timeSeriesResponseStart() {
-  return '<timeSeriesResponse>'
+export function timeSeriesResponseStart({ hasAttribute = false }) {
+  return `<timeSeriesResponse${
+    hasAttribute
+      ? ` xmlns="http://www.cuahsi.org/waterML/1.1/"` +
+        ` xmlns:gml="http://www.opengis.net/gml"` +
+        ` xmlns:wtr="http://www.cuahsi.org/waterML/"` +
+        ` xmlns:xlink="http://www.w3.org/1999/xlink"`
+      : ``
+  }>`
 }
 
 export function timeSeriesResponseEnd() {
@@ -119,4 +126,11 @@ export function censorCodeInfo(data) {
     }` +
     '</censorCode>'
   )
+}
+
+export function getValuesResultStart() {
+  return '<GetValuesResult>'
+}
+export function getValuesResultEnd() {
+  return '</GetValuesResult>'
 }

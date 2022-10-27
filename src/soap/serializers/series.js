@@ -28,7 +28,14 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
   const contactName = refsMap.get('his.odm.sources.ContactName')
   const email = refsMap.get('his.odm.sources.Email')
   const phone = refsMap.get('his.odm.sources.Phone')
-  const address = refsMap.get('his.odm.sources.Address')
+  const city = refsMap.get('his.odm.sources.City')
+  const state = refsMap.get('his.odm.sources.State')
+  const zipCode = refsMap.get('his.odm.sources.ZipCode')
+  const address = refsMap
+    .get('his.odm.sources.Address')
+    .concat(', ' + city)
+    .concat(', ' + state)
+    .concat(' ' + zipCode)
   const sourceLink = refsMap.get('his.odm.sources.SourceLink')
 
   return (

@@ -26,9 +26,13 @@ export function createHelpers({ cache, logger, webAPI }) {
     },
 
     async findMany(entity, params) {
-      const url = `/${entity}`
-      const resp = await webAPI.get(url, { params })
-      return (resp.data && resp.data.data) || []
+      try {
+        const url = `/${entity}`
+        const resp = await webAPI.get(url, { params })
+        return (resp.data && resp.data.data) || []
+      } catch (err) {
+        logger.error(err)
+      }
     },
 
     // TODO: Need to fix this
@@ -136,11 +140,14 @@ export function createHelpers({ cache, logger, webAPI }) {
         ? str.replace(/[^A-Za-z0-9]/g, '-').toLowerCase()
         : str.replace(/[^A-Za-z0-9]/g, '-')
     },
-    dateformater(str) {
-      if (!str) return
+    dateformater(dt) {
+      if (!dt) return
 
-      const dateUtc = str ? str + 'Z' : ''
-      return new Date(dateUtc).getTime()
+      const dateUtc = dt.endsWith('Z') ? dt : dt + 'Z'
+
+      if (!isNaN(new Date(dateUtc).getTime())) {
+        return new Date(dateUtc).getTime()
+      }
     }
   }
 }

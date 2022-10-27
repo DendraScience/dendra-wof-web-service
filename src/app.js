@@ -56,7 +56,7 @@ export default async logger => {
   }
 
   const handlePost = async (request, reply, ctx) => {
-    const soapBody = request.body['soap:Envelope']['soap:Body']
+    const soapBody = request.body.Envelope.Body
     const method = Object.keys(soapBody)[0]
     const parameters = soapBody[method]
 
@@ -113,7 +113,9 @@ export default async logger => {
     fastify.register(cors, {
       exposedHeaders: ['Accept', 'Content-Type', 'Origin', 'X-Requested-With']
     })
-    fastify.register(xmlBodyParser)
+    fastify.register(xmlBodyParser, {
+      removeNSPrefix: true
+    })
 
     // Root routes
     fastify.get(

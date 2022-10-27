@@ -47,21 +47,41 @@ export function valueInfoType({
 }) {
   if (!(datapoint && typeof datapoint === 'object')) return ''
 
-  const censorCode = 'nc'
+  const censorCode = datapoint.d && datapoint.d.CensorCode
   const dateTime = new Date(datapoint.lt).toISOString().replace('.000Z', '')
-  const timeOffset = '-05:00'
   const dateTimeUTC = new Date(datapoint.t).toISOString().replace('.000Z', '')
   const value = datapoint.v
+  const utcTimeOffset = datapoint.d && datapoint.d.UTCOffset
 
-  return `<value ${censorCode ? `censorCode="${encodeXML(censorCode)}"` : ''} ${
-    dateTime ? `dateTime="${dateTime}"` : ''
-  } ${timeOffset ? `timeOffset="${encodeXML(timeOffset)}"` : ''} ${
-    dateTimeUTC ? `dateTimeUTC="${dateTimeUTC}"` : ''
-  } ${methodId ? `methodCode="${encodeXML(methodId)}"` : ''} ${
-    sourceID ? `sourceCode="${encodeXML(sourceID)}"` : ''
-  } ${
+  /**
+   *
+   * @param {string} n
+   * @returns -6 => -06 || 6 => 06 || 10 => 10 || 0 => 00
+   */
+  const twoDigitNumber = n => {
+    if (n <= 10 && n >= 0) {
+      return '0' + n
+    } else if (n < 0 && n > -10) {
+      return [n.slice(0, 1), '0', n.slice(1)].join('')
+    } else {
+      return n
+    }
+  }
+
+  // utcTimeOffset has possibility of 0 ; Atlantic/Azores
+  const toFixed = utcTimeOffset !== undefined && utcTimeOffset.toFixed(2)
+  const timeOffset =
+    toFixed && twoDigitNumber(toFixed.toString()).replace('.', ':')
+
+  return `<value${censorCode ? ` censorCode="${encodeXML(censorCode)}"` : ''}${
+    dateTime ? ` dateTime="${dateTime}"` : ''
+  }${timeOffset ? ` timeOffset="${timeOffset}"` : ''}${
+    dateTimeUTC ? ` dateTimeUTC="${dateTimeUTC}"` : ''
+  }${methodId ? ` methodCode="${encodeXML(methodId)}"` : ''}${
+    sourceID ? ` sourceCode="${encodeXML(sourceID)}"` : ''
+  }${
     qualityControlLevelCode
-      ? `qualityControlLevelCode="${encodeXML(qualityControlLevelCode)}"`
+      ? ` qualityControlLevelCode="${encodeXML(qualityControlLevelCode)}"`
       : ''
   }>${value}</value>`
 }

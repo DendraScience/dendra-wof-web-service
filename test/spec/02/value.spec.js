@@ -99,7 +99,12 @@ describe('Serializers', function () {
     it('should serialize valueInfoType', function () {
       expect(
         valueInfoType({
-          datapoint: { lt: 1447586100000, t: 1447604100000, v: 8.5 },
+          datapoint: {
+            lt: 1447586100000,
+            t: 1447604100000,
+            v: 8.5,
+            d: { CensorCode: 'nc', UTCOffset: -5 }
+          },
           methodId: '18',
           sourceID: '15',
           qualityControlLevelCode: '2'

@@ -223,8 +223,10 @@ export async function* getValues(
       })
 
       let datapoints = await helpers.findMany('datapoints', datapointsParams)
+
       while (datapoints.length) {
         let j = 0
+
         for (const datapoint of datapoints) {
           yield encodeXML(
             valueInfoType({
@@ -234,11 +236,13 @@ export async function* getValues(
               qualityControlLevelCode
             })
           )
+
           // Stay async friendly; scan 200 at a time (hardcoded)
           j++
           if (!(j % 200)) await new Promise(resolve => setImmediate(resolve))
         }
-        //
+
+        // Fetch next page
         datapoints = await helpers.findMany(
           'datapoints',
           Object.assign(datapointsParams, {

@@ -217,8 +217,10 @@ export async function* getValuesObject(
       })
 
       let datapoints = await helpers.findMany('datapoints', datapointsParams)
+
       while (datapoints && datapoints.length) {
         let j = 0
+
         for (const datapoint of datapoints) {
           yield valueInfoType({
             datapoint,
@@ -226,11 +228,13 @@ export async function* getValuesObject(
             sourceID,
             qualityControlLevelCode
           })
+
           // Stay async friendly; scan 200 at a time (hardcoded)
           j++
           if (!(j % 200)) await new Promise(resolve => setImmediate(resolve))
         }
-        //
+
+        // Fetch next page
         datapoints = await helpers.findMany(
           'datapoints',
           Object.assign(datapointsParams, {

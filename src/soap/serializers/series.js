@@ -114,15 +114,9 @@ export function variableTimeInterval({
     : ''
 }
 
-// TODO: change to orginal code
-export function valueCount({ refsMap }) {
-  if (!(refsMap && typeof refsMap === 'object')) return ''
-
-  const valueCount = refsMap.get('his.odm.datavalues.ValueCount')
-
-  return `${
-    valueCount ? `<valueCount>${encodeXML(valueCount)}</valueCount>` : ''
-  }`
+export function valueCount(valCount) {
+  if (!(typeof valCount === 'number')) return ''
+  return `<valueCount>${valCount}</valueCount>`
 }
 
 export function qualityControlLevelInfo({ hasExplanation = false, refsMap }) {

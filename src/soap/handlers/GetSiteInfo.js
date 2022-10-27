@@ -202,12 +202,22 @@ export async function* getSiteInfo(
           )
         }
 
+        const datapointsParams = Object.assign({
+          datastream_id: datastream._id,
+          fn: 'count'
+        })
+        const datapoints = await helpers.findMany(
+          'datapoints',
+          datapointsParams
+        )
+        const valCount = datapoints && datapoints.length && datapoints[0].v
+
         yield encodeXML(
           seriesStart() +
             variableStart() +
             variableInfoType({ datastream, refsMap, unitCV }) +
             variableEnd() +
-            valueCount({ refsMap }) +
+            valueCount(valCount) +
             variableTimeInterval({ firstDatapoint, lastDatapoint, refsMap }) +
             seriesMethod({ refsMap }) +
             seriesSource({ refsMap }) +

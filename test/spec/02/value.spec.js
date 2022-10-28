@@ -105,7 +105,7 @@ describe('Serializers', function () {
             v: 8.5,
             d: { CensorCode: 'nc', UTCOffset: -5 }
           },
-          methodId: '18',
+          methodID: '18',
           sourceID: '15',
           qualityControlLevelCode: '2'
         })

@@ -42,7 +42,7 @@ export function valuesEnd() {
 
 export function valueInfoType({
   datapoint,
-  methodId,
+  methodID,
   sourceID,
   qualityControlLevelCode
 }) {
@@ -58,7 +58,7 @@ export function valueInfoType({
     dateTime ? ` dateTime="${dateTime}"` : ''
   }${utcTimeOffset ? ` timeOffset="${utcTimeOffset}"` : ''}${
     dateTimeUTC ? ` dateTimeUTC="${dateTimeUTC}"` : ''
-  }${methodId ? ` methodCode="${encodeXML(methodId)}"` : ''}${
+  }${methodID ? ` methodCode="${encodeXML(methodID)}"` : ''}${
     sourceID ? ` sourceCode="${encodeXML(sourceID)}"` : ''
   }${
     qualityControlLevelCode

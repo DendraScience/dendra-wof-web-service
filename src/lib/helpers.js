@@ -140,14 +140,11 @@ export function createHelpers({ cache, logger, webAPI }) {
         ? str.replace(/[^A-Za-z0-9]/g, '-').toLowerCase()
         : str.replace(/[^A-Za-z0-9]/g, '-')
     },
-    dateformater(dt) {
-      if (!dt) return
 
-      const dateUtc = dt.endsWith('Z') ? dt : dt + 'Z'
-
-      if (!isNaN(new Date(dateUtc).getTime())) {
-        return new Date(dateUtc).getTime()
-      }
+    toTime(str) {
+      if (!str) return
+      const time = new Date(str.endsWith('Z') ? str : str + 'Z').getTime()
+      if (!isNaN(time)) return time
     }
   }
 }

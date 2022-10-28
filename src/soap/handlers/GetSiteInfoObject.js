@@ -150,11 +150,12 @@ export async function* getSiteInfoObject(
       siteInfoEnd()
   }
 
-  if (datastreams && datastreams.length) {
+  // datastreams length set for open & closing tag of seriesCatalog
+  const datastreamLength = datastreams && datastreams.length
+
+  if (datastreamLength) {
     yield seriesCatalogStart(org || siteParts[0])
   }
-
-  const uniqueVariables = new Set()
 
   while (datastreams.length) {
     let i = 0
@@ -164,57 +165,39 @@ export async function* getSiteInfoObject(
         datastream && datastream.external_refs
           ? helpers.externalRefsMap(datastream.external_refs)
           : undefined
-      const variableID = refsMap && refsMap.get(`his.odm.variables.VariableID`)
-      const methodID = refsMap && refsMap.get('his.odm.methods.MethodID')
-      const sourceID = refsMap.get('his.odm.sources.SourceID')
-      const qualityControlLevelID = refsMap.get(
-        'his.odm.qualitycontrollevels.QualityControlLevelID'
-      )
 
-      const variableObj = {
-        methodID,
-        qualityControlLevelID,
-        sourceID,
-        variableID
-      }
+      const firstDatapoint = await helpers.findDatapoint({
+        datastream_id: datastream._id
+      })
+      let lastDatapoint
 
-      // Normalize datastreams to unique variables
-      if (!uniqueVariables.has(variableObj)) {
-        uniqueVariables.add(variableObj)
-
-        const firstDatapoint = await helpers.findDatapoint({
-          datastream_id: datastream._id
-        })
-        let lastDatapoint
-
-        if (firstDatapoint) {
-          lastDatapoint = await helpers.findDatapoint(
-            { datastream_id: datastream._id },
-            true
-          )
-        }
-
-        const datapointsParams = Object.assign({
-          datastream_id: datastream._id,
-          fn: 'count'
-        })
-        const datapoints = await helpers.findMany(
-          'datapoints',
-          datapointsParams
+      if (firstDatapoint) {
+        lastDatapoint = await helpers.findDatapoint(
+          { datastream_id: datastream._id },
+          true
         )
-        const valCount = datapoints && datapoints.length && datapoints[0].v
-
-        yield seriesStart() +
-          variableStart() +
-          variableInfoType({ datastream, refsMap, unitCV }) +
-          variableEnd() +
-          valueCount(valCount) +
-          variableTimeInterval({ firstDatapoint, lastDatapoint, refsMap }) +
-          seriesMethod({ refsMap }) +
-          seriesSource({ refsMap }) +
-          qualityControlLevelInfo({ refsMap }) +
-          seriesEnd()
       }
+
+      const datapoints = await helpers.findMany('datapoints', {
+        datastream_id: datastream._id,
+        fn: 'count'
+      })
+      const vCount =
+        datapoints &&
+        datapoints.reduce((total, datapoint) => {
+          return total + datapoint.v
+        }, 0)
+
+      yield seriesStart() +
+        variableStart() +
+        variableInfoType({ datastream, refsMap, unitCV }) +
+        variableEnd() +
+        valueCount(vCount) +
+        variableTimeInterval({ firstDatapoint, lastDatapoint, refsMap }) +
+        seriesMethod({ refsMap }) +
+        seriesSource({ refsMap }) +
+        qualityControlLevelInfo({ refsMap }) +
+        seriesEnd()
 
       // Stay async friendly; scan 200 at a time (hardcoded)
       i++
@@ -233,7 +216,7 @@ export async function* getSiteInfoObject(
     )
   }
 
-  if (uniqueVariables.size || (datastreams && datastreams.length)) {
+  if (datastreamLength) {
     yield seriesCatalogEnd()
   }
 

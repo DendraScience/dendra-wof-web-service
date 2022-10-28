@@ -55,15 +55,15 @@ export async function* getValuesObject(
   const siteParts = location && location.split(':')
   const variableParts = variable && variable.split(':')
 
-  const startDateValue = helpers.dateformater(startDate)
-  const endDateValue = helpers.dateformater(endDate)
+  const startTime = helpers.toTime(startDate)
+  const endTime = helpers.toTime(endDate)
 
   // Check for Invalid Date
-  if (startDate && !startDateValue) {
-    throw new Error(`Improper BeginDate ${startDate} Must be YYYY-MM-DD`)
+  if (startDate && !startTime) {
+    throw new Error(`Invalid startDate parameter '${startDate}'`)
   }
-  if (endDate && !endDateValue) {
-    throw new Error(`Improper EndDate ${endDate} Must be YYYY-MM-DD`)
+  if (endDate && !endTime) {
+    throw new Error(`Invalid endDate parameter '${endDate}'`)
   }
 
   const org =
@@ -185,7 +185,7 @@ export async function* getValuesObject(
   yield valuesStart()
 
   const qualityControlLevelCodes = new Map()
-  const methodIds = new Map()
+  const methodIDs = new Map()
   const sourceIDs = new Map()
 
   while (datastreams.length) {
@@ -199,14 +199,14 @@ export async function* getValuesObject(
       const qualityControlLevelCode =
         refsMap &&
         refsMap.get('his.odm.qualitycontrollevels.QualityControlLevelCode')
-      const methodId = refsMap.get('his.odm.methods.MethodID')
+      const methodID = refsMap.get('his.odm.methods.MethodID')
       const sourceID = refsMap.get('his.odm.sources.SourceID')
 
       const datapointsParams = Object.assign({
         datastream_id: datastream._id,
         time: {
-          $gte: startDateValue,
-          $lte: endDateValue
+          $gte: startTime,
+          $lte: endTime
         },
         time_local: true,
         t_int: true,
@@ -224,7 +224,7 @@ export async function* getValuesObject(
         for (const datapoint of datapoints) {
           yield valueInfoType({
             datapoint,
-            methodId,
+            methodID,
             sourceID,
             qualityControlLevelCode
           })
@@ -240,7 +240,7 @@ export async function* getValuesObject(
           Object.assign(datapointsParams, {
             time: {
               $gt: datapoints[datapoints.length - 1].lt,
-              $lte: endDateValue
+              $lte: endTime
             }
           })
         )
@@ -253,8 +253,8 @@ export async function* getValuesObject(
         qualityControlLevelCodes.set(qualityControlLevelCode, refsMap)
       }
 
-      if (methodId && !methodIds.has(methodId)) {
-        methodIds.set(methodId, refsMap)
+      if (methodID && !methodIDs.has(methodID)) {
+        methodIDs.set(methodID, refsMap)
       }
 
       if (sourceID && !sourceIDs.has(sourceID)) {
@@ -285,7 +285,7 @@ export async function* getValuesObject(
     })
   }
 
-  for (const value of methodIds.values()) {
+  for (const value of methodIDs.values()) {
     yield seriesMethod({
       hasMethodCode: true,
       refsMap: value

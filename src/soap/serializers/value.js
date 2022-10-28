@@ -1,4 +1,5 @@
 import { encodeXML } from 'entities'
+import { timeOffset } from './time.js'
 
 export function timeSeriesResponseStart({ hasAttribute = false }) {
   return `<timeSeriesResponse${
@@ -48,34 +49,14 @@ export function valueInfoType({
   if (!(datapoint && typeof datapoint === 'object')) return ''
 
   const censorCode = datapoint.d && datapoint.d.CensorCode
-  const dateTime = new Date(datapoint.lt).toISOString().replace('.000Z', '')
-  const dateTimeUTC = new Date(datapoint.t).toISOString().replace('.000Z', '')
+  const dateTime = new Date(datapoint.lt).toISOString().substring(0, 19)
+  const dateTimeUTC = new Date(datapoint.t).toISOString().substring(0, 19)
   const value = datapoint.v
-  const utcTimeOffset = datapoint.d && datapoint.d.UTCOffset
-
-  /**
-   *
-   * @param {string} n
-   * @returns -6 => -06 || 6 => 06 || 10 => 10 || 0 => 00
-   */
-  const twoDigitNumber = n => {
-    if (n <= 10 && n >= 0) {
-      return '0' + n
-    } else if (n < 0 && n > -10) {
-      return [n.slice(0, 1), '0', n.slice(1)].join('')
-    } else {
-      return n
-    }
-  }
-
-  // utcTimeOffset has possibility of 0 ; Atlantic/Azores
-  const toFixed = utcTimeOffset !== undefined && utcTimeOffset.toFixed(2)
-  const timeOffset =
-    toFixed && twoDigitNumber(toFixed.toString()).replace('.', ':')
+  const utcTimeOffset = datapoint.d && timeOffset(datapoint.d.UTCOffset)
 
   return `<value${censorCode ? ` censorCode="${encodeXML(censorCode)}"` : ''}${
     dateTime ? ` dateTime="${dateTime}"` : ''
-  }${timeOffset ? ` timeOffset="${timeOffset}"` : ''}${
+  }${utcTimeOffset ? ` timeOffset="${utcTimeOffset}"` : ''}${
     dateTimeUTC ? ` dateTimeUTC="${dateTimeUTC}"` : ''
   }${methodId ? ` methodCode="${encodeXML(methodId)}"` : ''}${
     sourceID ? ` sourceCode="${encodeXML(sourceID)}"` : ''

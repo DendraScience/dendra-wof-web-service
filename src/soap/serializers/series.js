@@ -114,9 +114,9 @@ export function variableTimeInterval({
     : ''
 }
 
-export function valueCount(valCount) {
-  if (!(typeof valCount === 'number')) return ''
-  return `<valueCount>${valCount}</valueCount>`
+export function valueCount(vCount) {
+  if (!(typeof vCount === 'number')) return ''
+  return `<valueCount>${vCount}</valueCount>`
 }
 
 export function qualityControlLevelInfo({ hasExplanation = false, refsMap }) {

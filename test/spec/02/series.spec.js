@@ -86,9 +86,7 @@ describe('Serializers', function () {
     })
 
     it('should serialize valueCount', function () {
-      const refsMap = new Map([['his.odm.datavalues.ValueCount', '5']])
-
-      expect(valueCount({ refsMap })).to.equal('<valueCount>5</valueCount>')
+      expect(valueCount(37)).to.equal('<valueCount>37</valueCount>')
     })
 
     it('should serialize qualityControlLevelInfo', function () {

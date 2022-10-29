@@ -1,7 +1,15 @@
 import { encodeXML } from 'entities'
+import { timeOffset } from './time.js'
 
-export function timeSeriesResponseStart() {
-  return '<timeSeriesResponse>'
+export function timeSeriesResponseStart({ hasAttribute = false }) {
+  return `<timeSeriesResponse${
+    hasAttribute
+      ? ` xmlns="http://www.cuahsi.org/waterML/1.1/"` +
+        ` xmlns:gml="http://www.opengis.net/gml"` +
+        ` xmlns:wtr="http://www.cuahsi.org/waterML/"` +
+        ` xmlns:xlink="http://www.w3.org/1999/xlink"`
+      : ``
+  }>`
 }
 
 export function timeSeriesResponseEnd() {
@@ -34,27 +42,27 @@ export function valuesEnd() {
 
 export function valueInfoType({
   datapoint,
-  methodId,
+  methodID,
   sourceID,
   qualityControlLevelCode
 }) {
   if (!(datapoint && typeof datapoint === 'object')) return ''
 
-  const censorCode = 'nc'
-  const dateTime = new Date(datapoint.lt).toISOString().replace('.000Z', '')
-  const timeOffset = '-05:00'
-  const dateTimeUTC = new Date(datapoint.t).toISOString().replace('.000Z', '')
+  const censorCode = datapoint.d && datapoint.d.CensorCode
+  const dateTime = new Date(datapoint.lt).toISOString().substring(0, 19)
+  const dateTimeUTC = new Date(datapoint.t).toISOString().substring(0, 19)
   const value = datapoint.v
+  const utcTimeOffset = datapoint.d && timeOffset(datapoint.d.UTCOffset)
 
-  return `<value ${censorCode ? `censorCode="${encodeXML(censorCode)}"` : ''} ${
-    dateTime ? `dateTime="${dateTime}"` : ''
-  } ${timeOffset ? `timeOffset="${encodeXML(timeOffset)}"` : ''} ${
-    dateTimeUTC ? `dateTimeUTC="${dateTimeUTC}"` : ''
-  } ${methodId ? `methodCode="${encodeXML(methodId)}"` : ''} ${
-    sourceID ? `sourceCode="${encodeXML(sourceID)}"` : ''
-  } ${
+  return `<value${censorCode ? ` censorCode="${encodeXML(censorCode)}"` : ''}${
+    dateTime ? ` dateTime="${dateTime}"` : ''
+  }${utcTimeOffset ? ` timeOffset="${utcTimeOffset}"` : ''}${
+    dateTimeUTC ? ` dateTimeUTC="${dateTimeUTC}"` : ''
+  }${methodID ? ` methodCode="${encodeXML(methodID)}"` : ''}${
+    sourceID ? ` sourceCode="${encodeXML(sourceID)}"` : ''
+  }${
     qualityControlLevelCode
-      ? `qualityControlLevelCode="${encodeXML(qualityControlLevelCode)}"`
+      ? ` qualityControlLevelCode="${encodeXML(qualityControlLevelCode)}"`
       : ''
   }>${value}</value>`
 }
@@ -119,4 +127,11 @@ export function censorCodeInfo(data) {
     }` +
     '</censorCode>'
   )
+}
+
+export function getValuesResultStart() {
+  return '<GetValuesResult>'
+}
+export function getValuesResultEnd() {
+  return '</GetValuesResult>'
 }

@@ -28,7 +28,15 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
   const contactName = refsMap.get('his.odm.sources.ContactName')
   const email = refsMap.get('his.odm.sources.Email')
   const phone = refsMap.get('his.odm.sources.Phone')
-  const address = refsMap.get('his.odm.sources.Address')
+  const city = refsMap.get('his.odm.sources.City') || ''
+  const state = refsMap.get('his.odm.sources.State') || ''
+  const zipCode = refsMap.get('his.odm.sources.ZipCode') || ''
+  const address =
+    refsMap.get('his.odm.sources.Address') ||
+    ''
+      .concat(', ' + city)
+      .concat(', ' + state)
+      .concat(' ' + zipCode)
   const sourceLink = refsMap.get('his.odm.sources.SourceLink')
 
   return (
@@ -106,15 +114,9 @@ export function variableTimeInterval({
     : ''
 }
 
-// TODO: change to orginal code
-export function valueCount({ refsMap }) {
-  if (!(refsMap && typeof refsMap === 'object')) return ''
-
-  const valueCount = refsMap.get('his.odm.datavalues.ValueCount')
-
-  return `${
-    valueCount ? `<valueCount>${encodeXML(valueCount)}</valueCount>` : ''
-  }`
+export function valueCount(vCount) {
+  if (!(typeof vCount === 'number')) return ''
+  return `<valueCount>${vCount}</valueCount>`
 }
 
 export function qualityControlLevelInfo({ hasExplanation = false, refsMap }) {

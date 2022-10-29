@@ -6,6 +6,7 @@ import GetVariables from './GetVariables.js'
 import GetVariablesObject from './GetVariablesObject.js'
 import GetVariableInfo from './GetVariableInfo.js'
 import GetVariableInfoObject from './GetVariableInfoObject.js'
+import GetValues from './GetValues.js'
 import GetValuesObject from './GetValuesObject.js'
 
 // Named exports for convenience
@@ -18,5 +19,6 @@ export default {
   GetVariablesObject,
   GetVariableInfo,
   GetVariableInfoObject,
+  GetValues,
   GetValuesObject
 }

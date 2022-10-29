@@ -69,7 +69,10 @@ describe('GetSiteInfoObject handlers', function () {
     findManyFake.onCall(0).returns(organizationData)
     findManyFake.onCall(1).returns([stationData[1]])
     findManyFake.onCall(2).returns([datastreamsData[0], datastreamsData[3]])
-    findManyFake.onCall(3).returns([])
+    findManyFake.onCall(3).returns([{ v: 5 }])
+    findManyFake.onCall(4).returns([{ v: 5 }])
+    findManyFake.onCall(5).returns([])
+
     const getUnitCVFake = sinon.fake.returns({})
     const variableTimeIntervalFake = sinon.stub()
     variableTimeIntervalFake
@@ -247,7 +250,9 @@ describe('GetSiteInfoObject handlers', function () {
     findManyFake.onCall(0).returns(organizationData)
     findManyFake.onCall(1).returns([stationData[1]])
     findManyFake.onCall(2).returns([datastreamsData[0], datastreamsData[3]])
-    findManyFake.onCall(3).returns([])
+    findManyFake.onCall(3).returns([{ v: 5 }]) // two datapoints needed because of two station
+    findManyFake.onCall(4).returns([{ v: 5 }])
+    findManyFake.onCall(5).returns([])
     const getUnitCVFake = sinon.fake.returns(data)
     const time = sinon.fake.returns([])
     sinon.replace(helpers, 'org', orgFake)

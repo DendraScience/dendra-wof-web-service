@@ -150,7 +150,7 @@ export async function* getSiteInfoObject(
       siteInfoEnd()
   }
 
-  // datastreams length set for open & closing tag of seriesCatalog
+  // Datastreams length set for open and closing tag of seriesCatalog
   const datastreamLength = datastreams && datastreams.length
 
   if (datastreamLength) {

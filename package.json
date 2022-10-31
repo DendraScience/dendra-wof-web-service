@@ -1,6 +1,6 @@
 {
   "name": "@dendra-science/dendra-wof-web-service",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "WaterOneFlow Web Service to share hydrologic data with CUAHSI-HIS.",
   "license": "BSD-3-Clause",
   "author": "J. Scott Smith <scott@newleafsolutionsinc.com>",
@@ -26,30 +26,30 @@
     "node": ">=16.17"
   },
   "dependencies": {
-    "@fastify/cors": "^8.1.0",
+    "@fastify/cors": "^8.1.1",
     "agentkeepalive": "^4.2.1",
     "axios": "^0.27.2",
     "dotenv": "^16.0.3",
     "entities": "^4.4.0",
-    "fastify": "^4.8.1",
+    "fastify": "^4.9.2",
     "fastify-xml-body-parser": "^2.1.1",
     "http-errors": "^2.0.0",
     "load-json-file": "^7.0.1",
     "lru-cache": "^7.14.0",
-    "pino": "^8.6.1",
+    "pino": "^8.7.0",
     "qs": "^6.11.0"
   },
   "devDependencies": {
     "chai": "^4.3.6",
-    "eslint": "^8.25.0",
+    "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-promise": "^6.1.0",
+    "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-standard": "^5.0.0",
-    "mocha": "^10.0.0",
+    "mocha": "^10.1.0",
     "prettier": "2.7.1",
     "sinon": "^14.0.1"
   }

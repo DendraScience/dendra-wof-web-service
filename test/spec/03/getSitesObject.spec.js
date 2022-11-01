@@ -25,8 +25,7 @@ describe('GetSitesObject handlers', function () {
     const parameters = {
       site: {
         string: ['', '']
-      },
-      authToken: ''
+      }
     }
     const request = { params: { org: '' } }
     const cache = {}
@@ -71,8 +70,7 @@ describe('GetSitesObject handlers', function () {
     const parameters = {
       site: {
         string: ['woftest:sitecode-min', 'woftest:sitecode-full']
-      },
-      authToken: ''
+      }
     }
     const request = { params: { org: '' } }
     const cache = {}
@@ -117,8 +115,7 @@ describe('GetSitesObject handlers', function () {
     const parameters = {
       site: {
         string: ['', '']
-      },
-      authToken: ''
+      }
     }
     const request = { params: { org: '' } }
     const cache = {}
@@ -177,8 +174,7 @@ describe('GetSitesObject handlers', function () {
     const parameters = {
       site: {
         string: ['woftest:sitecode-min', 'woftest:sitecode-full']
-      },
-      authToken: ''
+      }
     }
     const request = { params: { org: '' } }
     const cache = {}

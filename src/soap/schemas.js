@@ -2,10 +2,6 @@
   Shared types.
  */
 
-export const authToken = {
-  type: 'string'
-}
-
 export const variable = {
   oneOf: [{ type: 'array' }]
 }
@@ -17,7 +13,6 @@ export const variable = {
 export const getSiteInfoType = {
   additionalProperties: false,
   properties: {
-    authToken,
     site: {
       oneOf: [{ type: 'array', items: { type: 'string', minLength: 1 } }]
     }
@@ -49,7 +44,6 @@ export const GetSiteInfoObject = {
 export const getSitesType = {
   additionalProperties: false,
   properties: {
-    authToken,
     site: {
       oneOf: [
         { type: 'string' },
@@ -86,17 +80,10 @@ export const GetSitesObject = {
 /*
   GetVariablesXXX methods.
  */
-export const getVariablesType = {
-  additionalProperties: false,
-  properties: {
-    authToken
-  },
-  type: 'object'
-}
 
 export const GetVariables = {
   properties: {
-    GetVariables: getVariablesType
+    GetVariables: {}
   },
   required: ['GetVariables'],
   type: 'object'
@@ -104,7 +91,7 @@ export const GetVariables = {
 
 export const GetVariablesObject = {
   properties: {
-    GetVariablesObject: getVariablesType
+    GetVariablesObject: {}
   },
   required: ['GetVariablesObject'],
   type: 'object'
@@ -116,8 +103,7 @@ export const GetVariablesObject = {
 export const getVariableInfoType = {
   additionalProperties: false,
   properties: {
-    variable,
-    authToken
+    variable
   },
   type: 'object'
 }
@@ -147,8 +133,7 @@ export const getValuesType = {
     location: { type: 'string', minLength: 1 },
     variable: { type: 'string', minLength: 1 },
     startDate: { type: 'string' },
-    endDate: { type: 'string' },
-    authToken
+    endDate: { type: 'string' }
   },
   required: ['location', 'variable', 'startDate', 'endDate'],
   type: 'object'

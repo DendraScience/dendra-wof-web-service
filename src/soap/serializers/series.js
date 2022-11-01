@@ -8,11 +8,17 @@ export function seriesMethod({ hasMethodCode = false, refsMap }) {
 
   const id = refsMap.get('his.odm.methods.MethodID')
   const description = refsMap.get('his.odm.methods.MethodDescription')
+  const methodLink = refsMap.get('his.odm.methods.MethodLink')
 
   return (
     `<method ${id ? `methodID="${encodeXML(id)}"` : ''}>` +
     `${id && hasMethodCode ? `<methodCode>${id}</methodCode>` : ''}` +
     methodType({ description }) +
+    `${
+      hasMethodCode && methodLink
+        ? `<methodLink>${methodLink}</methodLink>`
+        : ''
+    }` +
     '</method>'
   )
 }
@@ -28,16 +34,14 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
   const contactName = refsMap.get('his.odm.sources.ContactName')
   const email = refsMap.get('his.odm.sources.Email')
   const phone = refsMap.get('his.odm.sources.Phone')
-  const city = refsMap.get('his.odm.sources.City') || ''
-  const state = refsMap.get('his.odm.sources.State') || ''
-  const zipCode = refsMap.get('his.odm.sources.ZipCode') || ''
-  const address =
-    refsMap.get('his.odm.sources.Address') ||
-    ''
-      .concat(', ' + city)
-      .concat(', ' + state)
-      .concat(' ' + zipCode)
+  const city = refsMap.get('his.odm.sources.City')
+  const state = refsMap.get('his.odm.sources.State')
+  const zipCode = refsMap.get('his.odm.sources.ZipCode')
+  const streetAddress = refsMap.get('his.odm.sources.Address')
   const sourceLink = refsMap.get('his.odm.sources.SourceLink')
+  const address = [streetAddress, city, state, zipCode]
+    .filter(Boolean)
+    .join(', ')
 
   return (
     `<source ${sourceID ? `sourceID="${sourceID}` : ''}">` +

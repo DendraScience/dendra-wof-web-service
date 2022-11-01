@@ -144,12 +144,13 @@ export const GetVariableInfoObject = {
 export const getValuesType = {
   additionalProperties: false,
   properties: {
-    location: { type: 'string' },
-    variable: { type: 'string' },
+    location: { type: 'string', minLength: 1 },
+    variable: { type: 'string', minLength: 1 },
     startDate: { type: 'string' },
     endDate: { type: 'string' },
     authToken
   },
+  required: ['location', 'variable', 'startDate', 'endDate'],
   type: 'object'
 }
 

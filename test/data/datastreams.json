@@ -202,6 +202,38 @@
         {
           "identifier": "Nooksack Temperature Monitoring Program Quality Assurance Project Plan (QAPP) approved by EPA Region 10, Tribal Trust Assistance Unit, Seattle, WA.    Quality controlled data that have passed quality assurance procedures such as routine estimation of timing and sensor calibration or visual inspection and removal of obvious errors. NIT air temperature assurance procedures includes removing values within one hour of sensor deployment/removal, sensor calibration every year, numerical and visual inspection and removal of obvious errors during annual average estimation for 3 and 4 hourly calculation.  Another example is USGS published streamflow records following parsing through USGS quality control procedures.",
           "type": "his.odm.qualitycontrollevels.Explanation"
+        },
+        {
+          "identifier": "https://www.cuahsi.org/",
+          "type": "his.odm.sources.SourceLink"
+        },
+        {
+          "identifier": "Martin Seul",
+          "type": "his.odm.sources.ContactName"
+        },
+        {
+          "identifier": "339-221-5400",
+          "type": "his.odm.sources.Phone"
+        },
+        {
+          "identifier": "mseul@cuahsi.org",
+          "type": "his.odm.sources.Email"
+        },
+        {
+          "identifier": "1167 Mass Ave",
+          "type": "his.odm.sources.Address"
+        },
+        {
+          "identifier": "Arlington",
+          "type": "his.odm.sources.City"
+        },
+        {
+          "identifier": "MA",
+          "type": "his.odm.sources.State"
+        },
+        {
+          "identifier": "2140",
+          "type": "his.odm.sources.ZipCode"
         }
       ],
       "is_geo_protected": false,

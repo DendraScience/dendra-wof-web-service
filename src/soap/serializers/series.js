@@ -14,7 +14,11 @@ export function seriesMethod({ hasMethodCode = false, refsMap }) {
     `<method ${id ? `methodID="${encodeXML(id)}"` : ''}>` +
     `${id && hasMethodCode ? `<methodCode>${id}</methodCode>` : ''}` +
     methodType({ description }) +
-    `${hasMethodCode ? `<methodLink>${methodLink}</methodLink>` : ''}` +
+    `${
+      hasMethodCode && methodLink
+        ? `<methodLink>${methodLink}</methodLink>`
+        : ''
+    }` +
     '</method>'
   )
 }

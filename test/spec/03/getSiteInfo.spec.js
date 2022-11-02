@@ -23,8 +23,7 @@ describe('GetSiteInfo handlers', function () {
   it('should handle getSiteInfo with station, datastreams, params, uoms and variableTimeInterval', async function () {
     const method = 'GetSiteInfo'
     const parameters = {
-      site: ['woftest:sitecode-full'],
-      authToken: ''
+      site: ['woftest:sitecode-full']
     }
     const request = { params: { org: '' } }
     const cache = {}
@@ -115,8 +114,7 @@ describe('GetSiteInfo handlers', function () {
   it('should handle getSiteInfo with station, params, uoms and no datastream', async function () {
     const method = 'GetSiteInfo'
     const parameters = {
-      site: ['woftest:sitecode-full'],
-      authToken: ''
+      site: ['woftest:sitecode-full']
     }
     const request = { params: { org: '' } }
     const cache = {}
@@ -196,8 +194,7 @@ describe('GetSiteInfo handlers', function () {
   it('should handle getSiteInfo with station, datastreams, params and uoms', async function () {
     const method = 'GetSiteInfo'
     const parameters = {
-      site: ['woftest:sitecode-full'],
-      authToken: ''
+      site: ['woftest:sitecode-full']
     }
     const request = { params: { org: '' } }
     const cache = {}

@@ -20,10 +20,12 @@ describe('Serializers', function () {
   describe('value', function () {
     it('should serialize timeSeriesResponseStart flavor 1', function () {
       expect(timeSeriesResponseStart({ hasAttribute: true })).to.equal(
-        '<timeSeriesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"' +
-          ' xmlns:gml="http://www.opengis.net/gml"' +
+        '<timeSeriesResponse xmlns:gml="http://www.opengis.net/gml"' +
+          ' xmlns:xlink="http://www.w3.org/1999/xlink"' +
+          ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
+          ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' +
           ' xmlns:wtr="http://www.cuahsi.org/waterML/"' +
-          ' xmlns:xlink="http://www.w3.org/1999/xlink">'
+          ' xmlns="http://www.cuahsi.org/waterML/1.1/">'
       )
     })
 

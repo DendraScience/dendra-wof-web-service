@@ -22,9 +22,7 @@ describe('getVariables handlers', function () {
 
   it('should handle getVariables with no datastream and no parameters', async function () {
     const method = 'GetVariables'
-    const parameters = {
-      authToken: ''
-    }
+    const parameters = {}
     const request = { params: { org: '' } }
     const cache = {}
     const webAPI = {}
@@ -66,9 +64,7 @@ describe('getVariables handlers', function () {
 
   it('should handle getVariables with datastream and no parameters', async function () {
     const method = 'GetVariables'
-    const parameters = {
-      authToken: ''
-    }
+    const parameters = {}
     const request = { params: { org: '' } }
     const cache = {}
     const webAPI = {}

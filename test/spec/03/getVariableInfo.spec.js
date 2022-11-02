@@ -22,9 +22,7 @@ describe('getVariableInfo handlers', function () {
 
   it('should handle getVariableInfo with datastream and no parameters and no umos', async function () {
     const method = 'GetVariableInfo'
-    const parameters = {
-      authToken: ''
-    }
+    const parameters = {}
     const request = { params: { org: '' } }
     const cache = {}
     const webAPI = {}
@@ -79,9 +77,7 @@ describe('getVariableInfo handlers', function () {
 
   it('should handle getVariableInfo with datastream, uoms and no parameters', async function () {
     const method = 'GetVariableInfo'
-    const parameters = {
-      authToken: ''
-    }
+    const parameters = {}
     const request = { params: { org: '' } }
     const cache = {}
     const webAPI = {}
@@ -155,8 +151,7 @@ describe('getVariableInfo handlers', function () {
   it('should handle getVariableInfo with datastream, uoms and parameters', async function () {
     const method = 'GetVariableInfo'
     const parameters = {
-      variable: ['woftest:VariableCode-full'],
-      authToken: ''
+      variable: ['woftest:VariableCode-full']
     }
     const request = { params: { org: '' } }
     const cache = {}
@@ -229,8 +224,7 @@ describe('getVariableInfo handlers', function () {
   it('should handle getVariableInfo with datastream, uoms and muiltiple parameters', async function () {
     const method = 'GetVariableInfo'
     const parameters = {
-      variable: ['woftest:VariableCode-full', 'woftest:VariableCode-min'],
-      authToken: ''
+      variable: ['woftest:VariableCode-full', 'woftest:VariableCode-min']
     }
     const request = { params: { org: '' } }
     const cache = {}

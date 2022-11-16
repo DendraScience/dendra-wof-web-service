@@ -138,6 +138,7 @@ export default async logger => {
         return handlePost(request, reply, {
           cache,
           helpers,
+          logger,
           service: SERVICE_1_1
         })
       }
@@ -164,6 +165,7 @@ export default async logger => {
         return handlePost(request, reply, {
           cache,
           helpers,
+          logger,
           service: SERVICE_1_1
         })
       }

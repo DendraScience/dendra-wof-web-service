@@ -55,6 +55,14 @@ export async function* getValuesObject(
   const siteParts = location && location.split(':')
   const variableParts = variable && variable.split(':')
 
+  if (!siteParts[1]) {
+    throw new Error(`Invalid location parameter '${location}'`)
+  }
+
+  if (!variableParts[1]) {
+    throw new Error(`Invalid variable parameter '${variable}'`)
+  }
+
   const startTime = helpers.toTime(startDate)
   const endTime = helpers.toTime(endDate)
 

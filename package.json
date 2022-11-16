@@ -1,5 +1,5 @@
 {
-  "name": "@dendra-science/dendra-wof-web-service",
+  "name": "dendra-wof-web-service",
   "version": "0.0.0",
   "description": "WaterOneFlow Web Service to share hydrologic data with CUAHSI-HIS.",
   "license": "BSD-3-Clause",

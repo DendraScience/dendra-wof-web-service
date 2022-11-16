@@ -40,7 +40,8 @@ describe('Serializers', function () {
         ['his.odm.sites.State', 'Massachusetts'],
         ['his.odm.sites.County', 'Suffolk'],
         ['his.odm.sites.Comments', 'This is a full sites metadata record'],
-        ['his.odm.sites.Elevation_m', '55']
+        ['his.odm.sites.Elevation_m', '55'],
+        ['his.odm.sites.LocalProjection.CVSRSName', 'WGS 84 / UTM zone 19N']
       ])
       expect(
         siteInfoType({

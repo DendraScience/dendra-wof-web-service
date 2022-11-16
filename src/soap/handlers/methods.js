@@ -8,6 +8,8 @@ import GetVariableInfo from './GetVariableInfo.js'
 import GetVariableInfoObject from './GetVariableInfoObject.js'
 import GetValues from './GetValues.js'
 import GetValuesObject from './GetValuesObject.js'
+import GetSiteInfoMultpleObject from './GetSiteInfoMultpleObject.js'
+import GetValuesForASiteObject from './GetValuesForASiteObject.js'
 
 // Named exports for convenience
 export default {
@@ -20,5 +22,7 @@ export default {
   GetVariableInfo,
   GetVariableInfoObject,
   GetValues,
-  GetValuesObject
+  GetValuesObject,
+  GetSiteInfoMultpleObject,
+  GetValuesForASiteObject
 }

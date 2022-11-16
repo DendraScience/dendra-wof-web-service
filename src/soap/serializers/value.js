@@ -1,7 +1,10 @@
 import { encodeXML } from 'entities'
 import { timeOffset } from './time.js'
 
-export function timeSeriesResponseStart({ hasAttribute = false }) {
+export function timeSeriesResponseStart({
+  hasAttribute = false,
+  isSiteObject = false
+}) {
   return `<timeSeriesResponse${
     hasAttribute
       ? ` xmlns:gml="http://www.opengis.net/gml"` +
@@ -11,7 +14,7 @@ export function timeSeriesResponseStart({ hasAttribute = false }) {
         ` xmlns:wtr="http://www.cuahsi.org/waterML/"` +
         ` xmlns="http://www.cuahsi.org/waterML/1.1/"`
       : ``
-  }>`
+  }${isSiteObject ? ` xmlns="http://www.cuahsi.org/waterML/1.1/"` : ''}>`
 }
 
 export function timeSeriesResponseEnd() {

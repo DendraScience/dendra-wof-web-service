@@ -22,7 +22,7 @@ export function variableInfoType({ datastream, refsMap, unitCV }) {
   const timeSupport = refsMap && refsMap.get(`his.odm.variables.TimeSupport`)
   const speciation = refsMap && refsMap.get(`his.odm.variables.Speciation`)
   const isRegular = refsMap && refsMap.get(`his.odm.variables.IsRegular`)
-  const timeUnitTag = refsMap.get('time_unit_tag')
+  const timeUnitTag = refsMap && refsMap.get('time_unit_tag')
   return (
     `${
       variableCode

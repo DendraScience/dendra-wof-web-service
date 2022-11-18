@@ -54,10 +54,13 @@ export function valueInfoType({
   if (!(datapoint && typeof datapoint === 'object')) return ''
 
   const censorCode = datapoint.d && datapoint.d.CensorCode
-  const dateTime = new Date(datapoint.lt).toISOString().substring(0, 19)
+
   const dateTimeUTC = new Date(datapoint.t).toISOString().substring(0, 19)
   const value = datapoint.v
   const utcTimeOffset = datapoint.d && timeOffset(datapoint.d.UTCOffset)
+  const dateTime = new Date(datapoint.t + 3600000 * datapoint.d.UTCOffset)
+    .toISOString()
+    .substring(0, 19)
 
   return `<value${censorCode ? ` censorCode="${encodeXML(censorCode)}"` : ''}${
     dateTime ? ` dateTime="${dateTime}"` : ''

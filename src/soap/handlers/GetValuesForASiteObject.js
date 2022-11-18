@@ -46,11 +46,11 @@ import {
   variableInfoType,
   variableEnd
 } from '../serializers/variable.js'
-import { datastream } from '../../lib/datastream.js'
+import { genDatastreams } from '../../lib/datastream.js'
 
 export async function* getValuesForASiteObject(
   request,
-  { date = new Date(), helpers, logger, method, parameters, uniqueid }
+  { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { endDate, site, startDate } = parameters
   const siteParts = site && site.split(':')
@@ -116,11 +116,12 @@ export async function* getValuesForASiteObject(
     organization ? { organization_id: organization._id } : undefined
   )
 
-  const datastreams = await datastream({
+  const variableCodes = new Set()
+  const datastreams = await genDatastreams({
+    group: true,
     helpers,
-    logger,
-    merge: true,
-    params: datastreamsParams
+    params: datastreamsParams,
+    variableCodes
   }).next()
 
   const unitCV = await helpers.getUnitCV()
@@ -178,6 +179,7 @@ export async function* getValuesForASiteObject(
           unitCV
         }) +
         variableEnd()
+
       yield valuesStart()
 
       const qualityControlLevelCodes = new Map()
@@ -240,6 +242,7 @@ export async function* getValuesForASiteObject(
             })
           )
         }
+
         if (
           qualityControlLevelCode &&
           !qualityControlLevelCodes.has(qualityControlLevelCode)

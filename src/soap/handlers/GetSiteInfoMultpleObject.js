@@ -48,6 +48,7 @@ import {
   soapWsuTimestampEnd,
   soapHeaderEnd
 } from '../serializers/common.js'
+import { genDatastreams } from '../../lib/datastream.js'
 
 export async function* getSiteInfoMultpleObject(
   request,
@@ -160,77 +161,67 @@ export async function* getSiteInfoMultpleObject(
       organization ? { organization_id: organization._id } : undefined
     )
 
-    let datastreams = await helpers.findMany('datastreams', datastreamsParams)
+    // Fetch datastreams
+    const datastreams = await genDatastreams({
+      helpers,
+      params: datastreamsParams
+    })
+    let datastream = await datastreams.next()
 
-    // Datastreams length set for open and closing tag of seriesCatalog
-    const datastreamLength = datastreams && datastreams.length
+    // Datastreams set for open and closing tag of seriesCatalog
+    const hasDatastream = !!(datastream && datastream.value)
 
-    if (datastreamLength) {
+    if (hasDatastream) {
       yield seriesCatalogStart(org)
     }
 
-    while (datastreams.length) {
-      let i = 0
+    while (!datastream.done) {
+      const datastreamValue = datastream.value
+      const refsMap =
+        datastreamValue && datastreamValue.external_refs
+          ? helpers.externalRefsMap(datastreamValue.external_refs)
+          : undefined
 
-      for (const datastream of datastreams) {
-        const refsMap =
-          datastream && datastream.external_refs
-            ? helpers.externalRefsMap(datastream.external_refs)
-            : undefined
+      const firstDatapoint = await helpers.findDatapoint({
+        datastream_id: datastreamValue._id
+      })
+      let lastDatapoint
 
-        const firstDatapoint = await helpers.findDatapoint({
-          datastream_id: datastream._id
-        })
-        let lastDatapoint
-
-        if (firstDatapoint) {
-          lastDatapoint = await helpers.findDatapoint(
-            { datastream_id: datastream._id },
-            true
-          )
-        }
-
-        const datapoints = await helpers.findMany('datapoints', {
-          datastream_id: datastream._id,
-          fn: 'count'
-        })
-        const vCount =
-          datapoints &&
-          datapoints.reduce((total, datapoint) => {
-            return total + datapoint.v
-          }, 0)
-
-        yield seriesStart() +
-          variableStart() +
-          variableInfoType({ datastream, refsMap, unitCV }) +
-          variableEnd() +
-          valueCount(vCount) +
-          variableTimeInterval({ firstDatapoint, lastDatapoint, refsMap }) +
-          seriesMethod({ refsMap }) +
-          seriesSource({ refsMap }) +
-          qualityControlLevelInfo({ refsMap }) +
-          seriesEnd()
-
-        // Stay async friendly; scan 200 at a time (hardcoded)
-        i++
-        if (!(i % 200)) await new Promise(resolve => setImmediate(resolve))
+      if (firstDatapoint) {
+        lastDatapoint = await helpers.findDatapoint(
+          { datastream_id: datastreamValue._id },
+          true
+        )
       }
 
-      // Fetch next page
-      datastreams = await helpers.findMany(
-        'datastreams',
-        Object.assign(
-          {
-            _id: { $gt: datastreams[datastreams.length - 1]._id }
-          },
-          datastreamsParams
-        )
-      )
+      const datapoints = await helpers.findMany('datapoints', {
+        datastream_id: datastreamValue._id,
+        fn: 'count'
+      })
+      const vCount =
+        datapoints &&
+        datapoints.reduce((total, datapoint) => {
+          return total + datapoint.v
+        }, 0)
+
+      yield seriesStart() +
+        variableStart() +
+        variableInfoType({ datastream: datastreamValue, refsMap, unitCV }) +
+        variableEnd() +
+        valueCount(vCount) +
+        variableTimeInterval({ firstDatapoint, lastDatapoint, refsMap }) +
+        seriesMethod({ refsMap }) +
+        seriesSource({ refsMap }) +
+        qualityControlLevelInfo({ refsMap }) +
+        seriesEnd()
+
+      datastream = await datastreams.next()
     }
 
-    if (datastreamLength) {
+    if (hasDatastream) {
       yield seriesCatalogEnd()
     }
+
     yield siteEnd()
   }
 

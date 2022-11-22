@@ -73,8 +73,12 @@ export function seriesEnd() {
   return '</series>'
 }
 
-export function seriesCatalogStart(org) {
-  return `<seriesCatalog menuGroupName="" serviceWsdl="https://hydroportal.cuahsi.org/${org}/cuahsi_1_1.asmx?WSDL">`
+export function seriesCatalogStart({ isLocalService = false, org }) {
+  return `<seriesCatalog menuGroupName="" serviceWsdl="${
+    !isLocalService
+      ? `https://hydroportal.cuahsi.org/${org}/cuahsi_1_1.asmx?WSDL`
+      : 'http://localhost/'
+  }">`
 }
 
 export function seriesCatalogEnd() {

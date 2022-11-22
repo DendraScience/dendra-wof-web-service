@@ -210,6 +210,31 @@ export const GetValuesForASiteObject = {
   required: ['GetValuesForASiteObject'],
   type: 'object'
 }
+
+/*
+  GetSitesByBoxObject methods.
+ */
+export const getSitesByBoxObjectType = {
+  additionalProperties: false,
+  properties: {
+    west: { type: 'string', minLength: 1 },
+    south: { type: 'string', minLength: 1 },
+    east: { type: 'string', minLength: 1 },
+    north: { type: 'string', minLength: 1 },
+    IncludeSeries: { type: 'boolean' }
+  },
+  required: ['west', 'south', 'east', 'north', 'IncludeSeries'],
+  type: 'object'
+}
+
+export const GetSitesByBoxObject = {
+  properties: {
+    GetSitesByBoxObject: getSitesByBoxObjectType
+  },
+  required: ['GetSitesByBoxObject'],
+  type: 'object'
+}
+
 /*
   SOAP bleh.
  */
@@ -234,7 +259,8 @@ export const SoapRequestSchema = {
               GetValues,
               GetValuesObject,
               GetSiteInfoMultpleObject,
-              GetValuesForASiteObject
+              GetValuesForASiteObject,
+              GetSitesByBoxObject
             ]
           }
         },

@@ -160,7 +160,7 @@ export async function* getSiteInfoObject(
   const hasDatastream = !!(datastream && datastream.value)
 
   if (hasDatastream) {
-    yield seriesCatalogStart(org || siteParts[0])
+    yield seriesCatalogStart({ org: org || siteParts[0] })
   }
 
   while (!datastream.done) {

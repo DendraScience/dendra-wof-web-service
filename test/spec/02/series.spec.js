@@ -51,7 +51,7 @@ describe('Serializers', function () {
     })
 
     it('should serialize seriesCatalogStart', function () {
-      expect(seriesCatalogStart('woftest')).to.equal(
+      expect(seriesCatalogStart({ org: 'woftest' })).to.equal(
         '<seriesCatalog menuGroupName="" serviceWsdl="https://hydroportal.cuahsi.org/woftest/cuahsi_1_1.asmx?WSDL">'
       )
     })

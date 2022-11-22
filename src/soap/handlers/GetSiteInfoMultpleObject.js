@@ -172,7 +172,7 @@ export async function* getSiteInfoMultpleObject(
     const hasDatastream = !!(datastream && datastream.value)
 
     if (hasDatastream) {
-      yield seriesCatalogStart(org)
+      yield seriesCatalogStart({ org })
     }
 
     while (!datastream.done) {

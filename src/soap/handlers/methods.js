@@ -10,6 +10,7 @@ import GetValues from './GetValues.js'
 import GetValuesObject from './GetValuesObject.js'
 import GetSiteInfoMultpleObject from './GetSiteInfoMultpleObject.js'
 import GetValuesForASiteObject from './GetValuesForASiteObject.js'
+import GetSitesByBoxObject from './GetSitesByBoxObject.js'
 
 // Named exports for convenience
 export default {
@@ -24,5 +25,6 @@ export default {
   GetValues,
   GetValuesObject,
   GetSiteInfoMultpleObject,
-  GetValuesForASiteObject
+  GetValuesForASiteObject,
+  GetSitesByBoxObject
 }

@@ -46,7 +46,7 @@ import {
   variableInfoType,
   variableEnd
 } from '../serializers/variable.js'
-import { getvariables } from '../../lib/variable.js'
+import { getVariables } from '../../lib/variable.js'
 
 export async function* getValuesForASiteObject(
   request,
@@ -116,13 +116,10 @@ export async function* getValuesForASiteObject(
     organization ? { organization_id: organization._id } : undefined
   )
 
-  const variableCodes = new Set()
-
   // datastream grouped by variableCode
-  const datastreams = await getvariables({
+  const datastreams = await getVariables({
     helpers,
-    params: datastreamsParams,
-    variableCodes
+    params: datastreamsParams
   })
 
   const unitCV = await helpers.getUnitCV()

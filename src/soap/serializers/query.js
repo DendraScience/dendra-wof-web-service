@@ -34,6 +34,10 @@ export function queryInfoType({
       break
     case 'GetValuesForASiteObject':
       method = 'GetValuesForASite'
+      break
+    case 'GetSitesByBoxObject':
+      method = 'GetSitesByBox'
+      break
   }
 
   return (

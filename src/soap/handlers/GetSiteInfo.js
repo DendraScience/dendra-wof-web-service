@@ -168,7 +168,7 @@ export async function* getSiteInfo(
   const hasDatastream = !!(datastream && datastream.value)
 
   if (hasDatastream) {
-    yield encodeXML(seriesCatalogStart(org || siteParts[0]))
+    yield encodeXML(seriesCatalogStart({ org: org || siteParts[0] }))
   }
 
   while (!datastream.done) {

@@ -1,5 +1,6 @@
-// datastream grouped by variableCode
-export async function getvariables({ helpers, params, variableCodes }) {
+// Get datastreams grouped by variableCode
+// NOTE: Opportunity for optimization since this loads ALL variables into memory
+export async function getVariables({ helpers, params }) {
   let datastreams = await helpers.findMany('datastreams', params)
   const variables = new Map()
 
@@ -14,10 +15,9 @@ export async function getvariables({ helpers, params, variableCodes }) {
       const variableCode =
         refsMap && refsMap.get('his.odm.variables.VariableCode')
 
-      if (variableCode && !variableCodes.has(variableCode)) {
-        variableCodes.add(variableCode)
+      if (variableCode && !variables.has(variableCode)) {
         variables.set(variableCode, [datastream])
-      } else if (variableCode && variableCodes.has(variableCode)) {
+      } else if (variableCode && variables.has(variableCode)) {
         variables.get(variableCode).push(datastream)
       }
 

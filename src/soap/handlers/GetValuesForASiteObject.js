@@ -46,7 +46,7 @@ import {
   variableInfoType,
   variableEnd
 } from '../serializers/variable.js'
-import { genDatastreams } from '../../lib/datastream.js'
+import { getvariables } from '../../lib/variable.js'
 
 export async function* getValuesForASiteObject(
   request,
@@ -117,12 +117,13 @@ export async function* getValuesForASiteObject(
   )
 
   const variableCodes = new Set()
-  const datastreams = await genDatastreams({
-    group: true,
+
+  // datastream grouped by variableCode
+  const datastreams = await getvariables({
     helpers,
     params: datastreamsParams,
     variableCodes
-  }).next()
+  })
 
   const unitCV = await helpers.getUnitCV()
 
@@ -157,8 +158,8 @@ export async function* getValuesForASiteObject(
     }) +
     queryInfoEnd()
 
-  if (datastreams && datastreams.value.size) {
-    for (const datastream of datastreams.value.values()) {
+  if (datastreams && datastreams.size) {
+    for (const datastream of datastreams.values()) {
       const refsMap =
         datastream && datastream[0].external_refs
           ? helpers.externalRefsMap(datastream[0].external_refs)

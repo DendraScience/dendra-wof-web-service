@@ -156,6 +156,86 @@ export const GetValuesObject = {
 }
 
 /*
+  GetSiteInfoMultpleObject methods.
+ */
+export const getSiteInfoMultpleObjectType = {
+  additionalProperties: false,
+  properties: {
+    site: {
+      oneOf: [
+        { type: 'string' },
+        {
+          properties: {
+            string: {
+              oneOf: [
+                { type: 'array', items: { type: 'string', minLength: 1 } }
+              ]
+            }
+          },
+          type: 'object'
+        }
+      ]
+    }
+  },
+  required: ['site'],
+  type: 'object'
+}
+
+export const GetSiteInfoMultpleObject = {
+  properties: {
+    GetSiteInfoMultpleObject: getSiteInfoMultpleObjectType
+  },
+  required: ['GetSiteInfoMultpleObject'],
+  type: 'object'
+}
+
+/*
+  GetValuesForASiteObject methods.
+ */
+export const getValuesForASiteObjectType = {
+  additionalProperties: false,
+  properties: {
+    site: { type: 'string', minLength: 1 },
+    startDate: { type: 'string' },
+    endDate: { type: 'string' }
+  },
+  required: ['site'],
+  type: 'object'
+}
+
+export const GetValuesForASiteObject = {
+  properties: {
+    GetValuesForASiteObject: getValuesForASiteObjectType
+  },
+  required: ['GetValuesForASiteObject'],
+  type: 'object'
+}
+
+/*
+  GetSitesByBoxObject methods.
+ */
+export const getSitesByBoxObjectType = {
+  additionalProperties: false,
+  properties: {
+    west: { type: 'string', minLength: 1 },
+    south: { type: 'string', minLength: 1 },
+    east: { type: 'string', minLength: 1 },
+    north: { type: 'string', minLength: 1 },
+    IncludeSeries: { type: 'boolean' }
+  },
+  required: ['west', 'south', 'east', 'north', 'IncludeSeries'],
+  type: 'object'
+}
+
+export const GetSitesByBoxObject = {
+  properties: {
+    GetSitesByBoxObject: getSitesByBoxObjectType
+  },
+  required: ['GetSitesByBoxObject'],
+  type: 'object'
+}
+
+/*
   SOAP bleh.
  */
 
@@ -177,7 +257,10 @@ export const SoapRequestSchema = {
               GetVariableInfo,
               GetVariableInfoObject,
               GetValues,
-              GetValuesObject
+              GetValuesObject,
+              GetSiteInfoMultpleObject,
+              GetValuesForASiteObject,
+              GetSitesByBoxObject
             ]
           }
         },

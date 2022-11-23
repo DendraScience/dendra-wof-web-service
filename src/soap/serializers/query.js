@@ -26,10 +26,17 @@ export function queryInfoType({
       method = 'GetVariableInfo'
       break
     case 'GetSiteInfoObject':
+    case 'GetSiteInfoMultpleObject':
       method = 'GetSiteInfo'
       break
     case 'GetValuesObject':
       method = 'GetValues'
+      break
+    case 'GetValuesForASiteObject':
+      method = 'GetValuesForASite'
+      break
+    case 'GetSitesByBoxObject':
+      method = 'GetSitesByBox'
       break
   }
 

@@ -49,6 +49,7 @@ import {
   seriesMethod,
   seriesSource
 } from '../serializers/series.js'
+import { genDatastreams } from '../../lib/datastream.js'
 
 export async function* getValues(
   request,
@@ -57,6 +58,14 @@ export async function* getValues(
   const { location, variable, startDate, endDate } = parameters
   const siteParts = location && location.split(':')
   const variableParts = variable && variable.split(':')
+
+  if (!siteParts[1]) {
+    throw new Error(`Invalid location parameter '${location}'`)
+  }
+
+  if (!variableParts[1]) {
+    throw new Error(`Invalid variable parameter '${variable}'`)
+  }
 
   const startTime = helpers.toTime(startDate)
   const endTime = helpers.toTime(endDate)
@@ -122,14 +131,18 @@ export async function* getValues(
         }
       : undefined
   )
-  let datastreams = await helpers.findMany('datastreams', datastreamsParams)
+  const datastreams = await genDatastreams({
+    helpers,
+    params: datastreamsParams
+  })
+  let datastream = await datastreams.next()
 
-  if (!datastreams.length) throw new Error('Datastreams not found')
+  if (!datastream.value) throw new Error('Datastream not found')
 
   const unitCV = await helpers.getUnitCV()
-
-  const dataStreamRefsMap = datastreams[0].external_refs
-    ? helpers.externalRefsMap(datastreams[0].external_refs)
+  const datastreamTemplate = datastream.value
+  const dataStreamRefsMap = datastreamTemplate.external_refs
+    ? helpers.externalRefsMap(datastreamTemplate.external_refs)
     : undefined
 
   const stationRefsMap = stations[0].external_refs
@@ -189,7 +202,7 @@ export async function* getValues(
   yield encodeXML(
     variableStart() +
       variableInfoType({
-        datastream: datastreams[0],
+        datastream: datastreamTemplate,
         refsMap: dataStreamRefsMap,
         unitCV
       }) +
@@ -202,96 +215,80 @@ export async function* getValues(
   const methodIDs = new Map()
   const sourceIDs = new Map()
 
-  while (datastreams.length) {
-    let i = 0
+  while (!datastream.done) {
+    const datastreamValue = datastream.value
+    const refsMap =
+      datastreamValue && datastreamValue.external_refs
+        ? helpers.externalRefsMap(datastreamValue.external_refs)
+        : undefined
+    const qualityControlLevelCode =
+      refsMap &&
+      refsMap.get('his.odm.qualitycontrollevels.QualityControlLevelCode')
+    const methodID = refsMap.get('his.odm.methods.MethodID')
+    const sourceID = refsMap.get('his.odm.sources.SourceID')
 
-    for (const datastream of datastreams) {
-      const refsMap =
-        datastream && datastream.external_refs
-          ? helpers.externalRefsMap(datastream.external_refs)
-          : undefined
-      const qualityControlLevelCode =
-        refsMap &&
-        refsMap.get('his.odm.qualitycontrollevels.QualityControlLevelCode')
-      const methodID = refsMap.get('his.odm.methods.MethodID')
-      const sourceID = refsMap.get('his.odm.sources.SourceID')
+    const datapointsParams = Object.assign({
+      datastream_id: datastreamValue._id,
+      time: {
+        $gte: startTime,
+        $lte: endTime
+      },
+      time_local: true,
+      t_int: true,
+      $limit: 2016,
+      $sort: {
+        time: 1
+      }
+    })
 
-      const datapointsParams = Object.assign({
-        datastream_id: datastream._id,
-        time: {
-          $gte: startTime,
-          $lte: endTime
-        },
-        time_local: true,
-        t_int: true,
-        $limit: 2016,
-        $sort: {
-          time: 1
-        }
-      })
+    let datapoints = await helpers.findMany('datapoints', datapointsParams)
 
-      let datapoints = await helpers.findMany('datapoints', datapointsParams)
+    while (datapoints && datapoints.length) {
+      let j = 0
 
-      while (datapoints && datapoints.length) {
-        let j = 0
-
-        for (const datapoint of datapoints) {
-          yield encodeXML(
-            valueInfoType({
-              datapoint,
-              methodID,
-              sourceID,
-              qualityControlLevelCode
-            })
-          )
-
-          // Stay async friendly; scan 200 at a time (hardcoded)
-          j++
-          if (!(j % 200)) await new Promise(resolve => setImmediate(resolve))
-        }
-
-        // Fetch next page
-        datapoints = await helpers.findMany(
-          'datapoints',
-          Object.assign(datapointsParams, {
-            time: {
-              $gt: datapoints[datapoints.length - 1].lt,
-              $lte: endTime
-            }
+      for (const datapoint of datapoints) {
+        yield encodeXML(
+          valueInfoType({
+            datapoint,
+            methodID,
+            sourceID,
+            qualityControlLevelCode
           })
         )
+
+        // Stay async friendly; scan 200 at a time (hardcoded)
+        j++
+        if (!(j % 200)) await new Promise(resolve => setImmediate(resolve))
       }
 
-      if (
-        qualityControlLevelCode &&
-        !qualityControlLevelCodes.has(qualityControlLevelCode)
-      ) {
-        qualityControlLevelCodes.set(qualityControlLevelCode, refsMap)
-      }
-
-      if (methodID && !methodIDs.has(methodID)) {
-        methodIDs.set(methodID, refsMap)
-      }
-
-      if (sourceID && !sourceIDs.has(sourceID)) {
-        sourceIDs.set(sourceID, refsMap)
-      }
-
-      // Stay async friendly; scan 200 at a time (hardcoded)
-      i++
-      if (!(i % 200)) await new Promise(resolve => setImmediate(resolve))
+      // Fetch next page
+      datapoints = await helpers.findMany(
+        'datapoints',
+        Object.assign(datapointsParams, {
+          time: {
+            $gt: datapoints[datapoints.length - 1].lt,
+            $lte: endTime
+          }
+        })
+      )
     }
 
-    // Fetch next page
-    datastreams = await helpers.findMany(
-      'datastreams',
-      Object.assign(
-        {
-          _id: { $gt: datastreams[datastreams.length - 1]._id }
-        },
-        datastreamsParams
-      )
-    )
+    if (
+      qualityControlLevelCode &&
+      !qualityControlLevelCodes.has(qualityControlLevelCode)
+    ) {
+      qualityControlLevelCodes.set(qualityControlLevelCode, refsMap)
+    }
+
+    if (methodID && !methodIDs.has(methodID)) {
+      methodIDs.set(methodID, refsMap)
+    }
+
+    if (sourceID && !sourceIDs.has(sourceID)) {
+      sourceIDs.set(sourceID, refsMap)
+    }
+
+    datastream = await datastreams.next()
   }
 
   for (const value of qualityControlLevelCodes.values()) {

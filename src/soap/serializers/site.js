@@ -30,6 +30,10 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
   const networkName =
     organizationRefsMap &&
     organizationRefsMap.get('his.odm.service.NetworkName')
+  // TODO Need to fix this  | refsMap && refsMap.get('his.odm.sites.LatLongDatum.CVSRSName')
+  const srs = undefined
+  const projectionInformation =
+    refsMap && refsMap.get('his.odm.sites.LocalProjection.CVSRSName')
 
   return (
     `<siteName>${encodeXML(station.name)}</siteName>` +
@@ -40,15 +44,19 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
       : '') +
     (station.geo && station.geo.type === 'Point'
       ? '<geoLocation>' +
-        `<geogLocation xsi:type="LatLonPointType">` +
+        `<geogLocation xsi:type="LatLonPointType"${
+          srs ? ` srs="${srs}"` : ``
+        }>` +
         `<latitude>${encodeXML(station.geo.coordinates[1] + '')}</latitude>` +
         `<longitude>${encodeXML(station.geo.coordinates[0] + '')}</longitude>` +
         '</geogLocation>' +
         `${
-          localX || localY
-            ? `<localSiteXY projectionInformation="WGS 84 / UTM zone 19N">${
-                localX ? `<X>${encodeXML(localX)}</X>` : ''
-              }${localY ? `<Y>${encodeXML(localY)}</Y>` : ''}</localSiteXY>`
+          projectionInformation && (localX || localY)
+            ? `<localSiteXY projectionInformation="${encodeXML(
+                projectionInformation
+              )}">${localX ? `<X>${encodeXML(localX)}</X>` : ''}${
+                localY ? `<Y>${encodeXML(localY)}</Y>` : ''
+              }</localSiteXY>`
             : ''
         }` +
         '</geoLocation>'

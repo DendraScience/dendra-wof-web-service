@@ -33,6 +33,7 @@ import {
   queryInfoNote,
   queryInfoEnd
 } from '../serializers/query.js'
+import { genDatastreams } from '../../lib/datastream.js'
 
 export async function* getVariableInfoObject(
   request,
@@ -75,9 +76,15 @@ export async function* getVariableInfoObject(
         }
       : undefined
   )
-  let datastreams = await helpers.findMany('datastreams', datastreamsParams)
+  const variableCodes = new Set()
+  const datastreams = await genDatastreams({
+    helpers,
+    params: datastreamsParams,
+    variableCodes
+  })
+  let datastream = await datastreams.next()
 
-  if (!datastreams.length) throw new Error('Datastream not found')
+  if (!datastream.value) throw new Error('Datastream not found')
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
@@ -104,52 +111,29 @@ export async function* getVariableInfoObject(
     queryInfoNote({ note: 'OD Web Service' }) +
     queryInfoEnd()
 
-  if (datastreams && datastreams.length) {
+  if (!datastream.done) {
     yield variablesStart()
   }
 
-  const variableCodes = new Set()
+  while (!datastream.done) {
+    const datastreamValue = datastream.value
+    const refsMap =
+      datastreamValue && datastreamValue.external_refs
+        ? helpers.externalRefsMap(datastreamValue.external_refs)
+        : undefined
 
-  while (datastreams.length) {
-    let i = 0
+    yield variableStart() +
+      variableInfoType({ datastream: datastreamValue, refsMap, unitCV }) +
+      variableEnd()
 
-    for (const datastream of datastreams) {
-      const refsMap =
-        datastream && datastream.external_refs
-          ? helpers.externalRefsMap(datastream.external_refs)
-          : undefined
-      const variableCode =
-        refsMap && refsMap.get('his.odm.variables.VariableCode')
-
-      // Normalize datastreams to unique variables
-      if (variableCode && !variableCodes.has(variableCode)) {
-        variableCodes.add(variableCode)
-
-        yield variableStart() +
-          variableInfoType({ datastream, refsMap, unitCV }) +
-          variableEnd()
-      }
-
-      // Stay async friendly; scan 200 at a time (hardcoded)
-      i++
-      if (!(i % 200)) await new Promise(resolve => setImmediate(resolve))
+    if (!variableValue) {
+      datastream = await datastreams.next()
+    } else {
+      break
     }
-
-    // Fetch next page ; fetch if variable have not provided
-    datastreams = !variableValue
-      ? await helpers.findMany(
-          'datastreams',
-          Object.assign(
-            {
-              _id: { $gt: datastreams[datastreams.length - 1]._id }
-            },
-            datastreamsParams
-          )
-        )
-      : []
   }
 
-  if (variableCodes.size || (datastreams && datastreams.length)) {
+  if (variableCodes.size || datastream.value) {
     yield variablesEnd()
   }
 

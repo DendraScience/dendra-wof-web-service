@@ -33,6 +33,7 @@ import {
   queryInfoNote,
   queryInfoEnd
 } from '../serializers/query.js'
+import { genDatastreams } from '../../lib/datastream.js'
 
 export async function* getVariablesObject(
   request,
@@ -55,6 +56,7 @@ export async function* getVariablesObject(
   }
 
   const unitCV = await helpers.getUnitCV()
+
   // Fetch datastreams
   const datastreamsParams = Object.assign(
     {
@@ -65,7 +67,12 @@ export async function* getVariablesObject(
     },
     organization ? { organization_id: organization._id } : undefined
   )
-  let datastreams = await helpers.findMany('datastreams', datastreamsParams)
+  const variableCodes = new Set()
+  const datastreams = await genDatastreams({
+    helpers,
+    params: datastreamsParams,
+    variableCodes
+  })
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
@@ -91,50 +98,26 @@ export async function* getVariablesObject(
     queryInfoNote({ note: 'OD Web Service' }) +
     queryInfoEnd()
 
-  if (datastreams && datastreams.length) {
+  let datastream = await datastreams.next()
+
+  if (!datastream.done) {
     yield variablesStart()
   }
 
-  const variableCodes = new Set()
+  while (!datastream.done) {
+    const datastreamValue = datastream.value
+    const refsMap = datastreamValue.external_refs
+      ? helpers.externalRefsMap(datastreamValue.external_refs)
+      : undefined
 
-  while (datastreams.length) {
-    let i = 0
+    yield variableStart() +
+      variableInfoType({ datastream: datastreamValue, refsMap, unitCV }) +
+      variableEnd()
 
-    for (const datastream of datastreams) {
-      const refsMap =
-        datastream && datastream.external_refs
-          ? helpers.externalRefsMap(datastream.external_refs)
-          : undefined
-      const variableCode =
-        refsMap && refsMap.get('his.odm.variables.VariableCode')
-
-      // Normalize datastreams to unique variables
-      if (variableCode && !variableCodes.has(variableCode)) {
-        variableCodes.add(variableCode)
-
-        yield variableStart() +
-          variableInfoType({ datastream, refsMap, unitCV }) +
-          variableEnd()
-      }
-
-      // Stay async friendly; scan 200 at a time (hardcoded)
-      i++
-      if (!(i % 200)) await new Promise(resolve => setImmediate(resolve))
-    }
-
-    // Fetch next page
-    datastreams = await helpers.findMany(
-      'datastreams',
-      Object.assign(
-        {
-          _id: { $gt: datastreams[datastreams.length - 1]._id }
-        },
-        datastreamsParams
-      )
-    )
+    datastream = await datastreams.next()
   }
 
-  if (variableCodes.size || (datastreams && datastreams.length)) {
+  if (variableCodes.size || datastream.value) {
     yield variablesEnd()
   }
 

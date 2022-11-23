@@ -1,5 +1,4 @@
 import { Readable } from 'stream'
-import { encodeXML } from 'entities'
 import { CacheControls, ContentTypes, Headers, uuid } from '../../lib/utils.js'
 import {
   queryInfoStart,
@@ -23,15 +22,13 @@ import {
   variableEnd
 } from '../serializers/variable.js'
 import {
-  getSiteInfoResultStart,
   siteStart,
   siteEnd,
   siteInfoStart,
   siteInfoEnd,
   siteInfoType,
   sitesResponseStart,
-  sitesResponseEnd,
-  getSiteInfoResultEnd
+  sitesResponseEnd
 } from '../serializers/site.js'
 import {
   responseStart,
@@ -53,13 +50,21 @@ import {
 } from '../serializers/common.js'
 import { genDatastreams } from '../../lib/datastream.js'
 
-export async function* getSiteInfo(
+export async function* getSiteInfoMultpleObject(
   request,
   { date = new Date(), helpers, method, parameters, uniqueid }
 ) {
   const { site } = parameters
-  const siteValue = site && site.length ? site[0] : undefined
-  const siteParts = (siteValue && siteValue.split(':')) || []
+  const sites =
+    site &&
+    typeof site === 'object' &&
+    typeof site.string === 'string' &&
+    site.string > ''
+      ? [site.string]
+      : site && typeof site === 'object' && Array.isArray(site.string)
+      ? site.string.filter(str => !!str)
+      : []
+
   const org =
     typeof request.params.org === 'string'
       ? helpers.org(request.params.org)
@@ -83,37 +88,25 @@ export async function* getSiteInfo(
       {
         is_enabled: true,
         state: 'ready',
-        $limit: 1
+        $limit: 2000
       },
       organization ? { organization_id: organization._id } : undefined,
-      siteParts
+      sites.length
         ? {
-            slug: helpers.slugify(
-              (org || siteParts[0] || '-') + '-' + (siteParts[1] || '-')
-            )
+            slug: {
+              $in: sites.map(str => {
+                const parts = str.split(':')
+                return helpers.slugify(
+                  (org || parts[0] || '-') + '-' + (parts[1] || '-')
+                )
+              })
+            }
           }
         : undefined
     )
   )
 
   if (!stations.length) throw new Error('Station not found')
-
-  // Fetch datastreams for station
-  const datastreamsParams = Object.assign(
-    {
-      is_enabled: true,
-      state: 'ready',
-      station_id: stations[0]._id,
-      $limit: 2000,
-      $sort: { _id: 1 }
-    },
-    organization ? { organization_id: organization._id } : undefined
-  )
-
-  const datastreams = await genDatastreams({
-    helpers,
-    params: datastreamsParams
-  })
 
   const unitCV = await helpers.getUnitCV()
 
@@ -124,7 +117,7 @@ export async function* getSiteInfo(
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
-    soapWsaAction('GetSiteInfoResponse') +
+    soapWsaAction('GetSiteInfoMultpleObjectResponse') +
     soapWsaMessageID(uniqueid || uuid()) +
     soapWsaRelatesTo(uniqueid || uuid()) +
     soapWsaTo() +
@@ -135,19 +128,15 @@ export async function* getSiteInfo(
     soapWsseSecurityEnd() +
     soapHeaderEnd() +
     soapBodyStart() +
-    responseStart('GetSiteInfoResponse') +
-    getSiteInfoResultStart() +
-    encodeXML(
-      sitesResponseStart({ isObject: false }) +
-        queryInfoStart() +
-        queryInfoType({
-          date,
-          method,
-          parameters: [['site', siteValue || undefined]]
-        }) +
-        queryInfoEnd() +
-        siteStart()
-    )
+    responseStart('GetSiteInfoMultpleObjectResponse') +
+    sitesResponseStart({ isObject: true }) +
+    queryInfoStart() +
+    queryInfoType({
+      date,
+      method,
+      parameters: [...sites.map(str => ['site', str])]
+    }) +
+    queryInfoEnd()
 
   // Will only be one station since $limit=1
   for (const station of stations) {
@@ -155,53 +144,67 @@ export async function* getSiteInfo(
       ? helpers.externalRefsMap(station.external_refs)
       : undefined
 
-    yield encodeXML(
+    yield siteStart() +
       siteInfoStart() +
-        siteInfoType({ organizationRefsMap, refsMap, station }) +
-        siteInfoEnd()
+      siteInfoType({ organizationRefsMap, refsMap, station }) +
+      siteInfoEnd()
+
+    // Fetch datastreams for station
+    const datastreamsParams = Object.assign(
+      {
+        is_enabled: true,
+        state: 'ready',
+        station_id: stations[0]._id,
+        $limit: 2000,
+        $sort: { _id: 1 }
+      },
+      organization ? { organization_id: organization._id } : undefined
     )
-  }
 
-  let datastream = await datastreams.next()
-
-  // Datastreams set for open and closing tag of seriesCatalog
-  const hasDatastream = !!(datastream && datastream.value)
-
-  if (hasDatastream) {
-    yield encodeXML(seriesCatalogStart({ org: org || siteParts[0] }))
-  }
-
-  while (!datastream.done) {
-    const datastreamValue = datastream.value
-    const refsMap =
-      datastreamValue && datastreamValue.external_refs
-        ? helpers.externalRefsMap(datastreamValue.external_refs)
-        : undefined
-
-    const firstDatapoint = await helpers.findDatapoint({
-      datastream_id: datastreamValue._id
+    // Fetch datastreams
+    const datastreams = await genDatastreams({
+      helpers,
+      params: datastreamsParams
     })
-    let lastDatapoint
+    let datastream = await datastreams.next()
 
-    if (firstDatapoint) {
-      lastDatapoint = await helpers.findDatapoint(
-        { datastream_id: datastreamValue._id },
-        true
-      )
+    // Datastreams set for open and closing tag of seriesCatalog
+    const hasDatastream = !!(datastream && datastream.value)
+
+    if (hasDatastream) {
+      yield seriesCatalogStart({ org })
     }
 
-    const datapoints = await helpers.findMany('datapoints', {
-      datastream_id: datastreamValue._id,
-      fn: 'count'
-    })
-    const vCount =
-      datapoints &&
-      datapoints.reduce((total, datapoint) => {
-        return total + datapoint.v
-      }, 0)
+    while (!datastream.done) {
+      const datastreamValue = datastream.value
+      const refsMap =
+        datastreamValue && datastreamValue.external_refs
+          ? helpers.externalRefsMap(datastreamValue.external_refs)
+          : undefined
 
-    yield encodeXML(
-      seriesStart() +
+      const firstDatapoint = await helpers.findDatapoint({
+        datastream_id: datastreamValue._id
+      })
+      let lastDatapoint
+
+      if (firstDatapoint) {
+        lastDatapoint = await helpers.findDatapoint(
+          { datastream_id: datastreamValue._id },
+          true
+        )
+      }
+
+      const datapoints = await helpers.findMany('datapoints', {
+        datastream_id: datastreamValue._id,
+        fn: 'count'
+      })
+      const vCount =
+        datapoints &&
+        datapoints.reduce((total, datapoint) => {
+          return total + datapoint.v
+        }, 0)
+
+      yield seriesStart() +
         variableStart() +
         variableInfoType({ datastream: datastreamValue, refsMap, unitCV }) +
         variableEnd() +
@@ -211,18 +214,19 @@ export async function* getSiteInfo(
         seriesSource({ refsMap }) +
         qualityControlLevelInfo({ refsMap }) +
         seriesEnd()
-    )
 
-    datastream = await datastreams.next()
+      datastream = await datastreams.next()
+    }
+
+    if (hasDatastream) {
+      yield seriesCatalogEnd()
+    }
+
+    yield siteEnd()
   }
 
-  if (hasDatastream) {
-    yield encodeXML(seriesCatalogEnd())
-  }
-
-  yield encodeXML(siteEnd() + sitesResponseEnd()) +
-    getSiteInfoResultEnd() +
-    '</GetSiteInfoResponse>' +
+  yield sitesResponseEnd() +
+    '</GetSiteInfoMultpleObjectResponse>' +
     soapBodyEnd() +
     soapEnvelopeEnd()
 }
@@ -232,7 +236,7 @@ export default async (request, reply, ctx) => {
     .header(Headers.CACHE_CONTROL, CacheControls.PRIVATE_MAXAGE_0)
     .header(Headers.CONTENT_TYPE, ContentTypes.TEXT_XML_UTF8)
     .send(
-      Readable.from(getSiteInfo(request, ctx), {
+      Readable.from(getSiteInfoMultpleObject(request, ctx), {
         autoDestroy: true
       })
     )

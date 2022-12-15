@@ -180,6 +180,8 @@ describe('GetSiteInfoObject handlers', function () {
     const result = (await gen.next()).value
       .concat((await gen.next()).value)
       .concat((await gen.next()).value)
+      .concat((await gen.next()).value)
+      .concat((await gen.next()).value)
 
     const response = fs.readFileSync(
       path.resolve(

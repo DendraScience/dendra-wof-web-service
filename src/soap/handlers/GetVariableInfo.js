@@ -91,7 +91,7 @@ export async function* getVariableInfo(
 
   yield soapEnvelopeStart() +
     soapHeaderStart() +
-    soapWsaAction('GetVariableInfoObjectResponse') +
+    soapWsaAction('GetVariableInfoResponse') +
     soapWsaMessageID(uniqueid || uuid()) +
     soapWsaRelatesTo(uniqueid || uuid()) +
     soapWsaTo() +
@@ -105,7 +105,7 @@ export async function* getVariableInfo(
     responseStart('GetVariableInfoResponse') +
     getVariableInfoResultStart() +
     encodeXML(
-      variablesResponseStart({ isObject: false, isVariableInfo: true }) +
+      variablesResponseStart({ isObject: false, hasXMLSchema: true }) +
         queryInfoStart() +
         queryInfoType({
           date,

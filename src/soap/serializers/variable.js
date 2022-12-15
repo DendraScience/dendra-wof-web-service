@@ -69,14 +69,15 @@ export function variablesResultEnd() {
 }
 
 /* 
+  variables have 6 attributes
   variablesObject have not 3 attributes;
   GetVariableInfoObject have no attributes;
   GetvariableInfo have additional 2 attributes
 */
 export function variablesResponseStart({
   hasAttribute = true,
-  isObject = false,
-  isVariableInfo = false
+  hasXMLSchema = false,
+  isObject = false
 }) {
   return (
     `<variablesResponse${
@@ -90,7 +91,7 @@ export function variablesResponseStart({
         : ''
     }` +
     `${
-      isVariableInfo
+      hasXMLSchema
         ? ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"' +
           ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
         : ''

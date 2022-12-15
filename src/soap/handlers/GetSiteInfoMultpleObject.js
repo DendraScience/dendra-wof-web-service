@@ -154,7 +154,7 @@ export async function* getSiteInfoMultpleObject(
       {
         is_enabled: true,
         state: 'ready',
-        station_id: stations[0]._id,
+        station_id: station._id,
         $limit: 2000,
         $sort: { _id: 1 }
       },

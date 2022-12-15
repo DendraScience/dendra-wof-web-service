@@ -164,12 +164,7 @@ export async function* getSiteInfo(
 
   let datastream = await datastreams.next()
 
-  // Datastreams set for open and closing tag of seriesCatalog
-  const hasDatastream = !!(datastream && datastream.value)
-
-  if (hasDatastream) {
-    yield encodeXML(seriesCatalogStart({ org: org || siteParts[0] }))
-  }
+  yield encodeXML(seriesCatalogStart({ org: org || siteParts[0] }))
 
   while (!datastream.done) {
     const datastreamValue = datastream.value
@@ -216,9 +211,7 @@ export async function* getSiteInfo(
     datastream = await datastreams.next()
   }
 
-  if (hasDatastream) {
-    yield encodeXML(seriesCatalogEnd())
-  }
+  yield encodeXML(seriesCatalogEnd())
 
   yield encodeXML(siteEnd() + sitesResponseEnd()) +
     getSiteInfoResultEnd() +

@@ -65,7 +65,7 @@ describe('Serializers', function () {
         variablesResponseStart({
           hasAttribute: true,
           isObject: false,
-          isVariableInfo: true
+          hasXMLSchema: true
         })
       ).to.equal(
         '<variablesResponse xmlns="http://www.cuahsi.org/waterML/1.1/"' +

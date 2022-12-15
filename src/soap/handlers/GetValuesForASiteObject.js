@@ -151,7 +151,11 @@ export async function* getValuesForASiteObject(
     queryInfoType({
       date,
       method,
-      parameters: [['site', site || undefined]]
+      parameters: [
+        ['site', site || undefined],
+        startDate ? ['startDate', startDate] : undefined,
+        endDate ? ['endDate', endDate] : undefined
+      ]
     }) +
     queryInfoEnd()
 

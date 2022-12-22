@@ -30,8 +30,7 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
   const networkName =
     organizationRefsMap &&
     organizationRefsMap.get('his.odm.service.NetworkName')
-  // TODO Need to fix this  | refsMap && refsMap.get('his.odm.sites.LatLongDatum.CVSRSName')
-  const srs = undefined
+  const srs = refsMap && refsMap.get('his.odm.sites.LatLongDatum.SRS')
   const projectionInformation =
     refsMap && refsMap.get('his.odm.sites.LocalProjection.CVSRSName')
 

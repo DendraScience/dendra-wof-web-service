@@ -35,11 +35,11 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
     refsMap && refsMap.get('his.odm.sites.LocalProjection.CVSRSName')
 
   return (
-    `<siteName>${encodeXML(station.name)}</siteName>` +
+    `<siteName>${station.name}</siteName>` +
     (siteCode
-      ? `<siteCode network="${encodeXML(
+      ? `<siteCode network="${
           networkName || 'dendra'
-        )}" siteID="${siteId}">${encodeXML(siteCode)}</siteCode>`
+        }" siteID="${siteId}">${encodeXML(siteCode)}</siteCode>`
       : '') +
     (station.geo && station.geo.type === 'Point'
       ? '<geoLocation>' +
@@ -60,25 +60,15 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
         }` +
         '</geoLocation>'
       : '') +
-    (elevationM ? `<elevation_m>${encodeXML(elevationM)}</elevation_m>` : '') +
-    (verticalDatum
-      ? `<verticalDatum>${encodeXML(verticalDatum)}</verticalDatum>`
-      : '') +
-    (county
-      ? `<siteProperty name="County">${encodeXML(county)}</siteProperty>`
-      : '') +
-    (state
-      ? `<siteProperty name="State">${encodeXML(state)}</siteProperty>`
-      : '') +
+    (elevationM ? `<elevation_m>${elevationM}</elevation_m>` : '') +
+    (verticalDatum ? `<verticalDatum>${verticalDatum}</verticalDatum>` : '') +
+    (county ? `<siteProperty name="County">${county}</siteProperty>` : '') +
+    (state ? `<siteProperty name="State">${state}</siteProperty>` : '') +
     (comments
-      ? `<siteProperty name="Site Comments">${encodeXML(
-          comments
-        )}</siteProperty>`
+      ? `<siteProperty name="Site Comments">${comments}</siteProperty>`
       : '') +
     (posAccuracyM
-      ? `<siteProperty name="PosAccuracy_m">${encodeXML(
-          posAccuracyM
-        )}</siteProperty>`
+      ? `<siteProperty name="PosAccuracy_m">${posAccuracyM}</siteProperty>`
       : '')
   )
 }

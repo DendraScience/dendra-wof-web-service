@@ -28,7 +28,7 @@ const { NotFound } = httpErrors
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const SERVICE_1_1 = 'cuahsi_1_1'
-const ORG_REGEXP_STR = '^[A-Za-z][A-Za-z0-9-_]{2,}[A-Za-z0-9]$'
+const ORG_REGEXP_STR = '^[A-Za-z][A-Za-z0-9-_]{1,}[A-Za-z0-9]$'
 
 export default async logger => {
   const app = {}

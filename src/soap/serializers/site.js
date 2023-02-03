@@ -35,7 +35,7 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
     refsMap && refsMap.get('his.odm.sites.LocalProjection.CVSRSName')
 
   return (
-    `<siteName>${station.name}</siteName>` +
+    `<siteName>${encodeXML(station.name)}</siteName>` +
     (siteCode
       ? `<siteCode network="${
           networkName || 'dendra'

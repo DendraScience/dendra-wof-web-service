@@ -37,9 +37,9 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
   return (
     `<siteName>${encodeXML(station.name)}</siteName>` +
     (siteCode
-      ? `<siteCode network="${
-          encodeXML(networkName) || 'dendra'
-        }" siteID="${encodeXML(siteId)}">${encodeXML(siteCode)}</siteCode>`
+      ? `<siteCode network="${encodeXML(
+          networkName || 'dendra'
+        )}" siteID="${encodeXML(siteId)}">${encodeXML(siteCode)}</siteCode>`
       : '') +
     (station.geo && station.geo.type === 'Point'
       ? '<geoLocation>' +

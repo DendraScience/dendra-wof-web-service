@@ -31,7 +31,7 @@ export function variableInfoType({ datastream, refsMap, unitCV }) {
               datastream.organization_lookup.slug) ||
               'dendra'
           )}" default="true" ${
-            variableID ? `variableID="${variableID}` : ''
+            variableID ? `variableID="${encodeXML(variableID)}` : ''
           }">${encodeXML(variableCode)}</variableCode>`
         : ''
     } ` +

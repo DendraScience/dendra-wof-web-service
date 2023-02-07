@@ -38,13 +38,13 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
     `<siteName>${encodeXML(station.name)}</siteName>` +
     (siteCode
       ? `<siteCode network="${
-          networkName || 'dendra'
-        }" siteID="${siteId}">${encodeXML(siteCode)}</siteCode>`
+          encodeXML(networkName) || 'dendra'
+        }" siteID="${encodeXML(siteId)}">${encodeXML(siteCode)}</siteCode>`
       : '') +
     (station.geo && station.geo.type === 'Point'
       ? '<geoLocation>' +
         `<geogLocation xsi:type="LatLonPointType"${
-          srs ? ` srs="${srs}"` : ``
+          srs ? ` srs="${encodeXML(srs)}"` : ``
         }>` +
         `<latitude>${encodeXML(station.geo.coordinates[1] + '')}</latitude>` +
         `<longitude>${encodeXML(station.geo.coordinates[0] + '')}</longitude>` +
@@ -60,15 +60,25 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
         }` +
         '</geoLocation>'
       : '') +
-    (elevationM ? `<elevation_m>${elevationM}</elevation_m>` : '') +
-    (verticalDatum ? `<verticalDatum>${verticalDatum}</verticalDatum>` : '') +
-    (county ? `<siteProperty name="County">${county}</siteProperty>` : '') +
-    (state ? `<siteProperty name="State">${state}</siteProperty>` : '') +
+    (elevationM ? `<elevation_m>${encodeXML(elevationM)}</elevation_m>` : '') +
+    (verticalDatum
+      ? `<verticalDatum>${encodeXML(verticalDatum)}</verticalDatum>`
+      : '') +
+    (county
+      ? `<siteProperty name="County">${encodeXML(county)}</siteProperty>`
+      : '') +
+    (state
+      ? `<siteProperty name="State">${encodeXML(state)}</siteProperty>`
+      : '') +
     (comments
-      ? `<siteProperty name="Site Comments">${comments}</siteProperty>`
+      ? `<siteProperty name="Site Comments">${encodeXML(
+          comments
+        )}</siteProperty>`
       : '') +
     (posAccuracyM
-      ? `<siteProperty name="PosAccuracy_m">${posAccuracyM}</siteProperty>`
+      ? `<siteProperty name="PosAccuracy_m">${encodeXML(
+          posAccuracyM
+        )}</siteProperty>`
       : '')
   )
 }

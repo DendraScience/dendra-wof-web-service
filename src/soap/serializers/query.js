@@ -44,12 +44,14 @@ export function queryInfoType({
     `<creationTime>${date.toISOString()}</creationTime>` +
     `<criteria MethodCalled="${method}">` +
     `${
-      variableParam ? `<variableParam>${variableParam}</variableParam>` : ''
+      variableParam
+        ? `<variableParam>${encodeXML(variableParam)}</variableParam>`
+        : ''
     }` +
     parameters
       .map(parameter => {
         return parameter
-          ? `<parameter name="${parameter[0]}" ${
+          ? `<parameter name="${encodeXML(parameter[0])}" ${
               parameter[1] ? `value="${encodeXML(parameter[1])}"` : ''
             }/>`
           : ''
@@ -62,5 +64,5 @@ export function queryInfoType({
 export function queryInfoNote({ note, visible = true }) {
   if (!(note && typeof note === 'string')) return ''
 
-  return visible ? `<note>${note}</note>` : ''
+  return visible ? `<note>${encodeXML(note)}</note>` : ''
 }

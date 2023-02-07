@@ -12,11 +12,13 @@ export function seriesMethod({ hasMethodCode = false, refsMap }) {
 
   return (
     `<method ${id ? `methodID="${encodeXML(id)}"` : ''}>` +
-    `${id && hasMethodCode ? `<methodCode>${id}</methodCode>` : ''}` +
+    `${
+      id && hasMethodCode ? `<methodCode>${encodeXML(id)}</methodCode>` : ''
+    }` +
     methodType({ description }) +
     `${
       hasMethodCode && methodLink
-        ? `<methodLink>${methodLink}</methodLink>`
+        ? `<methodLink>${encodeXML(methodLink)}</methodLink>`
         : ''
     }` +
     '</method>'
@@ -44,9 +46,11 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
     .join(', ')
 
   return (
-    `<source ${sourceID ? `sourceID="${sourceID}` : ''}">` +
+    `<source ${sourceID ? `sourceID="${encodeXML(sourceID)}` : ''}">` +
     `${
-      hasSourceCode && sourceID ? `<sourceCode>${sourceID}</sourceCode>` : ''
+      hasSourceCode && sourceID
+        ? `<sourceCode>${encodeXML(sourceID)}</sourceCode>`
+        : ''
     }` +
     sourceType({ citation, description, name }) +
     `${hasSourceCode ? metadataInfoType('') : ''}` +
@@ -57,7 +61,7 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
     }` +
     `${
       hasSourceCode && sourceLink
-        ? `<sourceLink>${sourceLink}</sourceLink>`
+        ? `<sourceLink>${encodeXML(sourceLink)}</sourceLink>`
         : ''
     }` +
     `${citation ? `<citation>${encodeXML(citation)}</citation>` : ''}` +

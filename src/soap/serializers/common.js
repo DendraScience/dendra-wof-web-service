@@ -132,7 +132,9 @@ export function unitsType(data) {
       ? `<unitType>${encodeXML(data.UnitsType)}</unitType>`
       : '') +
     (data.UnitsAbbreviation
-      ? `<unitAbbreviation>${data.UnitsAbbreviation}</unitAbbreviation>`
+      ? `<unitAbbreviation>${encodeXML(
+          data.UnitsAbbreviation
+        )}</unitAbbreviation>`
       : '') +
     (data.UnitsID ? `<unitCode>${encodeXML(data.UnitsID)}</unitCode>` : '')
   )

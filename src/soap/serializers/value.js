@@ -85,13 +85,23 @@ export function metadataInfoType(data) {
   const metadataLink = data.metadataLink
   return (
     '<metadata>' +
-    `${topicCategory ? `<topicCategory>{topicCategory}</topicCategory>` : ''}` +
-    `${title ? `<title>${title}</title>` : ''}` +
-    `${abstract ? `<abstract>${abstract}</abstract>` : ''}` +
     `${
-      profileVersion ? `<profileVersion>${profileVersion}</profileVersion>` : ''
+      topicCategory
+        ? `<topicCategory>${encodeXML(topicCategory)}</topicCategory>`
+        : ''
     }` +
-    `${metadataLink ? `<metadataLink>${metadataLink}</metadataLink>` : ''}` +
+    `${title ? `<title>${encodeXML(title)}</title>` : ''}` +
+    `${abstract ? `<abstract>${encodeXML(abstract)}</abstract>` : ''}` +
+    `${
+      profileVersion
+        ? `<profileVersion>${encodeXML(profileVersion)}</profileVersion>`
+        : ''
+    }` +
+    `${
+      metadataLink
+        ? `<metadataLink>${encodeXML(metadataLink)}</metadataLink>`
+        : ''
+    }` +
     '</metadata>'
   )
 }
@@ -108,13 +118,21 @@ export function contactInfoType(data) {
 
   return (
     '<contactInformation>' +
-    `${contactName ? `<contactName>${contactName}</contactName>` : ''}` +
     `${
-      typeOfContact ? `<typeOfContact>${typeOfContact}</typeOfContact>` : ''
+      contactName ? `<contactName>${encodeXML(contactName)}</contactName>` : ''
     }` +
-    `${email ? `<email>${email}</email>` : ''}` +
-    `${phone ? `<phone>${phone}</phone>` : ''}` +
-    `${address ? `<address xsi:type="xsd:string">${address}</address>` : ''}` +
+    `${
+      typeOfContact
+        ? `<typeOfContact>${encodeXML(typeOfContact)}</typeOfContact>`
+        : ''
+    }` +
+    `${email ? `<email>${encodeXML(email)}</email>` : ''}` +
+    `${phone ? `<phone>${encodeXML(phone)}</phone>` : ''}` +
+    `${
+      address
+        ? `<address xsi:type="xsd:string">${encodeXML(address)}</address>`
+        : ''
+    }` +
     '</contactInformation>'
   )
 }
@@ -127,10 +145,12 @@ export function censorCodeInfo(data) {
 
   return (
     '<censorCode>' +
-    `${censorCode ? `<censorCode>${censorCode}</censorCode>` : ''}` +
+    `${censorCode ? `<censorCode>${encodeXML(censorCode)}</censorCode>` : ''}` +
     `${
       censorCodeDescription
-        ? `<censorCodeDescription>${censorCodeDescription}</censorCodeDescription>`
+        ? `<censorCodeDescription>${encodeXML(
+            censorCodeDescription
+          )}</censorCodeDescription>`
         : ''
     }` +
     '</censorCode>'

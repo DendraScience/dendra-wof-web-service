@@ -203,6 +203,7 @@ export async function* getValues(
     variableStart() +
       variableInfoType({
         datastream: datastreamTemplate,
+        organizationRefsMap,
         refsMap: dataStreamRefsMap,
         unitCV
       }) +

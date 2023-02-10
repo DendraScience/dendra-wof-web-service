@@ -79,11 +79,16 @@ describe('getVariables handlers', function () {
       'utf8'
     )
     const datastreamsData = JSON.parse(datastreams).data
+    const organization = fs.readFileSync(
+      path.resolve(__dirname, '../../data/organization.json'),
+      'utf8'
+    )
+    const organizationData = JSON.parse(organization).data
 
     // For getVariables, we need to fake out findMany(), org() and getUnitCVFake()
     const orgFake = sinon.fake.returns('woftest')
     const findManyFake = sinon.stub()
-    findManyFake.onFirstCall().returns([{}])
+    findManyFake.onFirstCall().returns(organizationData)
     findManyFake.onSecondCall().returns(datastreamsData)
     findManyFake.onThirdCall().returns([])
     const getUnitCVFake = sinon.fake.returns([])

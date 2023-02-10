@@ -22,6 +22,10 @@
         {
           "identifier": "woftest",
           "type": "his.odm.service.NetworkName"
+        },
+        {
+          "identifier": "WOF_TEST",
+          "type": "his.odm.service.Vocabulary"
         }
       ],
       "version_id": "63583d24338316d19029171d",

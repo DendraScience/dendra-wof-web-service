@@ -177,6 +177,7 @@ export async function* getValuesForASiteObject(
         variableStart() +
         variableInfoType({
           datastream: datastream[0],
+          organizationRefsMap,
           refsMap,
           unitCV
         }) +

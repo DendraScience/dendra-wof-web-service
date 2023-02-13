@@ -190,6 +190,7 @@ export async function* getValuesObject(
   yield variableStart() +
     variableInfoType({
       datastream: datastreamTemplate,
+      organizationRefsMap,
       refsMap: dataStreamRefsMap,
       unitCV
     }) +

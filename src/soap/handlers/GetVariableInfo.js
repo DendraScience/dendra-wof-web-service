@@ -89,6 +89,11 @@ export async function* getVariableInfo(
 
   if (!datastream.value) throw new Error('Datastream not found')
 
+  const organizationRefsMap =
+    organization && organization.external_refs
+      ? helpers.externalRefsMap(organization.external_refs)
+      : undefined
+
   yield soapEnvelopeStart() +
     soapHeaderStart() +
     soapWsaAction('GetVariableInfoResponse') +
@@ -130,7 +135,12 @@ export async function* getVariableInfo(
 
     yield encodeXML(
       variableStart() +
-        variableInfoType({ datastream: datastreamValue, refsMap, unitCV }) +
+        variableInfoType({
+          datastream: datastreamValue,
+          organizationRefsMap,
+          refsMap,
+          unitCV
+        }) +
         variableEnd()
     )
 

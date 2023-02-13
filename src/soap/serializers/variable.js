@@ -9,7 +9,12 @@ export function variableEnd() {
   return '</variable>'
 }
 
-export function variableInfoType({ datastream, refsMap, unitCV }) {
+export function variableInfoType({
+  datastream,
+  organizationRefsMap,
+  refsMap,
+  unitCV
+}) {
   const variableEl = (el, key) => {
     const result = refsMap && refsMap.get(`his.odm.variables.${key}`)
     return result ? `<${el}>${encodeXML(result)}</${el}>` : ''
@@ -23,14 +28,15 @@ export function variableInfoType({ datastream, refsMap, unitCV }) {
   const speciation = refsMap && refsMap.get(`his.odm.variables.Speciation`)
   const isRegular = refsMap && refsMap.get(`his.odm.variables.IsRegular`)
   const timeUnitTag = refsMap && refsMap.get('time_unit_tag')
+  const vocabulary =
+    organizationRefsMap && organizationRefsMap.get('his.odm.service.Vocabulary')
+
   return (
     `${
       variableCode
-        ? `<variableCode vocabulary="${encodeXML(
-            (datastream.organization_lookup &&
-              datastream.organization_lookup.slug) ||
-              'dendra'
-          )}" default="true" ${
+        ? `<variableCode ${
+            vocabulary ? `vocabulary="${encodeXML(vocabulary)}"` : ''
+          } default="true" ${
             variableID ? `variableID="${encodeXML(variableID)}` : ''
           }">${encodeXML(variableCode)}</variableCode>`
         : ''

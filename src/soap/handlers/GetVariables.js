@@ -78,6 +78,11 @@ export async function* getVariables(
     variableCodes
   })
 
+  const organizationRefsMap =
+    organization && organization.external_refs
+      ? helpers.externalRefsMap(organization.external_refs)
+      : undefined
+
   yield soapEnvelopeStart() +
     soapHeaderStart() +
     soapWsaAction('GetVariablesResponse') +
@@ -119,7 +124,12 @@ export async function* getVariables(
 
     yield encodeXML(
       variableStart() +
-        variableInfoType({ datastream: datastreamValue, refsMap, unitCV }) +
+        variableInfoType({
+          datastream: datastreamValue,
+          organizationRefsMap,
+          refsMap,
+          unitCV
+        }) +
         variableEnd()
     )
 

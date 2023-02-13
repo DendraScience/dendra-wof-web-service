@@ -10,7 +10,8 @@ import {
   variablesResponseStart,
   variablesResponseEnd,
   variablesStart,
-  variablesEnd
+  variablesEnd,
+  variableInfoType
 } from '../../../src/soap/serializers/variable.js'
 
 describe('Serializers', function () {
@@ -87,6 +88,56 @@ describe('Serializers', function () {
 
     it('should serialize variablesEnd', function () {
       expect(variablesEnd()).to.equal('</variables>')
+    })
+
+    it('should serialize variableInfoType', function () {
+      const datastream = {
+        terms_info: {
+          unit_tag: 'dt_Unit_MilligramPerLiter'
+        }
+      }
+      const organizationRefsMap = new Map([
+        ['his.odm.service.Vocabulary', 'WOF_TEST']
+      ])
+      const refsMap = new Map([
+        ['his.odm.variables.VariableCode', 'VariableCode-full'],
+        ['his.odm.variables.VariableID', '21'],
+        ['his.odm.variables.NoDataValue', '-9999'],
+        ['his.odm.variables.TimeSupport', '0'],
+        ['his.odm.variables.Speciation', 'Not Applicable'],
+        ['his.odm.variables.IsRegular', 'true'],
+        ['time_unit_tag', 'MilligramPerLiter'],
+        ['his.odm.variables.VariableName', 'Phosphorus, organic'],
+        ['his.odm.variables.ValueType', 'Field Observation'],
+        ['his.odm.variables.DataType', 'Regular Sampling'],
+        ['his.odm.variables.GeneralCategory', 'Water Quality'],
+        ['his.odm.variables.SampleMedium', 'Surface water']
+      ])
+      const unitCV = {
+        dt_Unit_MilligramPerLiter: {
+          UnitsID: '199',
+          UnitsName: 'milligrams per liter',
+          UnitsType: 'Concentration',
+          UnitsAbbreviation: 'mg/L'
+        }
+      }
+      expect(
+        variableInfoType({ datastream, organizationRefsMap, refsMap, unitCV })
+      ).to.equal(
+        '<variableCode vocabulary="WOF_TEST" default="true" variableID="21">VariableCode-full</variableCode> ' +
+          '<variableName>Phosphorus, organic</variableName>' +
+          '<valueType>Field Observation</valueType>' +
+          '<dataType>Regular Sampling</dataType>' +
+          '<generalCategory>Water Quality</generalCategory>' +
+          '<sampleMedium>Surface water</sampleMedium>' +
+          '<unit><unitName>milligrams per liter</unitName><unitType>Concentration</unitType><unitAbbreviation>mg/L</unitAbbreviation><unitCode>199</unitCode></unit>' +
+          '<noDataValue>-9999</noDataValue>' +
+          '<timeScale isRegular="true">' +
+          '<unit><unitName>milligrams per liter</unitName><unitType>Concentration</unitType><unitAbbreviation>mg/L</unitAbbreviation><unitCode>199</unitCode></unit>' +
+          '<timeSupport>0</timeSupport>' +
+          '</timeScale>' +
+          '<speciation>Not Applicable</speciation>'
+      )
     })
   })
 })

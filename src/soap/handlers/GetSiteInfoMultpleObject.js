@@ -206,7 +206,12 @@ export async function* getSiteInfoMultpleObject(
 
       yield seriesStart() +
         variableStart() +
-        variableInfoType({ datastream: datastreamValue, refsMap, unitCV }) +
+        variableInfoType({
+          datastream: datastreamValue,
+          organizationRefsMap,
+          refsMap,
+          unitCV
+        }) +
         variableEnd() +
         valueCount(vCount) +
         variableTimeInterval({ firstDatapoint, lastDatapoint, refsMap }) +

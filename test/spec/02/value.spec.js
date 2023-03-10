@@ -98,7 +98,7 @@ describe('Serializers', function () {
       )
     })
 
-    it('should serialize valueInfoType', function () {
+    it('should serialize valueInfoType flavor 1', function () {
       expect(
         valueInfoType({
           datapoint: {
@@ -113,6 +113,24 @@ describe('Serializers', function () {
         })
       ).to.equal(
         '<value censorCode="nc" dateTime="2015-11-15T11:15:00" timeOffset="-05:00" dateTimeUTC="2015-11-15T16:15:00" methodCode="18" sourceCode="15" qualityControlLevelCode="2">8.5</value>'
+      )
+    })
+
+    it('should serialize valueInfoType value null flavor 2', function () {
+      expect(
+        valueInfoType({
+          datapoint: {
+            lt: 1447586100000,
+            t: 1447604100000,
+            v: null,
+            d: { CensorCode: 'nc', UTCOffset: -5 }
+          },
+          methodID: '18',
+          sourceID: '15',
+          qualityControlLevelCode: '2'
+        })
+      ).to.equal(
+        '<value censorCode="nc" dateTime="2015-11-15T11:15:00" timeOffset="-05:00" dateTimeUTC="2015-11-15T16:15:00" methodCode="18" sourceCode="15" qualityControlLevelCode="2">-9999</value>'
       )
     })
   })

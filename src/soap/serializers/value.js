@@ -72,7 +72,7 @@ export function valueInfoType({
     qualityControlLevelCode
       ? ` qualityControlLevelCode="${encodeXML(qualityControlLevelCode)}"`
       : ''
-  }>${value}</value>`
+  }>${value === null ? -9999 : value}</value>`
 }
 
 export function metadataInfoType(data) {

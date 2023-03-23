@@ -25,7 +25,8 @@ export function variableInfoType({
   const variableNoDataValue =
     refsMap && refsMap.get(`his.odm.variables.NoDataValue`)
   const timeSupport = refsMap && refsMap.get(`his.odm.variables.TimeSupport`)
-  const speciation = refsMap && refsMap.get(`his.odm.variables.Speciation`)
+  const speciation =
+    (refsMap && refsMap.get(`his.odm.variables.Speciation`)) || 'Not applicable'
   const isRegular = refsMap && refsMap.get(`his.odm.variables.IsRegular`)
   const timeUnitTag = refsMap && refsMap.get('time_unit_tag')
   const vocabulary =
@@ -54,7 +55,11 @@ export function variableInfoType({
     (variableNoDataValue
       ? `<noDataValue>${encodeXML(variableNoDataValue)}</noDataValue>`
       : '') +
-    `<timeScale ${isRegular ? 'isRegular="true"' : ''}>` +
+    `<timeScale ${
+      isRegular && (isRegular === 'True' || isRegular === 'true')
+        ? 'isRegular="true"'
+        : ''
+    }>` +
     (timeUnitTag && unitCV[`dt_Unit_${timeUnitTag}`]
       ? '<unit>' + unitsType(unitCV[`dt_Unit_${timeUnitTag}`]) + '</unit>'
       : '') +

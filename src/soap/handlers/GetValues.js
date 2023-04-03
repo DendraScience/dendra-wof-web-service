@@ -126,8 +126,16 @@ export async function* getValues(
     organization ? { organization_id: organization._id } : undefined,
     variableParts
       ? {
-          'external_refs.type': 'his.odm.variables.VariableCode',
-          'external_refs.identifier': variableParts[1]
+          $and: [
+            {
+              external_refs: {
+                $elemMatch: {
+                  type: 'his.odm.variables.VariableCode',
+                  identifier: { $regex: `^${variableParts[1]}$` }
+                }
+              }
+            }
+          ]
         }
       : undefined
   )

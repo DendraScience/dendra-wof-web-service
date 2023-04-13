@@ -364,7 +364,8 @@ export async function* getValues(
     yield encodeXML(
       seriesSource({
         hasSourceCode: true,
-        refsMap: value
+        refsMap: value,
+        stationRefsMap
       })
     )
   }

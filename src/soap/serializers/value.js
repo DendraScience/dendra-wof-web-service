@@ -85,14 +85,32 @@ export function valueInfoType({
   }>${value === null ? -9999 : value}</value>`
 }
 
-export function metadataInfoType(data) {
-  if (!(data && typeof data === 'object')) return ''
+export function metadataInfoType(stationRefsMap) {
+  if (!(stationRefsMap && typeof stationRefsMap === 'object')) return ''
 
-  const topicCategory = data.topicCategory
-  const title = data.title
-  const abstract = data.abstract
-  const profileVersion = data.profileVersion
-  const metadataLink = data.metadataLink
+  const topicCategory =
+    stationRefsMap && stationRefsMap.get('his.odm.isometadata.TopicCategory')
+  const title =
+    stationRefsMap && stationRefsMap.get('his.odm.isometadata.Title')
+  const abstract =
+    stationRefsMap && stationRefsMap.get('his.odm.isometadata.Abstract')
+  const profileVersion =
+    stationRefsMap && stationRefsMap.get('his.odm.isometadata.ProfileVersion')
+  const metadataLink =
+    stationRefsMap && stationRefsMap.get('his.odm.isometadata.MetadataLink')
+
+  // Preventing empty metadata Object
+  if (
+    !topicCategory &&
+    !title &&
+    !abstract &&
+    !profileVersion &&
+    !profileVersion &&
+    !metadataLink
+  ) {
+    return ''
+  }
+
   return (
     '<metadata>' +
     `${

@@ -343,7 +343,8 @@ export async function* getValuesObject(
   for (const value of sourceIDs.values()) {
     yield seriesSource({
       hasSourceCode: true,
-      refsMap: value
+      refsMap: value,
+      stationRefsMap
     })
   }
 

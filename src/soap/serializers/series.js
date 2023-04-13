@@ -25,7 +25,11 @@ export function seriesMethod({ hasMethodCode = false, refsMap }) {
   )
 }
 
-export function seriesSource({ hasSourceCode = false, refsMap }) {
+export function seriesSource({
+  hasSourceCode = false,
+  refsMap,
+  stationRefsMap
+}) {
   if (!(refsMap && typeof refsMap === 'object')) return ''
 
   const sourceID = refsMap.get('his.odm.sources.SourceID')
@@ -53,7 +57,9 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
         : ''
     }` +
     sourceType({ citation, description, name }) +
-    `${hasSourceCode ? metadataInfoType('') : ''}` +
+    `${
+      hasSourceCode && stationRefsMap ? metadataInfoType(stationRefsMap) : ''
+    }` +
     `${
       hasSourceCode
         ? contactInfoType({ contactName, email, phone, address })

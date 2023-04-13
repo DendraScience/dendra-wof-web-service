@@ -13,7 +13,8 @@ import {
   getValuesResultStart,
   getValuesResultEnd,
   contactInfoType,
-  valueInfoType
+  valueInfoType,
+  metadataInfoType
 } from '../../../src/soap/serializers/value.js'
 
 describe('Serializers', function () {
@@ -131,6 +132,25 @@ describe('Serializers', function () {
         })
       ).to.equal(
         '<value censorCode="nc" dateTime="2015-11-15T11:15:00" timeOffset="-05:00" dateTimeUTC="2015-11-15T16:15:00" methodCode="18" sourceCode="15" qualityControlLevelCode="2">-9999</value>'
+      )
+    })
+
+    it('should serialize metadataInfoType value', function () {
+      const stationRefsMap = new Map([
+        ['his.odm.isometadata.TopicCategory', 'inlandWaters'],
+        ['his.odm.isometadata.Title', 'Wof-test River Program'],
+        ['his.odm.isometadata.Abstract', 'The RiverWatch program'],
+        ['his.odm.isometadata.ProfileVersion', 'Unknown'],
+        ['his.odm.isometadata.MetadataLink', 'http://woftest.com/']
+      ])
+      expect(metadataInfoType(stationRefsMap)).to.equal(
+        '<metadata>' +
+          '<topicCategory>inlandWaters</topicCategory>' +
+          '<title>Wof-test River Program</title>' +
+          '<abstract>The RiverWatch program</abstract>' +
+          '<profileVersion>Unknown</profileVersion>' +
+          '<metadataLink>http://woftest.com/</metadataLink>' +
+          '</metadata>'
       )
     })
   })

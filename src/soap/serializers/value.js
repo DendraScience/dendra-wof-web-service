@@ -1,5 +1,6 @@
 import { encodeXML } from 'entities'
 import { timeOffset } from './time.js'
+import { unitsType } from './common.js'
 
 export function timeSeriesResponseStart({
   hasAttribute = false,
@@ -46,6 +47,8 @@ export function valuesEnd() {
 }
 
 export function valueInfoType({
+  annotationAttrib,
+  annotationFlags,
   datapoint,
   methodID,
   sourceID,
@@ -61,14 +64,21 @@ export function valueInfoType({
   const dateTime = new Date(datapoint.t + 3600000 * datapoint.d.UTCOffset)
     .toISOString()
     .substring(0, 19)
+  const offsetTypeCode =
+    annotationFlags && annotationFlags.get('his.odm.offsettypes.OffsetTypeCode')
+  const qualifiers =
+    annotationFlags && annotationFlags.get('his.odm.qualifiers.QualifierCode')
+  const offsetValue = annotationAttrib && annotationAttrib.value
 
-  return `<value${censorCode ? ` censorCode="${encodeXML(censorCode)}"` : ''}${
-    dateTime ? ` dateTime="${dateTime}"` : ''
-  }${utcTimeOffset ? ` timeOffset="${utcTimeOffset}"` : ''}${
-    dateTimeUTC ? ` dateTimeUTC="${dateTimeUTC}"` : ''
-  }${methodID ? ` methodCode="${encodeXML(methodID)}"` : ''}${
-    sourceID ? ` sourceCode="${encodeXML(sourceID)}"` : ''
-  }${
+  return `<value${qualifiers ? ` qualifiers="${encodeXML(qualifiers)}"` : ''}${
+    censorCode ? ` censorCode="${encodeXML(censorCode)}"` : ''
+  }${dateTime ? ` dateTime="${dateTime}"` : ''}${
+    utcTimeOffset ? ` timeOffset="${utcTimeOffset}"` : ''
+  }${dateTimeUTC ? ` dateTimeUTC="${dateTimeUTC}"` : ''}${
+    methodID ? ` methodCode="${encodeXML(methodID)}"` : ''
+  }${sourceID ? ` sourceCode="${encodeXML(sourceID)}"` : ''}${
+    offsetValue ? ` offsetValue="${offsetValue}"` : ''
+  }${offsetTypeCode ? ` offsetTypeCode="${encodeXML(offsetTypeCode)}"` : ''}${
     qualityControlLevelCode
       ? ` qualityControlLevelCode="${encodeXML(qualityControlLevelCode)}"`
       : ''
@@ -103,6 +113,75 @@ export function metadataInfoType(data) {
         : ''
     }` +
     '</metadata>'
+  )
+}
+
+export function qualifierInfo({ refsMap }) {
+  if (!(refsMap && typeof refsMap === 'object')) return ''
+
+  const qualifierCode =
+    refsMap && refsMap.get('his.odm.qualifiers.QualifierCode')
+  const qualifierDescription =
+    refsMap && refsMap.get('his.odm.qualifiers.QualifierDescription')
+
+  return (
+    '<qualifier>' +
+    `${
+      qualifierCode
+        ? `<qualifierCode>${encodeXML(qualifierCode)}</qualifierCode>`
+        : ''
+    }` +
+    `${
+      qualifierDescription
+        ? `<qualifierDescription>${encodeXML(
+            qualifierDescription
+          )}</qualifierDescription>`
+        : ''
+    }` +
+    '</qualifier>'
+  )
+}
+
+export function offsetInfo({ annotation, unitCV }) {
+  if (!(annotation && typeof annotation === 'object')) return ''
+
+  const annotationFlags = annotation.annotationFlags
+  const offsetTypeID =
+    annotationFlags && annotationFlags.get('his.odm.offsettypes.OffsetTypeID')
+  const offsetTypeCode =
+    annotationFlags && annotationFlags.get('his.odm.offsettypes.OffsetTypeCode')
+  const offsetDescription =
+    annotationFlags &&
+    annotationFlags.get('his.odm.offsettypes.OffsetDescription')
+  const offsetIsVertical =
+    annotationFlags &&
+    annotationFlags.get('his.odm.offsettypes.OffsetIsVertical')
+
+  return (
+    `<offset ${
+      offsetTypeID ? `offsetTypeID="${encodeXML(offsetTypeID)}"` : ''
+    }>` +
+    `${
+      offsetTypeCode
+        ? `<offsetTypeCode>${encodeXML(offsetTypeCode)}</offsetTypeCode>`
+        : ''
+    }` +
+    `${
+      offsetDescription
+        ? `<offsetDescription>${encodeXML(
+            offsetDescription
+          )}</offsetDescription>`
+        : ''
+    }` +
+    '<unit>' +
+    unitsType(unitCV[annotation.annotationAttrib.unit_tag]) +
+    '</unit>' +
+    `${
+      offsetIsVertical
+        ? `<offsetIsVertical>${encodeXML(offsetIsVertical)}</offsetIsVertical>`
+        : ''
+    }` +
+    '</offset>'
   )
 }
 

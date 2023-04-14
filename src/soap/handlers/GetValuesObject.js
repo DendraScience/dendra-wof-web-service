@@ -39,7 +39,9 @@ import {
   sourceInfoEnd,
   censorCodeInfo,
   timeSeriesEnd,
-  timeSeriesResponseEnd
+  timeSeriesResponseEnd,
+  offsetInfo,
+  qualifierInfo
 } from '../serializers/value.js'
 import {
   qualityControlLevelInfo,
@@ -206,9 +208,11 @@ export async function* getValuesObject(
 
   yield valuesStart()
 
+  const qualifierCodes = new Map()
   const qualityControlLevelCodes = new Map()
   const methodIDs = new Map()
   const sourceIDs = new Map()
+  const offsetIDs = new Map()
 
   while (!datastream.done) {
     const datastreamValue = datastream.value
@@ -242,7 +246,41 @@ export async function* getValuesObject(
       let j = 0
 
       for (const datapoint of datapoints) {
+        const annotationFlags =
+          datapoint.q &&
+          datapoint.q.flag &&
+          datapoint.q.flag.length &&
+          datapoint.q.flag.reduce((map, ref) => {
+            const annotationFlag = ref.split(':')
+            map.set(annotationFlag[0], annotationFlag[1])
+            return map
+          }, new Map())
+        const annotationAttrib =
+          datapoint.q &&
+          datapoint.q.attrib &&
+          Object.values(datapoint.q.attrib)[0]
+        const qualifierCode =
+          annotationFlags &&
+          annotationFlags.get('his.odm.qualifiers.QualifierCode')
+        const offsetTypeID =
+          annotationFlags &&
+          annotationFlags.get('his.odm.offsettypes.OffsetTypeID')
+
+        if (
+          annotationFlags &&
+          qualifierCode &&
+          !qualifierCodes.has(qualifierCode)
+        ) {
+          qualifierCodes.set(qualifierCode, annotationFlags)
+        }
+
+        if (offsetTypeID && !offsetIDs.has(offsetTypeID)) {
+          offsetIDs.set(offsetTypeID, { annotationAttrib, annotationFlags })
+        }
+
         yield valueInfoType({
+          annotationAttrib,
+          annotationFlags,
           datapoint,
           methodID,
           sourceID,
@@ -264,24 +302,28 @@ export async function* getValuesObject(
           }
         })
       )
-    }
 
-    if (
-      qualityControlLevelCode &&
-      !qualityControlLevelCodes.has(qualityControlLevelCode)
-    ) {
-      qualityControlLevelCodes.set(qualityControlLevelCode, refsMap)
-    }
+      if (
+        qualityControlLevelCode &&
+        !qualityControlLevelCodes.has(qualityControlLevelCode)
+      ) {
+        qualityControlLevelCodes.set(qualityControlLevelCode, refsMap)
+      }
 
-    if (methodID && !methodIDs.has(methodID)) {
-      methodIDs.set(methodID, refsMap)
-    }
+      if (methodID && !methodIDs.has(methodID)) {
+        methodIDs.set(methodID, refsMap)
+      }
 
-    if (sourceID && !sourceIDs.has(sourceID)) {
-      sourceIDs.set(sourceID, refsMap)
+      if (sourceID && !sourceIDs.has(sourceID)) {
+        sourceIDs.set(sourceID, refsMap)
+      }
     }
 
     datastream = await datastreams.next()
+  }
+
+  for (const value of qualifierCodes.values()) {
+    yield qualifierInfo({ refsMap: value })
   }
 
   for (const value of qualityControlLevelCodes.values()) {
@@ -301,8 +343,13 @@ export async function* getValuesObject(
   for (const value of sourceIDs.values()) {
     yield seriesSource({
       hasSourceCode: true,
-      refsMap: value
+      refsMap: value,
+      stationRefsMap
     })
+  }
+
+  for (const value of offsetIDs.values()) {
+    yield offsetInfo({ annotation: value, unitCV })
   }
 
   yield censorCodeInfo({

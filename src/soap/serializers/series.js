@@ -25,7 +25,11 @@ export function seriesMethod({ hasMethodCode = false, refsMap }) {
   )
 }
 
-export function seriesSource({ hasSourceCode = false, refsMap }) {
+export function seriesSource({
+  hasSourceCode = false,
+  refsMap,
+  stationRefsMap
+}) {
   if (!(refsMap && typeof refsMap === 'object')) return ''
 
   const sourceID = refsMap.get('his.odm.sources.SourceID')
@@ -33,14 +37,30 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
   const description = refsMap.get('his.odm.sources.SourceDescription')
   const citation = refsMap.get('his.odm.sources.Citation')
 
-  const contactName = refsMap.get('his.odm.sources.ContactName')
-  const email = refsMap.get('his.odm.sources.Email')
-  const phone = refsMap.get('his.odm.sources.Phone')
-  const city = refsMap.get('his.odm.sources.City')
-  const state = refsMap.get('his.odm.sources.State')
-  const zipCode = refsMap.get('his.odm.sources.ZipCode')
-  const streetAddress = refsMap.get('his.odm.sources.Address')
-  const sourceLink = refsMap.get('his.odm.sources.SourceLink')
+  const contactName =
+    refsMap.get('his.odm.sources.ContactName') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.ContactName'))
+  const email =
+    refsMap.get('his.odm.sources.Email') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.Email'))
+  const phone =
+    refsMap.get('his.odm.sources.Phone') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.Phone'))
+  const city =
+    refsMap.get('his.odm.sources.City') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.City'))
+  const state =
+    refsMap.get('his.odm.sources.State') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.State'))
+  const zipCode =
+    refsMap.get('his.odm.sources.ZipCode') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.ZipCode'))
+  const streetAddress =
+    refsMap.get('his.odm.sources.Address') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.Address'))
+  const sourceLink =
+    refsMap.get('his.odm.sources.SourceLink') ||
+    (stationRefsMap && stationRefsMap.get('his.odm.sources.SourceLink'))
   const address = [streetAddress, city, state, zipCode]
     .filter(Boolean)
     .join(', ')
@@ -53,7 +73,9 @@ export function seriesSource({ hasSourceCode = false, refsMap }) {
         : ''
     }` +
     sourceType({ citation, description, name }) +
-    `${hasSourceCode ? metadataInfoType('') : ''}` +
+    `${
+      hasSourceCode && stationRefsMap ? metadataInfoType(stationRefsMap) : ''
+    }` +
     `${
       hasSourceCode
         ? contactInfoType({ contactName, email, phone, address })

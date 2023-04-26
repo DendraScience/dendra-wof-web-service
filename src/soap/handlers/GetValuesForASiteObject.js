@@ -35,7 +35,8 @@ import {
   timeSeriesEnd,
   timeSeriesResponseEnd,
   offsetInfo,
-  qualifierInfo
+  qualifierInfo,
+  sampleInfo
 } from '../serializers/value.js'
 import { siteInfoType } from '../serializers/site.js'
 import {
@@ -192,6 +193,8 @@ export async function* getValuesForASiteObject(
       const methodIDs = new Map()
       const sourceIDs = new Map()
       const offsetIDs = new Map()
+      const censorCodes = new Map()
+      const labSampleCodes = new Map()
 
       for (const data of datastream) {
         const dataRefsMap =
@@ -245,6 +248,12 @@ export async function* getValuesForASiteObject(
             const offsetTypeID =
               annotationFlags &&
               annotationFlags.get('his.odm.offsettypes.OffsetTypeID')
+            const censorCode = datapoint.d && datapoint.d.CensorCode
+            const labSampleCode =
+              annotationFlags &&
+              annotationFlags.get('his.odm.samples.LabSampleCode')
+            const sampleID =
+              annotationFlags && annotationFlags.get('his.odm.samples.SampleID')
 
             if (
               annotationFlags &&
@@ -256,6 +265,20 @@ export async function* getValuesForASiteObject(
 
             if (offsetTypeID && !offsetIDs.has(offsetTypeID)) {
               offsetIDs.set(offsetTypeID, { annotationAttrib, annotationFlags })
+            }
+
+            if (
+              labSampleCode &&
+              !labSampleCodes.has(labSampleCode + '-' + sampleID)
+            ) {
+              labSampleCodes.set(
+                labSampleCode + '-' + sampleID,
+                annotationFlags
+              )
+            }
+
+            if (censorCode && !censorCodes.has(censorCode)) {
+              censorCodes.set(censorCode, censorCode)
             }
 
             yield valueInfoType({
@@ -330,10 +353,13 @@ export async function* getValuesForASiteObject(
         yield offsetInfo({ annotation: value, unitCV })
       }
 
-      yield censorCodeInfo({
-        censorCode: 'nc',
-        censorCodeDescription: 'not censored'
-      })
+      for (const value of labSampleCodes.values()) {
+        yield sampleInfo({ refsMap: value })
+      }
+
+      for (const value of censorCodes.values()) {
+        yield censorCodeInfo(helpers.findCensorCode(value))
+      }
 
       yield valuesEnd() + timeSeriesEnd()
     }

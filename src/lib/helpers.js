@@ -4,6 +4,18 @@
 
 export function createHelpers({ cache, logger, webAPI }) {
   return {
+    findCensorCode(censorCode) {
+      const censorCodeCV = [
+        { term: 'gt', definition: 'greater than' },
+        { term: 'lt', definition: 'less than' },
+        { term: 'nc', definition: 'not censored' },
+        { term: 'nd', definition: 'nd' },
+        { term: 'pnq', definition: 'present but not quantified' },
+        { term: 'unk', definition: 'unknown' }
+      ]
+      return censorCodeCV.find(cc => cc.term === censorCode)
+    },
+
     async findDatapoint(query, last) {
       try {
         const resp = await webAPI.get('/datapoints', {

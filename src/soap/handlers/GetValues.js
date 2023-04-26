@@ -44,7 +44,8 @@ import {
   timeSeriesResponseEnd,
   getValuesResultEnd,
   offsetInfo,
-  qualifierInfo
+  qualifierInfo,
+  sampleInfo
 } from '../serializers/value.js'
 import {
   qualityControlLevelInfo,
@@ -227,6 +228,8 @@ export async function* getValues(
   const methodIDs = new Map()
   const sourceIDs = new Map()
   const offsetIDs = new Map()
+  const censorCodes = new Map()
+  const labSampleCodes = new Map()
 
   while (!datastream.done) {
     const datastreamValue = datastream.value
@@ -279,6 +282,12 @@ export async function* getValues(
         const offsetTypeID =
           annotationFlags &&
           annotationFlags.get('his.odm.offsettypes.OffsetTypeID')
+        const censorCode = datapoint.d && datapoint.d.CensorCode
+        const labSampleCode =
+          annotationFlags &&
+          annotationFlags.get('his.odm.samples.LabSampleCode')
+        const sampleID =
+          annotationFlags && annotationFlags.get('his.odm.samples.SampleID')
 
         if (
           annotationFlags &&
@@ -290,6 +299,17 @@ export async function* getValues(
 
         if (offsetTypeID && !offsetIDs.has(offsetTypeID)) {
           offsetIDs.set(offsetTypeID, { annotationAttrib, annotationFlags })
+        }
+
+        if (
+          labSampleCode &&
+          !labSampleCodes.has(labSampleCode + '-' + sampleID)
+        ) {
+          labSampleCodes.set(labSampleCode + '-' + sampleID, annotationFlags)
+        }
+
+        if (censorCode && !censorCodes.has(censorCode)) {
+          censorCodes.set(censorCode, censorCode)
         }
 
         yield encodeXML(
@@ -374,12 +394,13 @@ export async function* getValues(
     yield encodeXML(offsetInfo({ annotation: value, unitCV }))
   }
 
-  yield encodeXML(
-    censorCodeInfo({
-      censorCode: 'nc',
-      censorCodeDescription: 'not censored'
-    })
-  )
+  for (const value of labSampleCodes.values()) {
+    yield encodeXML(sampleInfo({ refsMap: value }))
+  }
+
+  for (const value of censorCodes.values()) {
+    yield encodeXML(censorCodeInfo(helpers.findCensorCode(value)))
+  }
 
   yield encodeXML(valuesEnd())
 

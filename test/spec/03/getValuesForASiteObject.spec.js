@@ -86,7 +86,10 @@ describe('GetValuesForASiteObject handlers', function () {
     findManyFake.onCall(3).returns([])
 
     findManyFake.onCall(4).returns([datapointsData[2]])
+
     findManyFake.onCall(5).returns([])
+
+    findManyFake.onCall(6).returns([datapointsData[3]])
 
     const getUnitCVFake = sinon.fake.returns(unitCV)
     sinon.replace(helpers, 'org', orgFake)
@@ -102,6 +105,7 @@ describe('GetValuesForASiteObject handlers', function () {
     // Followup with with expect statements to check yielded results
 
     const result = (await gen.next()).value
+      .concat((await gen.next()).value)
       .concat((await gen.next()).value)
       .concat((await gen.next()).value)
       .concat((await gen.next()).value)

@@ -69,6 +69,8 @@ export function valueInfoType({
   const qualifiers =
     annotationFlags && annotationFlags.get('his.odm.qualifiers.QualifierCode')
   const offsetValue = annotationAttrib && annotationAttrib.value
+  const labSampleCode =
+    annotationFlags && annotationFlags.get('his.odm.samples.LabSampleCode')
 
   return `<value${qualifiers ? ` qualifiers="${encodeXML(qualifiers)}"` : ''}${
     censorCode ? ` censorCode="${encodeXML(censorCode)}"` : ''
@@ -79,6 +81,8 @@ export function valueInfoType({
   }${sourceID ? ` sourceCode="${encodeXML(sourceID)}"` : ''}${
     offsetValue ? ` offsetValue="${offsetValue}"` : ''
   }${offsetTypeCode ? ` offsetTypeCode="${encodeXML(offsetTypeCode)}"` : ''}${
+    labSampleCode ? ` labSampleCode="${encodeXML(labSampleCode)}"` : ''
+  }${
     qualityControlLevelCode
       ? ` qualityControlLevelCode="${encodeXML(qualityControlLevelCode)}"`
       : ''
@@ -203,6 +207,81 @@ export function offsetInfo({ annotation, unitCV }) {
   )
 }
 
+export function sampleInfo({ refsMap }) {
+  if (!(refsMap && typeof refsMap === 'object')) return ''
+
+  const sampleID = refsMap && refsMap.get('his.odm.samples.SampleID')
+  const labSampleCode = refsMap && refsMap.get('his.odm.samples.LabSampleCode')
+  const sampleType = refsMap && refsMap.get('his.odm.samples.SampleType')
+
+  return (
+    `<sample${sampleID ? ` sampleID="${encodeXML(sampleID)}"` : ''}>` +
+    `${
+      labSampleCode
+        ? `<labSampleCode>${encodeXML(labSampleCode)}</labSampleCode>`
+        : ''
+    }` +
+    `${sampleType ? `<sampleType>${encodeXML(sampleType)}</sampleType>` : ''}` +
+    labMethodInfo({ refsMap }) +
+    `</sample>`
+  )
+}
+
+export function labMethodInfo({ refsMap }) {
+  if (!(refsMap && typeof refsMap === 'object')) return ''
+
+  const labSampleCode = refsMap && refsMap.get('his.odm.samples.LabSampleCode')
+  const labName = refsMap && refsMap.get('his.odm.labmethods.LabName')
+  const labOrganization =
+    refsMap && refsMap.get('his.odm.labmethods.LabOrganization')
+  const labMethodName =
+    refsMap && refsMap.get('his.odm.labmethods.LabMethodName')
+  const labMethodDescription =
+    refsMap && refsMap.get('his.odm.labmethods.LabMethodDescription')
+  const labMethodLink =
+    refsMap && refsMap.get('his.odm.labmethods.LabMethodLink')
+
+  if (
+    !labSampleCode &&
+    !labName &&
+    !labOrganization &&
+    !labMethodName &&
+    !labMethodDescription &&
+    !labMethodLink
+  ) {
+    return ''
+  }
+
+  return (
+    `<labMethod>` +
+    `${labSampleCode ? `<labCode>${encodeXML(labSampleCode)}</labCode>` : ''}` +
+    `${labName ? `<labName>${encodeXML(labName)}</labName>` : ''}` +
+    `${
+      labOrganization
+        ? `<labOrganization>${encodeXML(labOrganization)}</labOrganization>`
+        : ''
+    }` +
+    `${
+      labMethodName
+        ? `<labMethodName>${encodeXML(labMethodName)}</labMethodName>`
+        : ''
+    }` +
+    `${
+      labMethodDescription
+        ? `<labMethodDescription>${encodeXML(
+            labMethodDescription
+          )}</labMethodDescription>`
+        : ''
+    }` +
+    `${
+      labMethodLink
+        ? `<labMethodLink>${encodeXML(labMethodLink)}</labMethodLink>`
+        : ''
+    }` +
+    `</labMethod>`
+  )
+}
+
 export function contactInfoType(data) {
   if (!(data && typeof data === 'object')) return ''
 
@@ -237,8 +316,8 @@ export function contactInfoType(data) {
 export function censorCodeInfo(data) {
   if (!(data && typeof data === 'object')) return ''
 
-  const censorCode = data.censorCode
-  const censorCodeDescription = data.censorCodeDescription
+  const censorCode = data.term
+  const censorCodeDescription = data.definition
 
   return (
     '<censorCode>' +

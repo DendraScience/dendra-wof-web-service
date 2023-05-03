@@ -194,7 +194,12 @@ export async function* getValuesObject(
   // Will only be one station since $limit=1
   for (const station of stations) {
     yield sourceInfoStart() +
-      siteInfoType({ organizationRefsMap, refsMap: stationRefsMap, station }) +
+      siteInfoType({
+        hasAttribute: true,
+        organizationRefsMap,
+        refsMap: stationRefsMap,
+        station
+      }) +
       sourceInfoEnd()
   }
 

@@ -75,6 +75,40 @@ describe('Serializers', function () {
       )
     })
 
+    it('should serialize siteInfoType with siteProperty flavor 1', function () {
+      expect(
+        siteInfoType({
+          hasAttribute: true,
+          station: {
+            name: 'SiteName-full'
+          }
+        })
+      ).to.equal(
+        '<siteName>SiteName-full</siteName>' +
+          '<siteProperty name="County"></siteProperty>' +
+          '<siteProperty name="State"></siteProperty>' +
+          '<siteProperty name="Site Comments"></siteProperty>'
+      )
+    })
+
+    it('should serialize siteInfoType with siteProperty flavor 2', function () {
+      const refsMap = new Map([['his.odm.sites.State', 'Massachusetts']])
+      expect(
+        siteInfoType({
+          hasAttribute: true,
+          station: {
+            name: 'SiteName-full'
+          },
+          refsMap
+        })
+      ).to.equal(
+        '<siteName>SiteName-full</siteName>' +
+          '<siteProperty name="County"></siteProperty>' +
+          '<siteProperty name="State">Massachusetts</siteProperty>' +
+          '<siteProperty name="Site Comments"></siteProperty>'
+      )
+    })
+
     it('should serialize siteInfoType without externalRefs', function () {
       expect(
         siteInfoType({

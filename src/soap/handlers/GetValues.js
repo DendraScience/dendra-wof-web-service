@@ -202,6 +202,7 @@ export async function* getValues(
     yield encodeXML(
       sourceInfoStart() +
         siteInfoType({
+          hasAttribute: true,
           organizationRefsMap,
           refsMap: stationRefsMap,
           station

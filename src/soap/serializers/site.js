@@ -16,7 +16,12 @@ export function siteInfoEnd() {
   return '</siteInfo>'
 }
 
-export function siteInfoType({ organizationRefsMap, refsMap, station }) {
+export function siteInfoType({
+  hasAttribute = false,
+  organizationRefsMap,
+  refsMap,
+  station
+}) {
   const siteId = refsMap && refsMap.get('his.odm.sites.SiteID')
   const siteCode = refsMap && refsMap.get('his.odm.sites.SiteCode')
   const verticalDatum = refsMap && refsMap.get('his.odm.sites.VerticalDatum')
@@ -64,17 +69,27 @@ export function siteInfoType({ organizationRefsMap, refsMap, station }) {
     (verticalDatum
       ? `<verticalDatum>${encodeXML(verticalDatum)}</verticalDatum>`
       : '') +
-    (county
-      ? `<siteProperty name="County">${encodeXML(county)}</siteProperty>`
-      : '') +
-    (state
-      ? `<siteProperty name="State">${encodeXML(state)}</siteProperty>`
-      : '') +
-    (comments
-      ? `<siteProperty name="Site Comments">${encodeXML(
-          comments
-        )}</siteProperty>`
-      : '') +
+    `${
+      hasAttribute || county
+        ? `<siteProperty name="County">${
+            county ? encodeXML(county) : ''
+          }</siteProperty>`
+        : ''
+    }` +
+    `${
+      hasAttribute || county
+        ? `<siteProperty name="State">${
+            state ? encodeXML(state) : ''
+          }</siteProperty>`
+        : ''
+    }` +
+    `${
+      hasAttribute || comments
+        ? `<siteProperty name="Site Comments">${
+            comments ? encodeXML(comments) : ''
+          }</siteProperty>`
+        : ''
+    }` +
     (posAccuracyM
       ? `<siteProperty name="PosAccuracy_m">${encodeXML(
           posAccuracyM

@@ -208,14 +208,19 @@ export async function* getValuesForASiteObject(
           )
         const methodID = dataRefsMap.get('his.odm.methods.MethodID')
         const sourceID = dataRefsMap.get('his.odm.sources.SourceID')
+        const queryUTCOffset = refsMap && refsMap.get('his.wof.query.UTCOffset')
 
         const datapointsParams = Object.assign({
           datastream_id: data._id,
           time: {
-            $gte: startTime,
-            $lte: endTime
+            $gte: parseInt(queryUTCOffset)
+              ? startTime - parseInt(queryUTCOffset)
+              : startTime,
+            $lte: parseInt(queryUTCOffset)
+              ? endTime - parseInt(queryUTCOffset)
+              : endTime
           },
-          time_local: true,
+          time_local: !parseInt(queryUTCOffset),
           t_int: true,
           $limit: 2016,
           $sort: {
@@ -300,8 +305,12 @@ export async function* getValuesForASiteObject(
             'datapoints',
             Object.assign(datapointsParams, {
               time: {
-                $gt: datapoints[datapoints.length - 1].lt,
-                $lte: endTime
+                $gt: parseInt(queryUTCOffset)
+                  ? datapoints[datapoints.length - 1].t
+                  : datapoints[datapoints.length - 1].lt,
+                $lte: parseInt(queryUTCOffset)
+                  ? endTime - parseInt(queryUTCOffset)
+                  : endTime
               }
             })
           )

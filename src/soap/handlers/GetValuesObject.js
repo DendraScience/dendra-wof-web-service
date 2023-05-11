@@ -194,7 +194,12 @@ export async function* getValuesObject(
   // Will only be one station since $limit=1
   for (const station of stations) {
     yield sourceInfoStart() +
-      siteInfoType({ organizationRefsMap, refsMap: stationRefsMap, station }) +
+      siteInfoType({
+        hasAttribute: true,
+        organizationRefsMap,
+        refsMap: stationRefsMap,
+        station
+      }) +
       sourceInfoEnd()
   }
 
@@ -228,14 +233,19 @@ export async function* getValuesObject(
       refsMap.get('his.odm.qualitycontrollevels.QualityControlLevelCode')
     const methodID = refsMap.get('his.odm.methods.MethodID')
     const sourceID = refsMap.get('his.odm.sources.SourceID')
+    const queryUTCOffset = refsMap && refsMap.get('his.wof.query.UTCOffset')
 
     const datapointsParams = Object.assign({
       datastream_id: datastreamValue._id,
       time: {
-        $gte: startTime,
-        $lte: endTime
+        $gte: parseInt(queryUTCOffset)
+          ? startTime - parseInt(queryUTCOffset)
+          : startTime,
+        $lte: parseInt(queryUTCOffset)
+          ? endTime - parseInt(queryUTCOffset)
+          : endTime
       },
-      time_local: true,
+      time_local: !parseInt(queryUTCOffset),
       t_int: true,
       $limit: 2016,
       $sort: {
@@ -317,8 +327,12 @@ export async function* getValuesObject(
         'datapoints',
         Object.assign(datapointsParams, {
           time: {
-            $gt: datapoints[datapoints.length - 1].lt,
-            $lte: endTime
+            $gt: parseInt(queryUTCOffset)
+              ? datapoints[datapoints.length - 1].t
+              : datapoints[datapoints.length - 1].lt,
+            $lte: parseInt(queryUTCOffset)
+              ? endTime - parseInt(queryUTCOffset)
+              : endTime
           }
         })
       )
